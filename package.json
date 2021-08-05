@@ -73,7 +73,12 @@
       "afterEach",
       "jest",
       "beforeAll",
-      "afterAll"
+      "afterAll",
+      "XMLHttpRequest"
+    ],
+    "ignore": [
+      "app/dist/**/*.js",
+      "test/acceptance/**/*.js"
     ]
   },
   "nodemonConfig": {
