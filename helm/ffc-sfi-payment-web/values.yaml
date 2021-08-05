@@ -1,13 +1,13 @@
 environment: development
-name: ffc-template-node
-namespace: ffc-demo
-workstream: ffc-demo
-image: ffc-template-node
+name: ffc-sfi-payment-web
+namespace: ffc-sfi
+workstream: ffc-sfi
+image: ffc-sfi-payment-web
 
 labels: {}
 
 containerConfigMap:
-  name: ffc-template-node-config-map
+  name: ffc-sfi-payment-web-config-map
 
 deployment:
   restartPolicy: Always
@@ -21,18 +21,18 @@ container:
   requestCpu: 10m
   limitMemory: 40Mi
   limitCpu: 40m
-  port: 3000
+  port: 3007
 
 livenessProbe:
   path: /healthz
-  port: 3000
+  port: 3007
   initialDelaySeconds: 10
   periodSeconds: 10
   failureThreshold: 3
 
 readinessProbe:
   path: /healthy
-  port: 3000
+  port: 3007
   initialDelaySeconds: 10
   periodSeconds: 10
   failureThreshold: 3
