@@ -4,10 +4,25 @@ namespace: ffc-sfi
 workstream: ffc-sfi
 image: ffc-sfi-payment-web
 
-labels: {}
+labels: web
+
+appInsights:
+  key:
+
+azureIdentity:
+  clientID: not-a-real-clientID
+  resourceID: not-a-real-resourceID
 
 containerConfigMap:
-  name: ffc-sfi-payment-web-config-map
+  name: ffc-sfi-processing-web-config-map
+
+containerSecret:
+  name: ffc-sfi-processing-web-container-secret
+  type: Opaque
+
+service:
+  port: 80
+  type: ClusterIP
 
 deployment:
   restartPolicy: Always
@@ -22,6 +37,12 @@ container:
   limitMemory: 40Mi
   limitCpu: 40m
   port: 3007
+  messageQueueHost: namespace.servicebus.windows.net
+
+ingress:
+  class: nginx
+  endpoint: ffc-sfi-payment-web
+  server: example.com
 
 livenessProbe:
   path: /healthz
