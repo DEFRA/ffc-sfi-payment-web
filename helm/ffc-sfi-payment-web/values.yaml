@@ -14,10 +14,10 @@ azureIdentity:
   resourceID: not-a-real-resourceID
 
 containerConfigMap:
-  name: ffc-sfi-processing-web-config-map
+  name: ffc-sfi-payment-web-config-map
 
 containerSecret:
-  name: ffc-sfi-processing-web-container-secret
+  name: ffc-sfi-payment-web-container-secret
   type: Opaque
 
 service:
