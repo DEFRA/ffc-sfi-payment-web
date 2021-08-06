@@ -1,6 +1,5 @@
 const joi = require('joi')
 const cacheConfig = require('./cache')
-const dbConfig = require('./db-config')
 
 // Define config schema
 const schema = joi.object({
@@ -73,7 +72,5 @@ value.catboxOptions = {
   tls: value.isProd ? {} : undefined,
   partition: value.redisPartition
 }
-
-value.dbConfig = dbConfig
 
 module.exports = value

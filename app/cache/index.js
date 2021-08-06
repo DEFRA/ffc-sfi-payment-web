@@ -33,11 +33,10 @@ const clear = async (cacheName, key) => {
 }
 
 const getCache = (cacheName) => {
-  switch (cacheName) {
-    case 'payment-journey':
-      return paymentJourneyCache
-    default:
-      throw new Error(`Cache ${cacheName} does not exist`)
+  if (cacheName === 'payment-journey') {
+    return paymentJourneyCache
+  } else {
+    throw new Error(`Cache ${cacheName} does not exist`)
   }
 }
 
