@@ -1,8 +1,11 @@
 describe('Healthy test', () => {
-  const server = require('../../../../app/server')
+  jest.mock('ffc-messaging')
+  const createServer = require('../../../../app/server')
+  let server
 
   beforeEach(async () => {
-    await server.start()
+    server = await createServer()
+    await server.initialize()
   })
 
   test('GET /healthy route returns 200', async () => {

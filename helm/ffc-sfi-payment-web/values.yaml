@@ -4,10 +4,26 @@ namespace: ffc-sfi
 workstream: ffc-sfi
 image: ffc-sfi-payment-web
 
-labels: {}
+labels: 
+  component: web
+
+appInsights:
+  key:
+
+azureIdentity:
+  clientID: not-a-real-clientID
+  resourceID: not-a-real-resourceID
 
 containerConfigMap:
   name: ffc-sfi-payment-web-config-map
+
+containerSecret:
+  name: ffc-sfi-payment-web-container-secret
+  type: Opaque
+
+service:
+  port: 80
+  type: ClusterIP
 
 deployment:
   restartPolicy: Always
@@ -22,6 +38,17 @@ container:
   limitMemory: 40Mi
   limitCpu: 40m
   port: 3007
+  googleTagManagerKey:
+  redisHostname: redis-redis-ha.default
+  redisPassword: redis
+  redisPort: 6379
+  redisPartition: ffc-sfi-payment-web
+  cookiePassword: passwordpasswordpasswordpasswordpassword
+
+ingress:
+  class: nginx
+  endpoint: ffc-sfi-payment-web
+  server: example.com
 
 livenessProbe:
   path: /healthz
@@ -36,3 +63,5 @@ readinessProbe:
   initialDelaySeconds: 10
   periodSeconds: 10
   failureThreshold: 3
+
+aadPodIdentity: true

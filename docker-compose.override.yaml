@@ -11,7 +11,7 @@ services:
     container_name: ffc-sfi-payment-web-development
     ports:
       - "3007:3007"
-      - "9229:9229"
+      - "9237:9229"
     volumes:
       - ./app:/home/node/app
       - ./package.json:/home/node/package.json

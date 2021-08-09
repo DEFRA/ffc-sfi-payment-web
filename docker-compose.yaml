@@ -7,4 +7,7 @@ services:
       target: production
     image: ffc-sfi-payment-web
     container_name: ffc-sfi-payment-web
-    environment: {}
+    environment:
+      APPINSIGHTS_CLOUDROLE: ffc-sfi-payment-web-local
+      APPINSIGHTS_INSTRUMENTATIONKEY: ${APPINSIGHTS_INSTRUMENTATIONKEY}      
+      COOKIE_PASSWORD: cookiecookiecookiecookiecookiecookie
