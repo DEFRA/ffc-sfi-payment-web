@@ -11,3 +11,4 @@ services:
       APPINSIGHTS_CLOUDROLE: ffc-sfi-payment-web-local
       APPINSIGHTS_INSTRUMENTATIONKEY: ${APPINSIGHTS_INSTRUMENTATIONKEY}      
       COOKIE_PASSWORD: cookiecookiecookiecookiecookiecookie
+      PAYMENTS_SERVICE_ENDPOINT: http://ffc-sfi-siti-agri-mock:3002
