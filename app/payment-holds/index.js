@@ -27,9 +27,9 @@ const getPaymentHoldFRNsResponse = async (url) => {
   }
 }
 
-const addPaymentHoldRequest = async (url) => {
+const addPaymentHoldRequest = async (url, data, token) => {
   try {
-    return await api.post(`${url}`)
+    return await api.post(`${url}`, data, token)
   } catch (err) {
     console.error(`${err}`)
     return undefined

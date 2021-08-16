@@ -1,23 +1,23 @@
-const { getPaymentHoldCategoriesResponse, getPaymentHoldFRNsResponse } = require('../payment-holds')
+const { getPaymentHoldCategoriesResponse, getPaymentHoldFRNsResponse, addPaymentHoldRequest } = require('../payment-holds')
 
 module.exports = [{
   method: 'GET',
-  path: '/payment-holds/add',
+  path: '/add-payment-hold',
   options: {
     handler: async (request, h) => {
-      const paymentHoldCategoriesResponse = await getPaymentHoldCategoriesResponse('/get-payment-hold-categories')
-      const paymentHoldFRNsResponse = await getPaymentHoldFRNsResponse('/get-payment-hold-frns')
-      return h.view('add-payment-hold', { paymentHoldCategories: paymentHoldCategoriesResponse.payload, paymentHoldFRNs: paymentHoldFRNsResponse.payload })
+      const paymentHoldCategoriesResponse = await getPaymentHoldCategoriesResponse('/payment-hold-categories')
+      const paymentHoldFRNsResponse = await getPaymentHoldFRNsResponse('/payment-hold-frns')
+      return h.view('add-payment-hold', { paymentHoldCategories: paymentHoldCategoriesResponse.payload.paymentHoldCategories, paymentHoldFRNs: paymentHoldFRNsResponse.payload.paymentHoldFrns })
     }
   }
 },
 {
   method: 'POST',
-  path: '/payment-holds/add',
+  path: '/add-payment-hold',
   options: {
     handler: async (request, h) => {
-      // const paymentHoldResponse = await getPaymentHoldResponse('/payment-holds')
-      // return h.view('payment-holds', { paymentHolds: paymentHoldResponse.payload })
+      await addPaymentHoldRequest('/add-payment-hold', { holdCategoryId: request.payload.holdCategory, frn: request.payload.frn }, null)
+      return h.redirect('/')
     }
   }
 }]
