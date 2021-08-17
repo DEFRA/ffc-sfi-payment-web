@@ -1,22 +1,22 @@
-const { getPaymentHoldResponse } = require('../payment-holds')
+const { getResponse, postRequest } = require('../payment-holds')
 
 module.exports = [{
   method: 'GET',
-  path: '/payment-holds/remove',
+  path: '/remove-payment-hold',
   options: {
     handler: async (request, h) => {
-      const paymentHoldsResponse = await getPaymentHoldResponse('/payment-holds')
-      return h.view('remove-payment-hold', { paymentHolds: paymentHoldsResponse.payload })
+      const paymentHoldsResponse = await getResponse('/payment-holds?open=true')
+      return h.view('remove-payment-hold', { paymentHolds: paymentHoldsResponse.payload.paymentHolds })
     }
   }
 },
 {
   method: 'POST',
-  path: '/payment-holds/remove',
+  path: '/remove-payment-hold',
   options: {
     handler: async (request, h) => {
-      // const paymentHoldResponse = await getPaymentHoldResponse('/payment-holds')
-      return h.view('payment-holds')
+      await postRequest('/remove-payment-hold', { holdId: request.payload.holdId })
+      return h.redirect('/')
     }
   }
 }]

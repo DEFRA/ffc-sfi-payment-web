@@ -40,9 +40,9 @@
                 <td class="govuk-table__cell">{{ paymentHold.holdCategoryName }}</td>
                 <td class="govuk-table__cell">{{ paymentHold.dateTimeAdded }}</td>              
                 <td class="govuk-table__cell">
-                  <form method="POST" action="/agreement/pay">
+                  <form method="POST" action="/remove-payment-hold">
                     <input type="hidden" name="crumb" value="{{crumb}}"/>
-                    <input type="hidden" id="paymentHoldId" name="paymentHoldId" value="{{ paymentHold.holdId }}">
+                    <input type="hidden" id="holdId" name="holdId" value="{{ paymentHold.holdId }}">
                     <button class="govuk-button" data-module="govuk-button">Remove</button>
                   </form>
                 </td>

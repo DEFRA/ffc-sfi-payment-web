@@ -1,6 +1,6 @@
 const api = require('../api')
 
-const getPaymentHoldResponse = async (url) => {
+const getResponse = async (url) => {
   try {
     return await api.get(`${url}`)
   } catch (err) {
@@ -9,25 +9,7 @@ const getPaymentHoldResponse = async (url) => {
   }
 }
 
-const getPaymentHoldCategoriesResponse = async (url) => {
-  try {
-    return await api.get(`${url}`)
-  } catch (err) {
-    console.error(`${err}`)
-    return undefined
-  }
-}
-
-const getPaymentHoldFRNsResponse = async (url) => {
-  try {
-    return await api.get(`${url}`)
-  } catch (err) {
-    console.error(`${err}`)
-    return undefined
-  }
-}
-
-const addPaymentHoldRequest = async (url, data, token) => {
+const postRequest = async (url, data, token) => {
   try {
     return await api.post(`${url}`, data, token)
   } catch (err) {
@@ -36,19 +18,7 @@ const addPaymentHoldRequest = async (url, data, token) => {
   }
 }
 
-const removePaymentHoldRequest = async (url) => {
-  try {
-    return await api.post(`${url}`)
-  } catch (err) {
-    console.error(`${err}`)
-    return undefined
-  }
-}
-
 module.exports = {
-  getPaymentHoldResponse,
-  getPaymentHoldCategoriesResponse,
-  getPaymentHoldFRNsResponse,
-  addPaymentHoldRequest,
-  removePaymentHoldRequest
+  getResponse,
+  postRequest
 }
