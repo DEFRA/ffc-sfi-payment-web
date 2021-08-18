@@ -3,12 +3,12 @@ const cacheConfig = require('./cache')
 
 // Define config schema
 const schema = joi.object({
-  serviceName: joi.string().default('Payment Web'),
+  serviceName: joi.string().default('Payment management'),
   port: joi.number().default(3007),
   env: joi.string().valid('development', 'test', 'production').default('development'),
-  cookiePassword: joi.string().required(),
   staticCacheTimeoutMillis: joi.number().default(7 * 24 * 60 * 60 * 1000),
   googleTagManagerKey: joi.string().default(''),
+  paymentsEndpoint: joi.string().uri().required(),
   cookieOptions: joi.object({
     ttl: joi.number().default(1000 * 60 * 60 * 24 * 365),
     isSameSite: joi.string().valid('Lax').default('Lax'),
@@ -25,9 +25,9 @@ const config = {
   serviceName: process.env.SERVICE_NAME,
   port: process.env.PORT,
   env: process.env.NODE_ENV,
-  cookiePassword: process.env.COOKIE_PASSWORD,
   staticCacheTimeoutMillis: process.env.STATIC_CACHE_TIMEOUT_IN_MILLIS,
   googleTagManagerKey: process.env.GOOGLE_TAG_MANAGER_KEY,
+  paymentsEndpoint: process.env.PAYMENTS_SERVICE_ENDPOINT,
   cookieOptions: {
     ttl: process.env.COOKIE_TTL_IN_MILLIS,
     isSameSite: 'Lax',

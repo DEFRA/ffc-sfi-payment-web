@@ -39,11 +39,7 @@ container:
   limitCpu: 40m
   port: 3007
   googleTagManagerKey:
-  redisHostname: redis-redis-ha.default
-  redisPassword: redis
-  redisPort: 6379
-  redisPartition: ffc-sfi-payment-web
-  cookiePassword: passwordpasswordpasswordpasswordpassword
+  paymentsEndpoint: http://ffc-sfi-payments.ffc-sfi
 
 ingress:
   class: nginx

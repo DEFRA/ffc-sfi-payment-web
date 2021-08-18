@@ -11,7 +11,6 @@ module.exports = {
       expiresIn: config.cacheConfig.defaultExpiresIn
     },
     cookieOptions: {
-      password: config.cookiePassword,
       isSecure: config.cookieOptions.isSecure
     },
     customSessionIDGenerator: function (request) {
