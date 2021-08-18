@@ -1,4 +1,3 @@
-// const joi = require('joi')
 const schema = require('./schemas/frn')
 const { getResponse, postRequest } = require('../payment-holds')
 
