@@ -32,7 +32,7 @@ async function createServer () {
   await server.register(require('./plugins/views'))
   await server.register(require('./plugins/router'))
   await server.register(require('./plugins/error-pages'))
-  await server.register(require('./plugins/session'))
+  // await server.register(require('./plugins/session'))
   await server.register(require('./plugins/cookies'))
   await server.register(require('./plugins/crumb'))
 

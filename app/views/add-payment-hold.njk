@@ -22,17 +22,28 @@
         <input type="hidden" name="crumb" value="{{crumb}}"/>
         <h1 class="govuk-heading-l">Add payment hold</h1>
 
+        {% if errors %}        
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+          <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+          </h2>
+          <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+              {% for errorDetail in errors.details %}
+                <span class="govuk-error-message">
+                  <span class="govuk-visually-hidden">Error:</span> {{ errorDetail.message }}
+                </span>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>        
+      {% endif %}
+
         <dl class="govuk-summary-list">
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">FRN</dt>
             <dd class="govuk-summary-list__value">
-              {% if paymentHoldFRNs.length > 0 %}
-                <select class="govuk-select" id="frn" name="frn">
-                  {% for paymentHoldFRN in paymentHoldFRNs %}
-                    <option value="{{ paymentHoldFRN.frn }}">{{ paymentHoldFRN.frn}} </option>
-                  {% endfor %}
-                </select>
-              {% endif %}
+              <input class="govuk-input govuk-input--width-10" id="frn" name="frn" type="text">
             </dd>
           </div>          
           <div class="govuk-summary-list__row">

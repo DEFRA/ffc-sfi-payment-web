@@ -8,9 +8,4 @@ data:
   GOOGLE_TAG_MANAGER_KEY: {{ quote .Values.container.googleTagManagerKey }}
   {{- end }}
   PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
-  {{- if .Values.container.redisHostname }}
-  REDIS_HOSTNAME: {{ quote .Values.container.redisHostname }}
-  {{- end }}
-  REDIS_PORT: {{ quote .Values.container.redisPort }}
-  REDIS_PARTITION: {{ quote .Values.container.redisPartition }}
 {{- end -}}
