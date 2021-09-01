@@ -8,7 +8,7 @@ function ViewModel (value, error) {
     active: `${value.active}`,
     fieldset: {
       legend: {
-        text: `Do you want to update scheme ?`,
+        text: getText(value.active),
         isPageHeading: true,
         classes: 'govuk-fieldset__legend--l'
       }
@@ -16,13 +16,11 @@ function ViewModel (value, error) {
     items: [
       {
         value: true,
-        text: 'Active',
-        checked: value.active == 'true' ? true : false
+        text: 'Yes'
       },
       {
         value: false,
-        text: 'Not Active',
-        checked: value.active == 'false' ? true : false
+        text: 'No'
       }
     ]
   }
@@ -30,8 +28,16 @@ function ViewModel (value, error) {
   // If error is passed to model then this error property is added to the model
   if (error) {
     this.model.errorMessage = {
-      text: 'Please select if you would like to submit your application.'
+      text: 'Please select yes or no to update.'
     }
+  }
+}
+
+const getText = (active) => {
+  if (active === 'true') {
+    return 'Would you like to set the payment scheme to Not Active ?'
+  } else {
+    return 'Would you like to set the payment scheme to Active ?'
   }
 }
 
