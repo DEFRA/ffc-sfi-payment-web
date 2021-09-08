@@ -6,7 +6,9 @@ const routes = [].concat(
   require('../routes/cookies'),
   require('../routes/payment-holds'),
   require('../routes/add-payment-hold'),
-  require('../routes/remove-payment-hold')
+  require('../routes/remove-payment-hold'),
+  require('../routes/payment-schemes'),
+  require('../routes/update-payment-scheme')
 )
 
 module.exports = {
