@@ -22,7 +22,7 @@
         <input type="hidden" name="crumb" value="{{crumb}}"/>
         <h1 class="govuk-heading-l">Add payment hold</h1>
 
-        {% if errors %}        
+        {% if errors %}
         <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
           <h2 class="govuk-error-summary__title" id="error-summary-title">
             There is a problem
@@ -36,7 +36,7 @@
               {% endfor %}
             </ul>
           </div>
-        </div>        
+        </div>
       {% endif %}
 
         <dl class="govuk-summary-list">
@@ -45,16 +45,16 @@
             <dd class="govuk-summary-list__value">
               <input class="govuk-input govuk-input--width-10" id="frn" name="frn" type="text">
             </dd>
-          </div>          
+          </div>
           <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">             
+            <dt class="govuk-summary-list__key">
                 Select payment hold category
             </dt>
             <dd class="govuk-summary-list__value">
               {% if paymentHoldCategories.length > 0 %}
                 <select class="govuk-select" id="holdCategory" name="holdCategory">
                   {% for paymentHoldCategory in paymentHoldCategories %}
-                    <option value="{{ paymentHoldCategory.holdCategoryId }}">{{ paymentHoldCategory.name}} </option>
+                    <option value="{{ paymentHoldCategory.holdCategoryId }}">{{ paymentHoldCategory.name}} With Scheme {{ paymentHoldCategory.schemeName}}</option>
                   {% endfor %}
                 </select>
               {% endif %}

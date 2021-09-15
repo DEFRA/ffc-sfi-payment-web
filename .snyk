@@ -9,4 +9,17 @@ ignore:
     - ffc-messaging > @azure/identity > @azure/msal-node > axios:
         reason: None given
         expires: '2021-10-06T14:44:32.284Z'
+  SNYK-JS-ANSIREGEX-1583908:
+    - '@azure/identity > keytar > prebuild-install > npmlog > gauge > strip-ansi > ansi-regex':
+        reason: None given
+        expires: '2021-10-15T10:47:57.023Z'
+    - '@azure/identity > keytar > prebuild-install > npmlog > gauge > string-width > strip-ansi > ansi-regex':
+        reason: None given
+        expires: '2021-10-15T10:47:57.023Z'
+    - blipp > easy-table > ansi-regex:
+        reason: None given
+        expires: '2021-10-15T10:47:57.023Z'
+    - '@azure/identity > keytar > prebuild-install > npmlog > gauge > wide-align > string-width > strip-ansi > ansi-regex':
+        reason: None given
+        expires: '2021-10-15T10:47:57.023Z'
 patch: {}
