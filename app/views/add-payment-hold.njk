@@ -54,7 +54,7 @@
               {% if paymentHoldCategories.length > 0 %}
                 <select class="govuk-select" id="holdCategory" name="holdCategory">
                   {% for paymentHoldCategory in paymentHoldCategories %}
-                    <option value="{{ paymentHoldCategory.holdCategoryId }}">{{ paymentHoldCategory.name}} </option>
+                    <option value="{{ paymentHoldCategory.holdCategoryId }}">{{ paymentHoldCategory.name}} With Scheme {{ paymentHoldCategory.schemeName}}</option>
                   {% endfor %}
                 </select>
               {% endif %}
