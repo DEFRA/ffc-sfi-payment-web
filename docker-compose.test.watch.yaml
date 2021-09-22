@@ -4,3 +4,5 @@ services:
   ffc-sfi-payment-web:
     command: >
       sh -c "npm run test:watch"
+    volumes:
+      - ./app:/home/node/app
