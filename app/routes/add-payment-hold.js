@@ -7,7 +7,9 @@ module.exports = [{
   options: {
     handler: async (request, h) => {
       const paymentHoldCategoriesResponse = await getResponse('/payment-hold-categories')
-      return h.view('add-payment-hold', { paymentHoldCategories: paymentHoldCategoriesResponse.payload.paymentHoldCategories })
+      return h.view('add-payment-hold', {
+        paymentHoldCategories: paymentHoldCategoriesResponse.payload.paymentHoldCategories
+      })
     }
   }
 },
