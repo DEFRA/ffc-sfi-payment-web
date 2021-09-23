@@ -39,11 +39,6 @@ describe('Payment holds', () => {
       dateTimeClosed: '2021-09-14T22:41:44.659Z'
     }
   ]
-  // const paymentHoldResponse = {
-  //   payload: {
-  //     paymentHold
-  //   }
-  // }
 
   function mockGetPaymentHold (paymentHolds) {
     getResponse.mockResolvedValue({ payload: { paymentHolds } })
@@ -74,7 +69,7 @@ describe('Payment holds', () => {
 
       const res = await server.inject({ method, url })
 
-      // expectRequestForPaymentHold()
+      expectRequestForPaymentHold()
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)

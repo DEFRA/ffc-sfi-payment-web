@@ -3,7 +3,6 @@ const joi = require('joi')
 module.exports = joi.object({
   frn: joi.number().integer().greater(999999999).less(10000000000).required(),
   holdCategory: joi.string().required()
-  // paymentScheme: joi.string().required()
 }).error(errors => {
   errors.forEach(err => {
     switch (err.code) {
