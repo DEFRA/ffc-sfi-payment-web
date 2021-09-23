@@ -60,7 +60,7 @@ describe('Payment holds', () => {
       expect($('h1').text()).toEqual(pageH1)
       const holdCategories = $('.govuk-summary-list__value select option')
       expect(holdCategories.length).toEqual(1)
-      expect(holdCategories.text()).toEqual(`${paymentHoldCategories[0].name} With Scheme ${paymentHoldCategories[0].schemeName}`)
+      expect(holdCategories.text()).toEqual(`${paymentHoldCategories[0].name} - ${paymentHoldCategories[0].schemeName}`)
     })
   })
 
