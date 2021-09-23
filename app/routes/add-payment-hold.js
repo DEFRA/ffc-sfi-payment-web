@@ -7,8 +7,15 @@ module.exports = [{
   options: {
     handler: async (request, h) => {
       const paymentHoldCategoriesResponse = await getResponse('/payment-hold-categories')
+<<<<<<< HEAD
       return h.view('add-payment-hold', {
         paymentHoldCategories: paymentHoldCategoriesResponse.payload.paymentHoldCategories
+=======
+      // const paymentSchemesResponse = await getResponse('/payment-schemes')
+      return h.view('add-payment-hold', {
+        paymentHoldCategories: paymentHoldCategoriesResponse.payload.paymentHoldCategories
+        // paymentSchemes : paymentSchemesResponse.payload.paymentSchemes
+>>>>>>> 9f8a73e (SFI-1033 : Add Scheme Information To Hold)
       })
     }
   }
