@@ -84,4 +84,3 @@ describe('Payment holds', () => {
     })
   })
 })
-
