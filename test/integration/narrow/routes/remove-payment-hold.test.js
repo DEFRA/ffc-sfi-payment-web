@@ -1,5 +1,6 @@
 const cheerio = require('cheerio')
 const createServer = require('../../../../app/server')
+const getCrumbs = require('../../../helpers/get-crumbs')
 
 describe('Payment holds', () => {
   let server
@@ -16,7 +17,7 @@ describe('Payment holds', () => {
   })
 
   jest.mock('../../../../app/payment-holds')
-  const { getResponse } = require('../../../../app/payment-holds')
+  const { getResponse, postRequest } = require('../../../../app/payment-holds')
 
   const paymentHolds = [
     {
@@ -43,7 +44,7 @@ describe('Payment holds', () => {
     getResponse.mockResolvedValue({ payload: { paymentHolds } })
   }
 
-  function expectRequestForPaymentHold (timesCalled = 1) {
+  function expectRequestForPaymentHolds (timesCalled = 1) {
     expect(getResponse).toHaveBeenCalledTimes(timesCalled)
     expect(getResponse).toHaveBeenCalledWith('/payment-holds?open=true')
   }
@@ -62,18 +63,82 @@ describe('Payment holds', () => {
       expect($('.govuk-body').text()).toEqual('No payment holds')
     })
 
-    test('returns 200 and correctly lists returned hold', async () => {
+    test('returns 200 and correctly lists returned holds', async () => {
       mockGetPaymentHold(paymentHolds)
 
       const res = await server.inject({ method, url })
 
-      expectRequestForPaymentHold()
+      expectRequestForPaymentHolds()
       expect(res.statusCode).toBe(200)
-      // const $ = cheerio.load(res.payload)
-      // expect($('h1').text()).toEqual(pageH1)
-      // const holdCategories = $('.govuk-summary-list__value select option')
-      // expect(holdCategories.length).toEqual(1)
-      // expect(holdCategories.text()).toEqual(`${paymentHold[0].name} With Scheme ${paymentHold[0].schemeName}`)
+
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      const holds = $('tbody tr.govuk-table__row')
+      expect(holds.length).toEqual(paymentHolds.length)
+      holds.each((i, hold) => {
+        const holdCells = $('td', hold)
+        expect(holdCells.eq(0).text()).toEqual(paymentHolds[i].frn)
+        expect(holdCells.eq(1).text()).toEqual(paymentHolds[i].holdCategoryName)
+        expect(holdCells.eq(2).text()).toEqual(paymentHolds[i].holdCategorySchemeName)
+        expect(holdCells.eq(3).text()).toEqual(paymentHolds[i].dateTimeAdded)
+        expect(holdCells.eq(4).text()).toMatch('Remove')
+      })
+    })
+  })
+
+  describe('POST requests', () => {
+    const method = 'POST'
+    const holdId = 1
+
+    test('redirects successful request to \'/\' and correctly POSTs to remove hold', async () => {
+      const mockForCrumbs = () => mockGetPaymentHold([paymentHolds[0]])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
+
+      const res = await server.inject({
+        method,
+        url,
+        payload: { crumb: viewCrumb, holdId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(302)
+      expect(postRequest).toHaveBeenCalledTimes(1)
+      expect(postRequest).toHaveBeenCalledWith('/remove-payment-hold', { holdId })
+      expect(res.headers.location).toEqual('/')
+    })
+
+    test.each([
+      { viewCrumb: 'incorrect' },
+      { viewCrumb: undefined }
+    ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
+      const mockForCrumbs = () => mockGetPaymentHold([paymentHolds[0]])
+      const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url)
+
+      const res = await server.inject({
+        method,
+        url,
+        payload: { crumb: viewCrumb, holdId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(403)
+    })
+
+    test.each([
+      { cookieCrumb: 'incorrect' },
+      { cookieCrumb: undefined }
+    ])('returns 400 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
+      const mockForCrumbs = () => mockGetPaymentHold([paymentHolds[0]])
+      const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
+
+      const res = await server.inject({
+        method,
+        url,
+        payload: { crumb: viewCrumb, holdId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
     })
   })
 })

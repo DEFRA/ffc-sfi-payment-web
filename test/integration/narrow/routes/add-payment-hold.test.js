@@ -1,5 +1,6 @@
 const cheerio = require('cheerio')
 const createServer = require('../../../../app/server')
+const getCrumbs = require('../../../helpers/get-crumbs')
 
 describe('Payment holds', () => {
   let server
@@ -64,31 +65,12 @@ describe('Payment holds', () => {
     })
   })
 
-  /**
-   * Make an initial request to get crumbs (CSRF tokens) so that subsequent
-   * requests are valid.
-   *
-   * @returns {object} object contain crumbs for view and cookie.
-   */
-  async function getCrumbs (url) {
-    mockGetPaymentHoldCategories([])
-    const initRes = await server.inject({ method: 'GET', url })
-    const initHeader = initRes.headers['set-cookie']
-
-    const $ = cheerio.load(initRes.payload)
-    const viewCrumb = $('input[name=crumb]').val()
-    const cookieCrumb = initHeader[0].match(/crumb=([^",;\\\x7F]*)/)[1]
-    return {
-      cookieCrumb,
-      viewCrumb
-    }
-  }
-
   describe('POST requests', () => {
     const method = 'POST'
 
     test('redirects successful request to \'/\' and correctly POSTs hold details', async () => {
-      const { cookieCrumb, viewCrumb } = await getCrumbs(url)
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
 
       const holdCategory = 'hold this'
       const res = await server.inject({
@@ -111,7 +93,8 @@ describe('Payment holds', () => {
       { frn: undefined, holdCategory: 'kill-me', expectedErrorMessage: 'The FRN is invalid.' },
       { frn: 1000000000, holdCategory: undefined, expectedErrorMessage: 'The FRN is invalid.' }
     ])('returns 400 and view with errors when request fails validation - %p', async ({ frn, holdCategory, expectedErrorMessage }) => {
-      const { cookieCrumb, viewCrumb } = await getCrumbs(url)
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
 
       const res = await server.inject({
         method,
@@ -134,7 +117,8 @@ describe('Payment holds', () => {
       { viewCrumb: 'incorrect' },
       { viewCrumb: undefined }
     ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
-      const { cookieCrumb } = await getCrumbs(url)
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url)
 
       const holdCategory = 'hold this'
       const res = await server.inject({
@@ -151,7 +135,8 @@ describe('Payment holds', () => {
       { cookieCrumb: 'incorrect' },
       { cookieCrumb: undefined }
     ])('returns 400 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
-      const { viewCrumb } = await getCrumbs(url)
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
 
       const holdCategory = 'hold this'
       const res = await server.inject({
