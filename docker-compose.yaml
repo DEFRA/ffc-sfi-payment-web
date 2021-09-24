@@ -9,5 +9,5 @@ services:
     container_name: ffc-sfi-payment-web
     environment:
       APPINSIGHTS_CLOUDROLE: ffc-sfi-payment-web-local
-      APPINSIGHTS_INSTRUMENTATIONKEY: ${APPINSIGHTS_INSTRUMENTATIONKEY}      
+      APPINSIGHTS_INSTRUMENTATIONKEY: ${APPINSIGHTS_INSTRUMENTATIONKEY}
       PAYMENTS_SERVICE_ENDPOINT: http://ffc-sfi-payments:3008
