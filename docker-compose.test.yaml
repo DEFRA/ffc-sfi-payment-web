@@ -10,6 +10,8 @@ services:
     image: ffc-sfi-payment-web-development
     container_name: ffc-sfi-payment-web-test
     command: npm run test
+    environment:
+      NODE_ENV: ${NODE_ENV:-test}
     volumes:
       - ./test:/home/node/test
       - ./test-output:/home/node/test-output
