@@ -25,15 +25,12 @@ const getHeaders = () => {
   ]
 }
 
-const getAllRows = (values) => {
-  const items = []
-
-  for (const val of values) {
-    val.active = val.active ? 'Active' : 'Not Active'
-    items.push(val)
-  }
-
-  return items
+const getAllRows = values => {
+  return values.map(val => {
+    const copy = { ...val }
+    copy.active = copy.active ? 'Active' : 'Not Active'
+    return copy
+  })
 }
 
 module.exports = ViewModel
