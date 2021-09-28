@@ -41,9 +41,9 @@ const getCache = (cacheName) => {
 }
 
 module.exports = {
-  setup,
+  clear,
   get,
   set,
-  update,
-  clear
+  setup,
+  update
 }
