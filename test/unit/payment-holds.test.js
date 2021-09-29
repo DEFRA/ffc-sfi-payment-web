@@ -7,7 +7,7 @@ describe('Payment holds', () => {
   const errorMessage = 'something has gone wrong'
   const url = 'https://a.url.com'
 
-  console.error = jest.fn()
+  console.error = jest.spyOn(console, 'error')
 
   beforeEach(() => {
     jest.clearAllMocks()
