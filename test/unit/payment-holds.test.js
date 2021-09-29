@@ -7,7 +7,7 @@ describe('Payment holds', () => {
   const errorMessage = 'something has gone wrong'
   const url = 'https://a.url.com'
 
-  console.error = jest.spyOn(console, 'error')
+  const consoleErrorSpy = jest.spyOn(console, 'error')
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -34,8 +34,8 @@ describe('Payment holds', () => {
       expect(response).toEqual(undefined)
       expect(api.get).toHaveBeenCalledTimes(1)
       expect(api.get).toHaveBeenCalledWith(url)
-      expect(console.error).toHaveBeenCalledTimes(1)
-      expect(console.error).toHaveBeenCalledWith(error)
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(1)
+      expect(consoleErrorSpy).toHaveBeenCalledWith(error)
     })
   })
 
@@ -63,8 +63,8 @@ describe('Payment holds', () => {
       expect(response).toEqual(undefined)
       expect(api.post).toHaveBeenCalledTimes(1)
       expect(api.post).toHaveBeenCalledWith(url, data, token)
-      expect(console.error).toHaveBeenCalledTimes(1)
-      expect(console.error).toHaveBeenCalledWith(error)
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(1)
+      expect(consoleErrorSpy).toHaveBeenCalledWith(error)
     })
   })
 })
