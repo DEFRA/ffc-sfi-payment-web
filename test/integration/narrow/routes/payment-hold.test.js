@@ -5,7 +5,6 @@ describe('Payment holds', () => {
   let server
   const url = '/payment-holds'
   const pageH1 = 'Payment Holds'
-  // const validFrn = 1000000000
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -73,9 +72,16 @@ describe('Payment holds', () => {
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
-      const holdCategories = $('.govuk-table__body')
-      expect(holdCategories.length).toEqual(1)
-      // expect(holdCategories.text()).toEqual(`${paymentHold[0].name} With Scheme ${paymentHold[0].schemeName}`)
+      const holds = $('.govuk-table__body tr')
+      expect(holds.length).toEqual(paymentHolds.length)
+      holds.each((i, hold) => {
+        const holdCells = $('td', hold)
+        expect(holdCells.eq(0).text()).toEqual(paymentHolds[i].frn)
+        expect(holdCells.eq(1).text()).toEqual(paymentHolds[i].holdCategoryName)
+        expect(holdCells.eq(2).text()).toEqual(paymentHolds[i].holdCategorySchemeName)
+        expect(holdCells.eq(3).text()).toEqual(paymentHolds[i].dateTimeAdded)
+        expect(holdCells.eq(4).text()).toEqual(paymentHolds[i].dateTimeClosed ?? '')
+      })
     })
   })
 })
