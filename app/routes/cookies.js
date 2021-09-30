@@ -19,7 +19,7 @@ module.exports = [{
       payload: joi.object({
         analytics: joi.boolean(),
         async: joi.boolean().default(false)
-      })
+      }).unknown()
     },
     handler: (request, h) => {
       updatePolicy(request, h, request.payload.analytics)
