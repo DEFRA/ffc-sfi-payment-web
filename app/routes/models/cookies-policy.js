@@ -1,3 +1,5 @@
+const { cookieNames: { cookiesPolicy: cookiesPolicyCookieName } } = require('../../../app/config')
+
 function ViewModel (cookiesPolicy = {}, updated = false) {
   this.analytics = {
     idPrefix: 'analytics',
@@ -22,6 +24,7 @@ function ViewModel (cookiesPolicy = {}, updated = false) {
     ]
   }
 
+  this.cookiesPolicyCookieName = cookiesPolicyCookieName
   this.updated = updated
 }
 

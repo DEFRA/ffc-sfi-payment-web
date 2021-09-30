@@ -1,5 +1,6 @@
 const cheerio = require('cheerio')
 const createServer = require('../../../../app/server')
+const { cookieNames: { cookiesPolicy: cookiesPolicyCookieName } } = require('../../../../app/config')
 
 describe('Cookies', () => {
   let server
@@ -32,7 +33,7 @@ describe('Cookies', () => {
     ])('returns 200 with correct analytics radio selected - %s', async ({ acceptAnalCookies }) => {
       const cookiePolicyCookie = Buffer.from(JSON.stringify({ analytics: acceptAnalCookies })).toString('base64')
 
-      const res = await server.inject({ method, url, headers: { cookie: `cookies_policy=${cookiePolicyCookie}` } })
+      const res = await server.inject({ method, url, headers: { cookie: `${cookiesPolicyCookieName}=${cookiePolicyCookie}` } })
 
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
@@ -58,13 +59,20 @@ describe('Cookies', () => {
     })
   })
 
+  /**
+   * Get the value of the cookies policy cookie as JSON.
+   *
+   * @param {object} res Hapi response.
+   * @returns {object} representing the cookies policy cooke value.
+   */
   function getCookiePolicy (res) {
     const cookies = res.headers['set-cookie']
     const cookiePolicyCookie = cookies.find(cookie => {
-      return cookie.split('=')[0] === 'cookies_policy'
+      return cookie.split('=')[0] === cookiesPolicyCookieName
     })
 
-    const cookiePolicy = cookiePolicyCookie.match(/cookies_policy=([^",;\\\x7F]*)/)[1]
+    const cookiesPolicyRegex = new RegExp(`${cookiesPolicyCookieName}=([^",;\\\x7F]*)`)
+    const cookiePolicy = cookiePolicyCookie.match(cookiesPolicyRegex)[1]
     return JSON.parse(Buffer.from(cookiePolicy, 'base64').toString())
   }
 
