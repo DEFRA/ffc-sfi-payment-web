@@ -1,12 +1,13 @@
-const ViewModel = require('./models/cookies-policy')
-const { updatePolicy } = require('../cookies')
 const joi = require('joi')
+const { updatePolicy } = require('../cookies')
+const { cookieNames: { cookiesPolicy } } = require('../config')
+const ViewModel = require('./models/cookies-policy')
 
 module.exports = [{
   method: 'GET',
   path: '/cookies',
   handler: (request, h) => {
-    return h.view('cookies/cookie-policy', new ViewModel(request.state.cookies_policy, request.query.updated))
+    return h.view('cookies/cookie-policy', new ViewModel(request.state[cookiesPolicy], request.query.updated))
   }
 }, {
   method: 'POST',
@@ -19,7 +20,7 @@ module.exports = [{
       payload: joi.object({
         analytics: joi.boolean(),
         async: joi.boolean().default(false)
-      })
+      }).unknown()
     },
     handler: (request, h) => {
       updatePolicy(request, h, request.payload.analytics)

@@ -23,7 +23,7 @@
         </div>
       {% endif %}
 
-      {% if model.head.length %}
+      {% if model.rows.length > 0 %}
         <table class="govuk-table">
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -37,7 +37,7 @@
               <tr class="govuk-table__row">
                 <td class="govuk-table__cell">{{ paymentScheme.schemeId }}</td>
                 <td class="govuk-table__cell">{{ paymentScheme.name }}</td>
-                <td class="govuk-table__cell">{{ paymentScheme.active }}</td>              
+                <td class="govuk-table__cell">{{ paymentScheme.active }}</td>
                 <td class="govuk-table__cell">
                   <form method="POST" action="/payment-schemes">
                     <input type="hidden" name="crumb" value="{{crumb}}"/>
@@ -57,7 +57,3 @@
     </div>
   </div>
 {% endblock %}
-
-
-
-   
