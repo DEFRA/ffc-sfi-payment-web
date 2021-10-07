@@ -1,4 +1,3 @@
-
 describe('Payment holds', () => {
   const paymentHolds = require('../../app/payment-holds')
   jest.mock('../../app/api')
