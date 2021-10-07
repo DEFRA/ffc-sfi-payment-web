@@ -1,3 +1,4 @@
+const path = require('path')
 const { Pact } = require('@pact-foundation/pact')
 const { name } = require('../../package')
 
@@ -8,27 +9,10 @@ describe('Payment Holds API', () => {
 
   const provider = new Pact({
     consumer: name,
-    dir: './test/pacts',
+    dir: path.resolve(process.cwd(), 'test', 'pacts'),
     logLevel: 'debug',
     provider: 'ffc-sfi-payments'
   })
-
-  const expectedResponse = [{ paymentHoldId: 0 }, { paymentHoldId: 1 }]
-  // TODO: add more interactions e.g. no holds available, error from API
-  const getPaymentHoldsInteraction = {
-    state: 'a list of holds exist',
-    uponReceiving: 'a request for all payment holds',
-    withRequest: {
-      method: 'GET',
-      path: paymentHoldsPath,
-      headers: { Authorization: '' }
-    },
-    willRespondWith: {
-      status: 200,
-      headers: { 'Content-type': 'application/json' },
-      body: expectedResponse
-    }
-  }
 
   beforeAll(async () => {
     await provider.setup()
@@ -46,12 +30,52 @@ describe('Payment Holds API', () => {
     process.env.PAYMENTS_SERVICE_ENDPOINT = paymentsServiceEndpointOriginal
   })
 
-  test('contract is correct for GET request', async () => {
-    await provider.addInteraction(getPaymentHoldsInteraction)
+  describe('GET requests', () => {
+    test('array with payment holds is returned when there are some', async () => {
+      const expectedResponse = [{ paymentHoldId: 0 }, { paymentHoldId: 1 }]
 
-    const response = await paymentHolds.getResponse(paymentHoldsPath)
+      await provider.addInteraction({
+        state: 'a list of holds exist',
+        uponReceiving: 'a request for all payment holds',
+        withRequest: {
+          method: 'GET',
+          path: paymentHoldsPath,
+          headers: { Authorization: '' }
+        },
+        willRespondWith: {
+          status: 200,
+          headers: { 'Content-type': 'application/json' },
+          body: expectedResponse
+        }
+      })
 
-    expect(response).toHaveProperty('payload')
-    expect(response.payload).toEqual(expectedResponse)
+      const response = await paymentHolds.getResponse(paymentHoldsPath)
+
+      expect(response).toHaveProperty('payload')
+      expect(response.payload).toEqual(expectedResponse)
+    })
+
+    test('empty array is returned when no payment holds exist', async () => {
+      const expectedResponse = []
+      await provider.addInteraction({
+        state: 'no holds exist',
+        uponReceiving: 'a request for all payment holds',
+        withRequest: {
+          method: 'GET',
+          path: paymentHoldsPath,
+          headers: { Authorization: '' }
+        },
+        willRespondWith: {
+          status: 200,
+          headers: { 'Content-type': 'application/json' },
+          body: expectedResponse
+        }
+      })
+
+      const response = await paymentHolds.getResponse(paymentHoldsPath)
+
+      expect(response).toHaveProperty('payload')
+      expect(response.payload).toEqual(expectedResponse)
+    })
   })
 })
