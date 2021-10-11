@@ -9,7 +9,7 @@ describe('Payment Holds API', () => {
 
   const provider = new Pact({
     consumer: name,
-    dir: path.resolve(process.cwd(), 'test', 'pacts'),
+    dir: path.resolve(process.cwd(), 'test-output'),
     logLevel: 'debug',
     provider: 'ffc-sfi-payments'
   })
