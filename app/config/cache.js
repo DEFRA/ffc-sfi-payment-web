@@ -10,7 +10,7 @@ module.exports = {
     host: process.env.REDIS_HOSTNAME,
     port: process.env.REDIS_PORT,
     password: process.env.REDIS_PASSWORD,
-    partition: process.env.REDIS_PARTITION ?? 'ffc-sfi-payment-web',
+    partition: process.env.REDIS_PARTITION ?? 'ffc-pay-web',
     tls: process.env.NODE_ENV === 'production' ? {} : undefined
   }
 }

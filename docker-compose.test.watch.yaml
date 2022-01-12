@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  ffc-sfi-payment-web:
+  ffc-pay-web:
     command: >
       sh -c "npm run test:watch"
     volumes:

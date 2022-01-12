@@ -1,6 +1,6 @@
 apiVersion: v2
-description: FFC SFI payment management service
-name: ffc-sfi-payment-web
+description: FFC payment management service
+name: ffc-pay-web
 # this version is automatically updated in the build pipline
 version: 1.0.0
 dependencies:

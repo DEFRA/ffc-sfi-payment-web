@@ -1,8 +1,8 @@
 {
-  "name": "ffc-sfi-payment-web",
-  "version": "1.5.0",
-  "description": "FFC SFI payment management service",
-  "homepage": "https://github.com/DEFRA/ffc-sfi-payment-web",
+  "name": "ffc-pay-web",
+  "version": "1.6.0",
+  "description": "FFC payment management service",
+  "homepage": "https://github.com/DEFRA/ffc-pay-web",
   "main": "app/index.js",
   "scripts": {
     "build": "webpack",

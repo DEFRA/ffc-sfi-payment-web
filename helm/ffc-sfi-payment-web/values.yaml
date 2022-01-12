@@ -1,8 +1,8 @@
 environment: development
-name: ffc-sfi-payment-web
-namespace: ffc-sfi
-workstream: ffc-sfi
-image: ffc-sfi-payment-web
+name: ffc-pay-web
+namespace: ffc-pay
+workstream: ffc-pay
+image: ffc-pay-web
 
 labels: 
   component: web
@@ -15,10 +15,10 @@ azureIdentity:
   resourceID: not-a-real-resourceID
 
 containerConfigMap:
-  name: ffc-sfi-payment-web-config-map
+  name: ffc-pay-web-config-map
 
 containerSecret:
-  name: ffc-sfi-payment-web-container-secret
+  name: ffc-pay-web-container-secret
   type: Opaque
 
 service:
@@ -39,11 +39,11 @@ container:
   limitCpu: 40m
   port: 3007
   googleTagManagerKey:
-  paymentsEndpoint: http://ffc-sfi-payments.ffc-sfi
+  paymentsEndpoint: http://ffc-payments.ffc-sfi
 
 ingress:
   class: nginx
-  endpoint: ffc-sfi-payment-web
+  endpoint: ffc-pay-web
   server: example.com
 
 livenessProbe:

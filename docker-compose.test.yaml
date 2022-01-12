@@ -4,11 +4,11 @@ version: '3.8'
 # that test output is saved to the host
 
 services:
-  ffc-sfi-payment-web:
+  ffc-pay-web:
     build:
       target: development
-    image: ffc-sfi-payment-web-development
-    container_name: ffc-sfi-payment-web-test
+    image: ffc-pay-web-development
+    container_name: ffc-pay-web-test
     command: npm run test
     environment:
       NODE_ENV: ${NODE_ENV:-test}
