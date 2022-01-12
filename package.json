@@ -17,7 +17,10 @@
     "start:nodemon": "nodemon --inspect=0.0.0.0 --ext css,js,njk --legacy-watch app/index.js"
   },
   "author": "Defra",
-  "contributors": [],
+  "contributors": [
+    "John Watson john.watson2@rpa.gov.uk",
+    "Steve Dickinson steve.dickinson@defra.gov.uk"
+  ],
   "license": "OGL-UK-3.0",
   "dependencies": {
     "@azure/identity": "^1.5.0",
