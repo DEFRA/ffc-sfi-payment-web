@@ -39,7 +39,7 @@ container:
   limitCpu: 40m
   port: 3007
   googleTagManagerKey:
-  paymentsEndpoint: http://ffc-payments.ffc-sfi
+  paymentsEndpoint: http://ffc-payments.ffc-pay
 
 ingress:
   class: nginx

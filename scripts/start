@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
-if [ -z "$(docker network ls --filter name=^ffc-sfi$ --format={{.Name}})" ]; then
-  echo "Creating ffc-sfi Docker network"
-  docker network create ffc-sfi
+if [ -z "$(docker network ls --filter name=^ffc-pay$ --format={{.Name}})" ]; then
+  echo "Creating ffc-pay Docker network"
+  docker network create ffc-pay
 fi
 
 set -e

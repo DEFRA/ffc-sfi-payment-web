@@ -1,6 +1,6 @@
-# FFC SFI Payment Web
+# FFC Payment Web
 
-FFC SFI payment services management
+FFC payment services management
 
 ## Prerequisites
 
