@@ -10,4 +10,4 @@ services:
     environment:
       APPINSIGHTS_CLOUDROLE: ffc-pay-web-local
       APPINSIGHTS_INSTRUMENTATIONKEY: ${APPINSIGHTS_INSTRUMENTATIONKEY}
-      PAYMENTS_SERVICE_ENDPOINT: http://ffc-payments:3008
+      PAYMENTS_SERVICE_ENDPOINT: http://ffc-pay-processing:3008
