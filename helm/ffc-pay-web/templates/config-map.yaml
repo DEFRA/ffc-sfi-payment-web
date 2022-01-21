@@ -1,5 +1,5 @@
-{{- include "ffc-helm-library.container-config-map" (list . "ffc-sfi-payment-web.config-map") -}}
-{{- define "ffc-sfi-payment-web.config-map" -}}
+{{- include "ffc-helm-library.container-config-map" (list . "ffc-pay-web.config-map") -}}
+{{- define "ffc-pay-web.config-map" -}}
 data:
   NODE_ENV: {{ quote .Values.environment }}
   PORT: {{ quote .Values.container.port }}

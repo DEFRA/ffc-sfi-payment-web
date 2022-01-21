@@ -1,3 +1,0 @@
-{{- include "ffc-helm-library.azure-ingress" (list . "ffc-sfi-payment-web.ingress") -}}
-{{- define "ffc-sfi-payment-web.ingress" -}}
-{{- end -}}

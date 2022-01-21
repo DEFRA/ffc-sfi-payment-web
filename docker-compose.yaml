@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-  ffc-sfi-payment-web:
+  ffc-pay-web:
     build:
       context: .
       target: production
-    image: ffc-sfi-payment-web
-    container_name: ffc-sfi-payment-web
+    image: ffc-pay-web
+    container_name: ffc-pay-web
     environment:
-      APPINSIGHTS_CLOUDROLE: ffc-sfi-payment-web-local
+      APPINSIGHTS_CLOUDROLE: ffc-pay-web-local
       APPINSIGHTS_INSTRUMENTATIONKEY: ${APPINSIGHTS_INSTRUMENTATIONKEY}
-      PAYMENTS_SERVICE_ENDPOINT: http://ffc-sfi-payments:3008
+      PAYMENTS_SERVICE_ENDPOINT: http://ffc-pay-processing:3008
