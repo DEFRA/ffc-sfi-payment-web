@@ -1,5 +1,6 @@
 const joi = require('joi')
 const cacheConfig = require('./cache')
+const authConfig = require('./auth')
 
 // Define config schema
 const schema = joi.object({
@@ -66,6 +67,7 @@ value.isProd = value.env === 'production'
 
 // Don't try to connect to Redis for testing or if Redis not available
 value.useRedis = !value.isTest && value.cacheConfig.redisCatboxOptions.host !== undefined
+value.authConfig = authConfig
 
 if (!value.useRedis) {
   console.info('Redis disabled, using in memory cache')

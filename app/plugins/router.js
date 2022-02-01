@@ -8,7 +8,10 @@ const routes = [].concat(
   require('../routes/add-payment-hold'),
   require('../routes/remove-payment-hold'),
   require('../routes/payment-schemes'),
-  require('../routes/update-payment-scheme')
+  require('../routes/update-payment-scheme'),
+  require('../routes/authenticate'),
+  require('../routes/login'),
+  require('../routes/logout')
 )
 
 module.exports = {
