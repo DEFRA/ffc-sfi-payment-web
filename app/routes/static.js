@@ -21,6 +21,7 @@ module.exports = [{
   method: 'GET',
   path: '/static/{path*}',
   options: {
+    auth: false,
     handler: {
       directory: {
         path: [
