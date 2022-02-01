@@ -10,6 +10,11 @@ labels:
 appInsights:
   key:
 
+azureAppRegistration:
+  clientId:
+  clientSecret:
+  tenantId:
+
 azureIdentity:
   clientID: not-a-real-clientID
   resourceID: not-a-real-resourceID
@@ -40,6 +45,7 @@ container:
   port: 3007
   googleTagManagerKey:
   paymentsEndpoint: http://ffc-payments.ffc-pay
+  redirectUrl: http://ffc-pay-web/authenticate
 
 ingress:
   class: nginx

@@ -7,5 +7,10 @@ data:
   {{- if .Values.container.googleTagManagerKey }}
   GOOGLE_TAG_MANAGER_KEY: {{ quote .Values.container.googleTagManagerKey }}
   {{- end }}
-  PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
+  {{- if .Values.container.paymentsEndpoint }}
+    PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
+  {{- end }}
+  {{- if .Values.container.redirectUrl }}
+    REDIRECT_URL: {{ quote .Values.container.redirectUrl }}
+  {{- end }}
 {{- end -}}
