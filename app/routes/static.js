@@ -4,6 +4,7 @@ module.exports = [{
   method: 'GET',
   path: '/assets/{path*}',
   options: {
+    auth: false,
     handler: {
       directory: {
         path: [

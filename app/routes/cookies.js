@@ -6,6 +6,9 @@ const ViewModel = require('./models/cookies-policy')
 module.exports = [{
   method: 'GET',
   path: '/cookies',
+  options: {
+    auth: false
+  },
   handler: (request, h) => {
     return h.view('cookies/cookie-policy', new ViewModel(request.state[cookiesPolicy], request.query.updated))
   }
