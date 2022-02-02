@@ -1,6 +1,6 @@
-const config = require('../config')
+const config = require('./config')
 const msal = require('@azure/msal-node')
-const permissions = require('../permissions')
+const permissions = require('./permissions')
 
 const msalLogging = config.isProd
   ? {}
@@ -17,7 +17,7 @@ const msalClientApplication = new msal.ConfidentialClientApplication({
   system: { loggerOptions: msalLogging }
 })
 
-function getAuthenticationUrl () {
+const getAuthenticationUrl = () => {
   const authCodeUrlParameters = {
     prompt: 'select_account', // Force the MS account select dialog
     redirectUri: config.authConfig.redirectUrl
@@ -26,7 +26,7 @@ function getAuthenticationUrl () {
   return msalClientApplication.getAuthCodeUrl(authCodeUrlParameters)
 }
 
-async function authenticate (redirectCode, cookieAuth) {
+const authenticate = async (redirectCode, cookieAuth) => {
   const token = await msalClientApplication.acquireTokenByCode({
     code: redirectCode,
     redirectUri: config.authConfig.redirectUrl
@@ -38,7 +38,7 @@ async function authenticate (redirectCode, cookieAuth) {
   })
 }
 
-async function refresh (account, cookieAuth, forceRefresh = true) {
+const refresh = async (account, cookieAuth, forceRefresh = true) => {
   const token = await msalClientApplication.acquireTokenSilent({
     account,
     forceRefresh
@@ -53,7 +53,7 @@ async function refresh (account, cookieAuth, forceRefresh = true) {
   return perms
 }
 
-function logout (account) {
+const logout = (account) => {
   msalClientApplication.getTokenCache().removeAccount(account)
 }
 

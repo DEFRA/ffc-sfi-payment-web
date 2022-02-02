@@ -19,6 +19,15 @@ describe('Payment holds', () => {
   jest.mock('../../../../app/payment-holds')
   const { getResponse, postRequest } = require('../../../../app/payment-holds')
 
+  const auth = {
+    strategy: 'session-auth',
+    credentials: {
+      account: {
+        name: 'A Farmer'
+      }
+    }
+  }
+
   const paymentHolds = [
     {
       holdId: 1,
@@ -40,11 +49,11 @@ describe('Payment holds', () => {
     }
   ]
 
-  function mockGetPaymentHold (paymentHolds) {
+  const mockGetPaymentHold = (paymentHolds) => {
     getResponse.mockResolvedValue({ payload: { paymentHolds } })
   }
 
-  function expectRequestForPaymentHolds (timesCalled = 1) {
+  const expectRequestForPaymentHolds = (timesCalled = 1) => {
     expect(getResponse).toHaveBeenCalledTimes(timesCalled)
     expect(getResponse).toHaveBeenCalledWith('/payment-holds?open=true')
   }
@@ -55,7 +64,7 @@ describe('Payment holds', () => {
     test('returns 200 and no hold returned in response', async () => {
       mockGetPaymentHold([])
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
@@ -66,7 +75,7 @@ describe('Payment holds', () => {
     test('returns 200 and correctly lists returned holds', async () => {
       mockGetPaymentHold(paymentHolds)
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentHolds()
       expect(res.statusCode).toBe(200)
@@ -92,11 +101,12 @@ describe('Payment holds', () => {
 
     test('redirects successful request to \'/\' and correctly POSTs to remove hold', async () => {
       const mockForCrumbs = () => mockGetPaymentHold([paymentHolds[0]])
-      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
       const res = await server.inject({
         method,
         url,
+        auth,
         payload: { crumb: viewCrumb, holdId },
         headers: { cookie: `crumb=${cookieCrumb}` }
       })
@@ -112,11 +122,12 @@ describe('Payment holds', () => {
       { viewCrumb: undefined }
     ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
       const mockForCrumbs = () => mockGetPaymentHold([paymentHolds[0]])
-      const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url)
+      const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
       const res = await server.inject({
         method,
         url,
+        auth,
         payload: { crumb: viewCrumb, holdId },
         headers: { cookie: `crumb=${cookieCrumb}` }
       })
@@ -129,11 +140,12 @@ describe('Payment holds', () => {
       { cookieCrumb: undefined }
     ])('returns 400 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
       const mockForCrumbs = () => mockGetPaymentHold([paymentHolds[0]])
-      const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
+      const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
       const res = await server.inject({
         method,
         url,
+        auth,
         payload: { crumb: viewCrumb, holdId },
         headers: { cookie: `crumb=${cookieCrumb}` }
       })

@@ -18,6 +18,18 @@ describe('Payment holds', () => {
   jest.mock('../../../../app/payment-holds')
   const { getResponse } = require('../../../../app/payment-holds')
 
+  jest.mock('../../../../app/azure-auth')
+  const { refresh } = require('../../../../app/azure-auth')
+
+  const auth = {
+    strategy: 'session-auth',
+    credentials: {
+      account: {
+        name: 'A Farmer'
+      }
+    }
+  }
+
   const paymentHolds = [
     {
       holdId: 1,
@@ -39,11 +51,15 @@ describe('Payment holds', () => {
     }
   ]
 
-  function mockGetPaymentHold (paymentHolds) {
+  const mockAzureAuthRefresh = (viewPaymentHolds = true) => {
+    refresh.mockResolvedValue({ viewPaymentHolds })
+  }
+
+  const mockGetPaymentHold = (paymentHolds) => {
     getResponse.mockResolvedValue({ payload: { paymentHolds } })
   }
 
-  function expectRequestForPaymentHold (timesCalled = 1) {
+  const expectRequestForPaymentHold = (timesCalled = 1) => {
     expect(getResponse).toHaveBeenCalledTimes(timesCalled)
     expect(getResponse).toHaveBeenCalledWith('/payment-holds')
   }
@@ -53,8 +69,9 @@ describe('Payment holds', () => {
 
     test('returns 200 and no hold categories when no categories returned in response', async () => {
       mockGetPaymentHold([])
+      mockAzureAuthRefresh()
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentHold()
       expect(res.statusCode).toBe(200)
@@ -63,10 +80,24 @@ describe('Payment holds', () => {
       expect($('.govuk-body').text()).toEqual('No payment holds')
     })
 
+    test('returns 401 no viewPaymentHolds permission', async () => {
+      mockAzureAuthRefresh(false)
+      const res = await server.inject({ method, url, auth })
+      expect(res.statusCode).toBe(401)
+      expect(res.headers.location).toEqual('/')
+    })
+
+    test('returns 302 no auth', async () => {
+      const res = await server.inject({ method, url })
+      expect(res.statusCode).toBe(302)
+      expect(res.headers.location).toEqual('/login')
+    })
+
     test('returns 200 and correctly lists returned hold category', async () => {
       mockGetPaymentHold(paymentHolds)
+      mockAzureAuthRefresh()
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentHold()
       expect(res.statusCode).toBe(200)

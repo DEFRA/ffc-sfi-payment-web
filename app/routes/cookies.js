@@ -16,6 +16,7 @@ module.exports = [{
   method: 'POST',
   path: '/cookies',
   options: {
+    auth: false,
     plugins: {
       crumb: false
     },

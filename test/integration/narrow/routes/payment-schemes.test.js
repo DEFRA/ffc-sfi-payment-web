@@ -19,6 +19,16 @@ describe('Payment schemes', () => {
   jest.mock('../../../../app/payment-holds')
   const { getResponse } = require('../../../../app/payment-holds')
 
+  const auth = {
+    strategy: 'session-auth',
+    isAuthenticated: true,
+    credentials: {
+      account: {
+        name: 'A Farmer'
+      }
+    }
+  }
+
   const paymentSchemes = [
     {
       schemeId: '1',
@@ -53,7 +63,7 @@ describe('Payment schemes', () => {
     ])('returns 500 and no response view when falsy value returned from getting payment schemes', async ({ holdResponse }) => {
       getResponse.mockResolvedValueOnce(holdResponse)
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentSchemes()
       expect(res.statusCode).toBe(500)
@@ -65,7 +75,7 @@ describe('Payment schemes', () => {
     test('returns 200 and no schemes when non are returned', async () => {
       mockGetPaymentSchemes([])
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentSchemes()
       expect(res.statusCode).toBe(200)
@@ -79,7 +89,7 @@ describe('Payment schemes', () => {
     test('returns 200 and correctly lists returned payment schemes', async () => {
       mockGetPaymentSchemes(paymentSchemes)
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentSchemes()
       expect(res.statusCode).toBe(200)
@@ -111,11 +121,12 @@ describe('Payment schemes', () => {
     ])('redirects to update payment scheme with correct argument values', async ({ active }) => {
       const name = 'SFI scheme'
       const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
-      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
       const res = await server.inject({
         method,
         url,
+        auth,
         payload: { crumb: viewCrumb, active, name, schemeId },
         headers: { cookie: `crumb=${cookieCrumb}` }
       })
@@ -130,11 +141,12 @@ describe('Payment schemes', () => {
         { viewCrumb: undefined }
       ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
         const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
-        const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url)
+        const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
         const res = await server.inject({
           method,
           url,
+          auth,
           payload: { crumb: viewCrumb, active: schemeActive, name: schemeName, schemeId },
           headers: { cookie: `crumb=${cookieCrumb}` }
         })
@@ -147,11 +159,12 @@ describe('Payment schemes', () => {
         { cookieCrumb: undefined }
       ])('returns 400 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
         const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
-        const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
+        const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
         const res = await server.inject({
           method,
           url,
+          auth,
           payload: { crumb: viewCrumb, active: schemeActive, name: schemeName, schemeId },
           headers: { cookie: `crumb=${cookieCrumb}` }
         })

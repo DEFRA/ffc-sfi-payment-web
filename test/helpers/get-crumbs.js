@@ -10,9 +10,9 @@ const cheerio = require('cheerio')
  * @param {string} url for initial request to get crumbs from.
  * @returns {object} object contain crumbs for view and cookie.
  */
-module.exports = async (mockForCrumbs, server, url) => {
+module.exports = async (mockForCrumbs, server, url, auth) => {
   mockForCrumbs()
-  const initRes = await server.inject({ method: 'GET', url })
+  const initRes = await server.inject({ method: 'GET', url, auth })
   const initHeader = initRes.headers['set-cookie']
 
   const $ = cheerio.load(initRes.payload)

@@ -1,6 +1,6 @@
-const { cookieNames: { cookiesPolicy: cookiesPolicyCookieName }, cookieOptions } = require('../config')
+const { cookieNames: { cookiesPolicy: cookiesPolicyCookieName }, cookieOptions } = require('./config')
 
-function getCurrentPolicy (request, h) {
+const getCurrentPolicy = (request, h) => {
   let cookiesPolicy = request.state[cookiesPolicyCookieName]
   if (!cookiesPolicy) {
     cookiesPolicy = createDefaultPolicy(h)
@@ -8,13 +8,13 @@ function getCurrentPolicy (request, h) {
   return cookiesPolicy
 }
 
-function createDefaultPolicy (h) {
+const createDefaultPolicy = (h) => {
   const cookiesPolicy = { confirmed: false, essential: true, analytics: false }
   h.state(cookiesPolicyCookieName, cookiesPolicy, cookieOptions)
   return cookiesPolicy
 }
 
-function updatePolicy (request, h, analytics) {
+const updatePolicy = (request, h, analytics) => {
   let cookiesPolicy = request.state[cookiesPolicyCookieName]
   if (!cookiesPolicy) {
     cookiesPolicy = createDefaultPolicy(h)

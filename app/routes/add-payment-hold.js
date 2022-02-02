@@ -1,11 +1,16 @@
 const schema = require('./schemas/frn')
 const { getResponse, postRequest } = require('../payment-holds')
+const azureAuth = require('../azure-auth')
 
 module.exports = [{
   method: 'GET',
   path: '/add-payment-hold',
   options: {
     handler: async (request, h) => {
+      const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+      if (!permissions.addPaymentHold) {
+        return h.redirect('/').code(401).takeover()
+      }
       const paymentHoldCategoriesResponse = await getResponse('/payment-hold-categories')
       return h.view('add-payment-hold', { paymentHoldCategories: paymentHoldCategoriesResponse.payload.paymentHoldCategories })
     }
@@ -23,6 +28,10 @@ module.exports = [{
       }
     },
     handler: async (request, h) => {
+      const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+      if (!permissions.addPaymentHold) {
+        return h.redirect('/').code(401).takeover()
+      }
       await postRequest('/add-payment-hold', { holdCategoryId: request.payload.holdCategory, frn: request.payload.frn }, null)
       return h.redirect('/')
     }

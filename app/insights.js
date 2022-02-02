@@ -1,6 +1,6 @@
 const appInsights = require('applicationinsights')
 
-function setup () {
+const setup = () => {
   if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
     appInsights.setup().start()
     console.log('App Insights Running')
