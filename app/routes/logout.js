@@ -5,7 +5,7 @@ module.exports = {
   path: '/logout',
   handler: (request, h) => {
     request?.auth?.credentials?.account && azureAuth.logout(request.auth.credentials.account)
-    request.cookieAuth.clear()
+    request?.cookieAuth && request.cookieAuth.clear()
     return h.redirect('/login')
   }
 }
