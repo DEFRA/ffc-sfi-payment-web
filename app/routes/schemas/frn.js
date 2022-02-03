@@ -12,9 +12,6 @@ module.exports = joi.object({
       case 'number.greater':
         err.message = 'The FRN is too short.'
         break
-      case 'number.unsafe':
-        err.message = 'The FRN is too long.'
-        break
       case 'number.base':
         err.message = 'The FRN must be a number.'
         break

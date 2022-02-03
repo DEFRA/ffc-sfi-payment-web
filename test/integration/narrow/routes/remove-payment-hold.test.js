@@ -19,6 +19,9 @@ describe('Payment holds', () => {
   jest.mock('../../../../app/payment-holds')
   const { getResponse, postRequest } = require('../../../../app/payment-holds')
 
+  jest.mock('../../../../app/azure-auth')
+  const { refresh } = require('../../../../app/azure-auth')
+
   const auth = {
     strategy: 'session-auth',
     credentials: {
@@ -53,6 +56,10 @@ describe('Payment holds', () => {
     getResponse.mockResolvedValue({ payload: { paymentHolds } })
   }
 
+  const mockAzureAuthRefresh = (removePaymentHold = true) => {
+    refresh.mockResolvedValue({ removePaymentHold })
+  }
+
   const expectRequestForPaymentHolds = (timesCalled = 1) => {
     expect(getResponse).toHaveBeenCalledTimes(timesCalled)
     expect(getResponse).toHaveBeenCalledWith('/payment-holds?open=true')
@@ -63,7 +70,7 @@ describe('Payment holds', () => {
 
     test('returns 200 and no hold returned in response', async () => {
       mockGetPaymentHold([])
-
+      mockAzureAuthRefresh()
       const res = await server.inject({ method, url, auth })
 
       expect(res.statusCode).toBe(200)
@@ -74,7 +81,7 @@ describe('Payment holds', () => {
 
     test('returns 200 and correctly lists returned holds', async () => {
       mockGetPaymentHold(paymentHolds)
-
+      mockAzureAuthRefresh()
       const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentHolds()
@@ -93,6 +100,15 @@ describe('Payment holds', () => {
         expect(holdCells.eq(4).text()).toMatch('Remove')
       })
     })
+
+    test('returns 401 and no permission', async () => {
+      mockGetPaymentHold([])
+      mockAzureAuthRefresh(false)
+      const res = await server.inject({ method, url, auth })
+
+      expect(res.statusCode).toBe(401)
+      expect(res.headers.location).toEqual('/')
+    })
   })
 
   describe('POST requests', () => {
@@ -100,6 +116,7 @@ describe('Payment holds', () => {
     const holdId = 1
 
     test('redirects successful request to \'/\' and correctly POSTs to remove hold', async () => {
+      mockAzureAuthRefresh()
       const mockForCrumbs = () => mockGetPaymentHold([paymentHolds[0]])
       const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
@@ -117,10 +134,28 @@ describe('Payment holds', () => {
       expect(res.headers.location).toEqual('/')
     })
 
+    test('redirects to \'/\' and permission invalid', async () => {
+      const mockForCrumbs = () => mockGetPaymentHold([paymentHolds[0]])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      mockAzureAuthRefresh(false)
+
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, holdId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(401)
+      expect(res.headers.location).toEqual('/')
+    })
+
     test.each([
       { viewCrumb: 'incorrect' },
       { viewCrumb: undefined }
     ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
+      mockAzureAuthRefresh()
       const mockForCrumbs = () => mockGetPaymentHold([paymentHolds[0]])
       const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
@@ -139,6 +174,7 @@ describe('Payment holds', () => {
       { cookieCrumb: 'incorrect' },
       { cookieCrumb: undefined }
     ])('returns 400 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
+      mockAzureAuthRefresh()
       const mockForCrumbs = () => mockGetPaymentHold([paymentHolds[0]])
       const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
