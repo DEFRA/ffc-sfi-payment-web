@@ -19,6 +19,9 @@ describe('Payment schemes', () => {
   jest.mock('../../../../app/payment-holds')
   const { getResponse } = require('../../../../app/payment-holds')
 
+  jest.mock('../../../../app/azure-auth')
+  const { refresh } = require('../../../../app/azure-auth')
+
   const auth = {
     strategy: 'session-auth',
     isAuthenticated: true,
@@ -42,11 +45,15 @@ describe('Payment schemes', () => {
     }
   ]
 
-  function mockGetPaymentSchemes (paymentSchemes) {
+  const mockAzureAuthRefresh = (viewPaymentScheme = true) => {
+    refresh.mockResolvedValue({ viewPaymentScheme })
+  }
+
+  const mockGetPaymentSchemes = (paymentSchemes) => {
     getResponse.mockResolvedValueOnce({ payload: { paymentSchemes } })
   }
 
-  function expectRequestForPaymentSchemes (timesCalled = 1) {
+  const expectRequestForPaymentSchemes = (timesCalled = 1) => {
     expect(getResponse).toHaveBeenCalledTimes(timesCalled)
     expect(getResponse).toHaveBeenCalledWith('/payment-schemes')
   }
@@ -61,6 +68,7 @@ describe('Payment schemes', () => {
       { holdResponse: 0 },
       { holdResponse: false }
     ])('returns 500 and no response view when falsy value returned from getting payment schemes', async ({ holdResponse }) => {
+      mockAzureAuthRefresh()
       getResponse.mockResolvedValueOnce(holdResponse)
 
       const res = await server.inject({ method, url, auth })
@@ -73,6 +81,7 @@ describe('Payment schemes', () => {
     })
 
     test('returns 200 and no schemes when non are returned', async () => {
+      mockAzureAuthRefresh()
       mockGetPaymentSchemes([])
 
       const res = await server.inject({ method, url, auth })
@@ -87,6 +96,7 @@ describe('Payment schemes', () => {
     })
 
     test('returns 200 and correctly lists returned payment schemes', async () => {
+      mockAzureAuthRefresh()
       mockGetPaymentSchemes(paymentSchemes)
 
       const res = await server.inject({ method, url, auth })
@@ -106,6 +116,25 @@ describe('Payment schemes', () => {
         expect(schemeCells.eq(3).text()).toMatch('Update')
       })
     })
+
+    test('returns 401 and redirects to / - no permission', async () => {
+      mockGetPaymentSchemes(paymentSchemes)
+      mockAzureAuthRefresh(false)
+      const res = await server.inject({ method, url, auth })
+
+      expect(res.statusCode).toBe(401)
+      expect(res.headers.location).toEqual('/')
+    })
+
+    test('returns 302 and redirects to /login - no auth', async () => {
+      mockAzureAuthRefresh()
+      mockGetPaymentSchemes(paymentSchemes)
+
+      const res = await server.inject({ method, url })
+
+      expect(res.statusCode).toBe(302)
+      expect(res.headers.location).toEqual('/login')
+    })
   })
 
   describe('POST requests', () => {
@@ -122,7 +151,7 @@ describe('Payment schemes', () => {
       const name = 'SFI scheme'
       const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
       const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
-
+      mockAzureAuthRefresh()
       const res = await server.inject({
         method,
         url,
@@ -142,7 +171,7 @@ describe('Payment schemes', () => {
       ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
         const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
         const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
-
+        mockAzureAuthRefresh()
         const res = await server.inject({
           method,
           url,
@@ -160,7 +189,7 @@ describe('Payment schemes', () => {
       ])('returns 400 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
         const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
         const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
-
+        mockAzureAuthRefresh()
         const res = await server.inject({
           method,
           url,
@@ -170,6 +199,21 @@ describe('Payment schemes', () => {
         })
 
         expect(res.statusCode).toBe(400)
+      })
+
+      test('returns 401 no permission', async () => {
+        const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
+        const { viewCrumb, cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+        mockAzureAuthRefresh(false)
+        const res = await server.inject({
+          method,
+          url,
+          auth,
+          payload: { crumb: viewCrumb, active: schemeActive, name: schemeName, schemeId },
+          headers: { cookie: `crumb=${cookieCrumb}` }
+        })
+
+        expect(res.statusCode).toBe(401)
       })
     })
   })

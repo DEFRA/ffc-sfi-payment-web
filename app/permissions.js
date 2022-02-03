@@ -1,6 +1,7 @@
 const permissions = {
   viewPaymentHolds: 'Payments.View.Holds',
   viewPaymentScheme: 'Payments.View.Scheme',
+  updatePaymentScheme: 'Payments.Update.Scheme',
   addPaymentHold: 'Payments.Add.Hold',
   removePaymentHold: 'Payments.Remove.Hold'
 }
