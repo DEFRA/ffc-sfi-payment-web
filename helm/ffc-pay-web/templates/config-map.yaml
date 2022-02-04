@@ -5,7 +5,7 @@ data:
   PORT: {{ quote .Values.container.port }}
   APPINSIGHTS_CLOUDROLE: {{ quote .Values.name }}
   {{- if .Values.container.googleTagManagerKey }}
-  GOOGLE_TAG_MANAGER_KEY: {{ quote .Values.container.googleTagManagerKey }}
+    GOOGLE_TAG_MANAGER_KEY: {{ quote .Values.container.googleTagManagerKey }}
   {{- end }}
   {{- if .Values.container.paymentsEndpoint }}
     PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
