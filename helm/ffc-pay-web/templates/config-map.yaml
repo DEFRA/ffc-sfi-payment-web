@@ -5,12 +5,8 @@ data:
   PORT: {{ quote .Values.container.port }}
   APPINSIGHTS_CLOUDROLE: {{ quote .Values.name }}
   {{- if .Values.container.googleTagManagerKey }}
-    GOOGLE_TAG_MANAGER_KEY: {{ quote .Values.container.googleTagManagerKey }}
+  GOOGLE_TAG_MANAGER_KEY: {{ quote .Values.container.googleTagManagerKey }}
   {{- end }}
-  {{- if .Values.container.paymentsEndpoint }}
-    PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
-  {{- end }}
-  {{- if .Values.azureAppRegistration.redirectUrl }}
-    REDIRECT_URL: {{ quote .Values.azureAppRegistration.redirectUrl }}
-  {{- end }}
+  PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
+  REDIRECT_URL: {{ quote .Values.azureAppRegistration.redirectUrl }}
 {{- end -}}
