@@ -10,7 +10,7 @@ data:
   {{- if .Values.container.paymentsEndpoint }}
     PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
   {{- end }}
-  {{- if .Values.container.redirectUrl }}
+  {{- if .Values.azureAppRegistration.redirectUrl }}
     REDIRECT_URL: {{ quote .Values.azureAppRegistration.redirectUrl }}
   {{- end }}
 {{- end -}}
