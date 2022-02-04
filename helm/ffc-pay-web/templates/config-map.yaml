@@ -11,6 +11,6 @@ data:
     PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
   {{- end }}
   {{- if .Values.container.redirectUrl }}
-    REDIRECT_URL: {{ quote .Values.container.redirectUrl }}
+    REDIRECT_URL: {{ quote .Values.azureAppRegistration.redirectUrl }}
   {{- end }}
 {{- end -}}

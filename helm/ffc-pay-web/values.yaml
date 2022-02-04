@@ -14,6 +14,7 @@ azureAppRegistration:
   clientId:
   clientSecret:
   tenantId:
+  redirectUrl: http://ffc-pay-web/authenticate
 
 azureIdentity:
   clientID: not-a-real-clientID
@@ -45,7 +46,6 @@ container:
   port: 3007
   googleTagManagerKey:
   paymentsEndpoint: http://ffc-payments.ffc-pay
-  redirectUrl: http://ffc-pay-web/authenticate
 
 ingress:
   class: nginx
