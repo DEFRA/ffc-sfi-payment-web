@@ -3,7 +3,6 @@ const routes = [].concat(
   require('../routes/healthz'),
   require('../routes/static'),
   require('../routes/home'),
-  require('../routes/cookies'),
   require('../routes/payment-holds'),
   require('../routes/add-payment-hold'),
   require('../routes/remove-payment-hold'),

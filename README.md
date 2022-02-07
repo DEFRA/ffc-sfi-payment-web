@@ -14,20 +14,19 @@ Optional:
 
 ## Azure App Registration
 
-`ffc-pay-web` has been integrated into Azure App Registration using the msal-node npm packackage (https://www.npmjs.com/package/@azure/msal-node)
+`ffc-pay-web` has been integrated into Azure App Registration using the msal-node [npm package](https://www.npmjs.com/package/@azure/msal-node)
 
-For `ffc-pay-web` to authenticate it needs to be registered with Azure App Registration (https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+For `ffc-pay-web` to authenticate it needs to be registered with [Azure App Registration](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
 
 The following environment varibles need to be set:
 
 - AZURE_CLIENT_ID
 - AZURE_TENANT_ID
 - AZURE_CLIENT_SECRET
-- REDIRECT_URL
 
 These can be retrieved from the App Restistration overview blade.
 
-The following roles need setting up (https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps)
+The following roles need [setting up](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps)
 
 - Payments.View.Holds
 - Payments.View.Scheme

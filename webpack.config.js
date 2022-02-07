@@ -9,8 +9,7 @@ console.log(`Running webpack in ${isDev ? 'development' : 'production'} mode`)
 
 module.exports = {
   entry: {
-    core: './app/frontend/css/index.js',
-    cookies: './app/frontend/js/cookies.js'
+    core: './app/frontend/css/index.js'
   },
   mode: isDev ? 'development' : 'production',
   module: {
@@ -71,12 +70,6 @@ module.exports = {
       filename: '../views/_layout.njk',
       template: 'app/views/_layout.template.njk',
       chunks: ['core']
-    }),
-    new HtmlWebpackPlugin({
-      inject: false,
-      filename: '../views/cookies/_cookie-banner.njk',
-      template: 'app/views/cookies/_cookie-banner.template.njk',
-      chunks: ['cookies']
     }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].[fullhash].css'
