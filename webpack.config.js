@@ -9,7 +9,11 @@ console.log(`Running webpack in ${isDev ? 'development' : 'production'} mode`)
 
 module.exports = {
   entry: {
-    core: './app/frontend/css/index.js',
+    core: [
+      './app/frontend/css/index.js',
+      './app/frontend/images/defra-logo-black.png',
+      './app/frontend/images/defra-logo-white.png'
+    ],
     cookies: './app/frontend/js/cookies.js'
   },
   mode: isDev ? 'development' : 'production',
@@ -44,7 +48,8 @@ module.exports = {
         use: {
           loader: 'file-loader',
           options: {
-            outputPath: 'images/'
+            outputPath: 'images/',
+            name: '[name].[ext]'
           }
         }
       },
