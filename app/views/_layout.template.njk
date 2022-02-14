@@ -24,14 +24,7 @@
 {% block header %}
    <header class="govuk-header " role="banner" data-module="govuk-header">
   <div class="govuk-header__container govuk-width-container">
-    <div class="govuk-header__logo">
-      <a href="#" class="govuk-header__link govuk-header__link--homepage">
-        <span class="govuk-header__logotype">
-          <image src="{{assetPath}}/images/defra-logo-white.png" height="32"></image>
-        </span>
-      </a>
-    </div>
-    <div class="govuk-header__content">
+    <div class="govuk-header__content govuk-!-width-full govuk-!-text-align-centre">
       <a href="/" class="govuk-header__link govuk-header__link--service-name">
         {{ serviceName }}
       </a>
@@ -70,9 +63,6 @@
             All content is available under the
             <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated
           </span>
-        </div>
-        <div class="govuk-footer__meta-item">
-          <image class="govuk-footer__link" src="{{assetPath}}/images/defra-logo-black.png" height="60"></image>
         </div>
       </div>
     </div>
