@@ -16,8 +16,8 @@ describe('Payment holds', () => {
     await server.stop()
   })
 
-  jest.mock('../../../../app/payment-holds')
-  const { getResponse, postRequest } = require('../../../../app/holds')
+  jest.mock('../../../../app/api')
+  const { get, post } = require('../../../../app/api')
 
   const paymentHolds = [
     {
@@ -41,12 +41,12 @@ describe('Payment holds', () => {
   ]
 
   function mockGetPaymentHold (paymentHolds) {
-    getResponse.mockResolvedValue({ payload: { paymentHolds } })
+    get.mockResolvedValue({ payload: { paymentHolds } })
   }
 
   function expectRequestForPaymentHolds (timesCalled = 1) {
-    expect(getResponse).toHaveBeenCalledTimes(timesCalled)
-    expect(getResponse).toHaveBeenCalledWith('/payment-holds?open=true')
+    expect(get).toHaveBeenCalledTimes(timesCalled)
+    expect(get).toHaveBeenCalledWith('/payment-holds?open=true')
   }
 
   describe('GET requests', () => {
@@ -102,8 +102,8 @@ describe('Payment holds', () => {
       })
 
       expect(res.statusCode).toBe(302)
-      expect(postRequest).toHaveBeenCalledTimes(1)
-      expect(postRequest).toHaveBeenCalledWith('/remove-payment-hold', { holdId })
+      expect(post).toHaveBeenCalledTimes(1)
+      expect(post).toHaveBeenCalledWith('/remove-payment-hold', { holdId })
       expect(res.headers.location).toEqual('/')
     })
 

@@ -16,8 +16,8 @@ describe('Payment schemes', () => {
     await server.stop()
   })
 
-  jest.mock('../../../../app/payment-holds')
-  const { getResponse } = require('../../../../app/holds')
+  jest.mock('../../../../app/api')
+  const { get } = require('../../../../app/api')
 
   const paymentSchemes = [
     {
@@ -33,12 +33,12 @@ describe('Payment schemes', () => {
   ]
 
   function mockGetPaymentSchemes (paymentSchemes) {
-    getResponse.mockResolvedValueOnce({ payload: { paymentSchemes } })
+    get.mockResolvedValueOnce({ payload: { paymentSchemes } })
   }
 
   function expectRequestForPaymentSchemes (timesCalled = 1) {
-    expect(getResponse).toHaveBeenCalledTimes(timesCalled)
-    expect(getResponse).toHaveBeenCalledWith('/payment-schemes')
+    expect(get).toHaveBeenCalledTimes(timesCalled)
+    expect(get).toHaveBeenCalledWith('/payment-schemes')
   }
 
   describe('GET requests', () => {
@@ -51,7 +51,7 @@ describe('Payment schemes', () => {
       { holdResponse: 0 },
       { holdResponse: false }
     ])('returns 500 and no response view when falsy value returned from getting payment schemes', async ({ holdResponse }) => {
-      getResponse.mockResolvedValueOnce(holdResponse)
+      get.mockResolvedValueOnce(holdResponse)
 
       const res = await server.inject({ method, url })
 
@@ -73,7 +73,7 @@ describe('Payment schemes', () => {
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
       const content = $('.govuk-body').text()
-      expect(content).toEqual('No Schemes found!')
+      expect(content).toEqual('No available schemes')
     })
 
     test('returns 200 and correctly lists returned payment schemes', async () => {
@@ -92,8 +92,7 @@ describe('Payment schemes', () => {
         const schemeCells = $('td', scheme)
         expect(schemeCells.eq(0).text()).toEqual(paymentSchemes[i].schemeId)
         expect(schemeCells.eq(1).text()).toEqual(paymentSchemes[i].name)
-        expect(schemeCells.eq(2).text()).toEqual(paymentSchemes[i].active ? 'Active' : 'Not Active')
-        expect(schemeCells.eq(3).text()).toMatch('Update')
+        expect(schemeCells.eq(2).text()).toEqual(paymentSchemes[i].active ? 'Active' : 'Inactive')
       })
     })
   })
