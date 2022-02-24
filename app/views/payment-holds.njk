@@ -40,8 +40,8 @@
               <th scope="col" class="govuk-table__header">FRN</th>
               <th scope="col" class="govuk-table__header">Description</th>
               <th scope="col" class="govuk-table__header">Scheme</th>
-              <th scope="col" class="govuk-table__header">Date Added</th>
-              <th scope="col" class="govuk-table__header">Date Closed</th>
+              <th scope="col" class="govuk-table__header">Created</th>
+              <th scope="col" class="govuk-table__header"></th>
             </tr>
           </thead>
           <tbody class="govuk-table__body">
@@ -51,7 +51,13 @@
                 <td class="govuk-table__cell">{{ paymentHold.holdCategoryName }}</td>
                 <td class="govuk-table__cell">{{ paymentHold.holdCategorySchemeName }}</td>
                 <td class="govuk-table__cell">{{ paymentHold.dateTimeAdded }}</td>
-                <td class="govuk-table__cell">{{ paymentHold.dateTimeClosed }}</td>
+                <td class="govuk-table__cell">
+                  <form method="POST" action="/remove-payment-hold">
+                    <input type="hidden" name="crumb" value="{{crumb}}"/>
+                    <input type="hidden" id="holdId" name="holdId" value="{{ paymentHold.holdId }}">
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" style="margin-bottom: 0px;">Remove</button>
+                  </form>
+                </td>
               </tr>
             {% endfor %}
           </tbody>
