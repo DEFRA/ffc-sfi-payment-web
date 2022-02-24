@@ -1,12 +1,12 @@
-const { getResponse } = require('../../payment-holds')
-const ViewModel = require('./models/payment-schemes')
+const { get } = require('../api')
+const ViewModel = require('./models/scheme')
 
 module.exports = [{
   method: 'GET',
   path: '/payment-schemes',
   options: {
     handler: async (request, h) => {
-      const paymentHoldsResponse = await getResponse('/payment-schemes')
+      const paymentHoldsResponse = await get('/payment-schemes')
       if (paymentHoldsResponse) {
         return h.view('payment-schemes', new ViewModel(paymentHoldsResponse.payload.paymentSchemes))
       }

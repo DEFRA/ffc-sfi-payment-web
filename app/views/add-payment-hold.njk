@@ -9,7 +9,7 @@
       text: "Home",
       href: "/"
     },{
-      text: "Payment Holds",
+      text: "Payment holds",
       href: "/payment-holds"
     }]
   })}}
@@ -23,47 +23,50 @@
         <h1 class="govuk-heading-l">Add payment hold</h1>
 
         {% if errors %}
-        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-          <h2 class="govuk-error-summary__title" id="error-summary-title">
+          <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
             There is a problem
           </h2>
-          <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-              {% for errorDetail in errors.details %}
-                <span class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span> {{ errorDetail.message }}
-                </span>
-              {% endfor %}
-            </ul>
+            <div class="govuk-error-summary__body">
+              <ul class="govuk-list govuk-error-summary__list">
+                {% for errorDetail in errors.details %}
+                  <span class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span>
+                    {{ errorDetail.message }}
+                  </span>
+                {% endfor %}
+              </ul>
+            </div>
           </div>
-        </div>
-      {% endif %}
+        {% endif %}
 
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">FRN</dt>
-            <dd class="govuk-summary-list__value">
-              <input class="govuk-input govuk-input--width-10" id="frn" name="frn" type="text">
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Select payment hold category
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if paymentHoldCategories.length > 0 %}
-                <select class="govuk-select" id="holdCategory" name="holdCategory">
-                  {% for paymentHoldCategory in paymentHoldCategories %}
-                    <option value="{{ paymentHoldCategory.holdCategoryId }}">{{ paymentHoldCategory.name}} - {{ paymentHoldCategory.schemeName}}</option>
-                  {% endfor %}
-                </select>
-              {% endif %}
-            </dd>
-          </div>
-        </dl>
+        <div class="govuk-form-group">
+          <label class="govuk-label govuk-label--m" for="frn">
+            Firm Reference Number (FRN)
+          </label>
+          <input class="govuk-input govuk-input--width-10" id="frn" name="frn" type="text">
+        </div>
+
+        <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend">
+              Hold category
+            </legend>
+            <div class="govuk-radios" data-module="govuk-radios">
+            {% for paymentHoldCategory in paymentHoldCategories %}
+              <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="holdCategoryId" name="holdCategoryId" type="radio" value="{{ paymentHoldCategory.holdCategoryId }}">
+                <label class="govuk-label govuk-radios__label" for="where-do-you-live">
+                  {{ paymentHoldCategory.schemeName}} - {{ paymentHoldCategory.name}}
+                </label>
+              </div>
+            {% endfor %}
+            </div>
+          </fieldset>
+        </div>
 
         {{ govukButton({
-        text: "Submit",
+        text: "Create",
         attributes: {
           id: "submit"
         }

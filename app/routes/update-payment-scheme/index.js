@@ -1,6 +1,6 @@
 const joi = require('joi')
 const ViewModel = require('./models/update-payment-scheme')
-const { postRequest } = require('../../payment-holds')
+const { post } = require('../../api')
 
 module.exports = [{
   method: 'GET',
@@ -32,7 +32,7 @@ module.exports = [{
         if (request.payload.active === 'true') {
           toggle = false
         }
-        await postRequest('/change-payment-status', { schemeId: request.payload.schemeId, active: toggle })
+        await post('/change-payment-status', { schemeId: request.payload.schemeId, active: toggle })
       }
       return h.redirect('/payment-schemes')
     }

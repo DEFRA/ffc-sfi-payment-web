@@ -16,7 +16,7 @@ describe('Payment holds', () => {
   })
 
   jest.mock('../../../../app/payment-holds')
-  const { getResponse } = require('../../../../app/payment-holds')
+  const { getResponse } = require('../../../../app/holds')
 
   const paymentHolds = [
     {
