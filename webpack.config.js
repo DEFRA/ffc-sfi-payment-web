@@ -9,7 +9,11 @@ console.log(`Running webpack in ${isDev ? 'development' : 'production'} mode`)
 
 module.exports = {
   entry: {
-    core: './app/frontend/css/index.js'
+    core: [
+      './app/frontend/css/index.js',
+      './app/frontend/images/favicon.ico',
+      './app/frontend/images/search-icon.png'
+    ]
   },
   mode: isDev ? 'development' : 'production',
   module: {
@@ -39,7 +43,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.(png|svg|jpg|gif)$/,
+        test: /\.(png|svg|jpg|gif|ico)$/,
         use: {
           loader: 'file-loader',
           options: {
