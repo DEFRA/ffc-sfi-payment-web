@@ -60,7 +60,7 @@ describe('Payment holds', () => {
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
-      expect($('.govuk-body').text()).toEqual('No payment holds')
+      expect($('#no-hold-text').text()).toEqual('No current payment holds')
     })
 
     test('returns 200 and correctly lists returned hold category', async () => {
@@ -80,7 +80,6 @@ describe('Payment holds', () => {
         expect(holdCells.eq(1).text()).toEqual(paymentHolds[i].holdCategoryName)
         expect(holdCells.eq(2).text()).toEqual(paymentHolds[i].holdCategorySchemeName)
         expect(holdCells.eq(3).text()).toEqual(paymentHolds[i].dateTimeAdded)
-        expect(holdCells.eq(4).text()).toEqual(paymentHolds[i].dateTimeClosed ?? '')
       })
     })
   })
