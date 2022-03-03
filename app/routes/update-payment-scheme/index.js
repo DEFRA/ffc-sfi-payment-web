@@ -9,7 +9,7 @@ module.exports = [{
   options: {
     handler: async (request, h) => {
       const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
-      if (!permissions.updatePaymentScheme) {
+      if (!permissions.schemeAdmin) {
         return h.redirect('/').code(401).takeover()
       }
       return h.view('update-payment-scheme', new ViewModel(request.query))
@@ -33,7 +33,7 @@ module.exports = [{
     },
     handler: async (request, h) => {
       const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
-      if (!permissions.updatePaymentScheme) {
+      if (!permissions.schemeAdmin) {
         return h.redirect('/').code(401).takeover()
       }
       if (request.payload.scheme === 'true') {

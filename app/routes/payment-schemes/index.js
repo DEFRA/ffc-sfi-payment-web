@@ -8,7 +8,7 @@ module.exports = [{
   options: {
     handler: async (request, h) => {
       const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
-      if (!permissions.viewPaymentScheme) {
+      if (!permissions.schemeAdmin) {
         return h.redirect('/').code(401).takeover()
       }
       const paymentHoldsResponse = await getResponse('/payment-schemes')
@@ -25,7 +25,7 @@ module.exports = [{
   options: {
     handler: async (request, h) => {
       const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
-      if (!permissions.viewPaymentScheme) {
+      if (!permissions.schemeAdmin) {
         return h.redirect('/').code(401).takeover()
       }
       const active = (request.payload.active === 'Active')
