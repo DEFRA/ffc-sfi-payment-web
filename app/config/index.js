@@ -10,9 +10,6 @@ const schema = joi.object({
   staticCacheTimeoutMillis: joi.number().default(7 * 24 * 60 * 60 * 1000),
   googleTagManagerKey: joi.string().default(''),
   paymentsEndpoint: joi.string().uri().required(),
-  cookieNames: {
-    cookiesPolicy: joi.string().default('cookies_policy')
-  },
   cookieOptions: joi.object({
     ttl: joi.number().default(1000 * 60 * 60 * 24 * 365),
     isSameSite: joi.string().valid('Lax').default('Lax'),
@@ -32,9 +29,6 @@ const config = {
   staticCacheTimeoutMillis: process.env.STATIC_CACHE_TIMEOUT_IN_MILLIS,
   googleTagManagerKey: process.env.GOOGLE_TAG_MANAGER_KEY,
   paymentsEndpoint: process.env.PAYMENTS_SERVICE_ENDPOINT,
-  cookieNames: {
-    cookiesPolicy: 'cookies_policy'
-  },
   cookieOptions: {
     ttl: process.env.COOKIE_TTL_IN_MILLIS,
     isSameSite: 'Lax',
