@@ -8,7 +8,7 @@ module.exports = [{
   options: {
     handler: async (request, h) => {
       const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
-      if (!permissions.addPaymentHold) {
+      if (!permissions.holdAdmin) {
         return h.redirect('/').code(401).takeover()
       }
       const paymentHoldCategoriesResponse = await getResponse('/payment-hold-categories')
@@ -29,7 +29,7 @@ module.exports = [{
     },
     handler: async (request, h) => {
       const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
-      if (!permissions.addPaymentHold) {
+      if (!permissions.holdAdmin) {
         return h.redirect('/').code(401).takeover()
       }
       await postRequest('/add-payment-hold', { holdCategoryId: request.payload.holdCategory, frn: request.payload.frn }, null)

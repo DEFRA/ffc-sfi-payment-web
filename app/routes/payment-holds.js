@@ -7,7 +7,7 @@ module.exports = {
   options: {
     handler: async (request, h) => {
       const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
-      if (!permissions.viewPaymentHolds) {
+      if (!permissions.holdAdmin) {
         return h.redirect('/').code(401).takeover()
       }
       const paymentHoldsResponse = await getResponse('/payment-holds')
