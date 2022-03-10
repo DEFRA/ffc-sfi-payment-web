@@ -7,7 +7,8 @@ module.exports = [{
   options: {
     handler: async (request, h) => {
       const paymentHoldsResponse = await get('/payment-holds')
-      return h.view('payment-holds', { paymentHolds: paymentHoldsResponse.payload.paymentHolds })
+      console.log(paymentHoldsResponse.payload)
+      return h.view('payment-holds', { paymentHolds: paymentHoldsResponse.payload.paymentHolds?.filter(x => x.dateTimeClosed == null) })
     }
   }
 }, {
