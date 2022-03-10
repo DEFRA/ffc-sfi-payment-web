@@ -73,7 +73,7 @@ describe('Payment holds', () => {
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
       const holds = $('.govuk-table__body tr')
-      expect(holds.length).toEqual(paymentHolds.length)
+      expect(holds.length).toEqual(1)
       holds.each((i, hold) => {
         const holdCells = $('td', hold)
         expect(holdCells.eq(0).text()).toEqual(paymentHolds[i].frn)
