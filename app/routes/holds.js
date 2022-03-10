@@ -29,7 +29,7 @@ module.exports = [{
       payload: schema,
       failAction: async (request, h, error) => {
         const paymentHoldCategoriesResponse = await get('/payment-hold-categories')
-        return h.view('add-payment-hold', { paymentHoldCategories: paymentHoldCategoriesResponse.payload.paymentHoldCategories, errors: error }).code(400).takeover()
+        return h.view('add-payment-hold', { paymentHoldCategories: paymentHoldCategoriesResponse.payload.paymentHoldCategories, errors: error, frn: request.payload.frn }).code(400).takeover()
       }
     },
     handler: async (request, h) => {
