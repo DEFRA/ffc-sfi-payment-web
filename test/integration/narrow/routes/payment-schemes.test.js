@@ -5,7 +5,7 @@ const getCrumbs = require('../../../helpers/get-crumbs')
 describe('Payment schemes', () => {
   let server
   const url = '/payment-schemes'
-  const pageH1 = 'Payment Schemes'
+  const pageH1 = 'Schemes'
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -16,8 +16,8 @@ describe('Payment schemes', () => {
     await server.stop()
   })
 
-  jest.mock('../../../../app/payment-holds')
-  const { getResponse } = require('../../../../app/payment-holds')
+  jest.mock('../../../../app/api')
+  const { get } = require('../../../../app/api')
 
   const paymentSchemes = [
     {
@@ -33,12 +33,12 @@ describe('Payment schemes', () => {
   ]
 
   function mockGetPaymentSchemes (paymentSchemes) {
-    getResponse.mockResolvedValueOnce({ payload: { paymentSchemes } })
+    get.mockResolvedValueOnce({ payload: { paymentSchemes } })
   }
 
   function expectRequestForPaymentSchemes (timesCalled = 1) {
-    expect(getResponse).toHaveBeenCalledTimes(timesCalled)
-    expect(getResponse).toHaveBeenCalledWith('/payment-schemes')
+    expect(get).toHaveBeenCalledTimes(timesCalled)
+    expect(get).toHaveBeenCalledWith('/payment-schemes')
   }
 
   describe('GET requests', () => {
@@ -51,7 +51,7 @@ describe('Payment schemes', () => {
       { holdResponse: 0 },
       { holdResponse: false }
     ])('returns 500 and no response view when falsy value returned from getting payment schemes', async ({ holdResponse }) => {
-      getResponse.mockResolvedValueOnce(holdResponse)
+      get.mockResolvedValueOnce(holdResponse)
 
       const res = await server.inject({ method, url })
 
@@ -73,7 +73,7 @@ describe('Payment schemes', () => {
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
       const content = $('.govuk-body').text()
-      expect(content).toEqual('No Schemes found!')
+      expect(content).toEqual('No available schemes')
     })
 
     test('returns 200 and correctly lists returned payment schemes', async () => {
@@ -90,10 +90,8 @@ describe('Payment schemes', () => {
       expect(schemes.length).toEqual(paymentSchemes.length)
       schemes.each((i, scheme) => {
         const schemeCells = $('td', scheme)
-        expect(schemeCells.eq(0).text()).toEqual(paymentSchemes[i].schemeId)
-        expect(schemeCells.eq(1).text()).toEqual(paymentSchemes[i].name)
-        expect(schemeCells.eq(2).text()).toEqual(paymentSchemes[i].active ? 'Active' : 'Not Active')
-        expect(schemeCells.eq(3).text()).toMatch('Update')
+        expect(schemeCells.eq(0).text()).toEqual(paymentSchemes[i].name)
+        expect(schemeCells.eq(1).text()).toEqual(paymentSchemes[i].active ? 'Active' : 'Inactive')
       })
     })
   })
@@ -105,9 +103,8 @@ describe('Payment schemes', () => {
     const schemeName = 'SFI scheme'
 
     test.each([
-      { active: 'Active' },
-      { active: 'Not Active' },
-      { active: 'something other than \'Active\'' }
+      { active: true },
+      { active: false }
     ])('redirects to update payment scheme with correct argument values', async ({ active }) => {
       const name = 'SFI scheme'
       const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
@@ -121,7 +118,7 @@ describe('Payment schemes', () => {
       })
 
       expect(res.statusCode).toBe(302)
-      expect(res.headers.location).toEqual(`/update-payment-scheme?schemeId=${schemeId}&active=${active === 'Active'}&name=${name}`)
+      expect(res.headers.location).toEqual(`/update-payment-scheme?schemeId=${schemeId}&active=${active}&name=${name}`)
     })
 
     describe('bad requests', () => {
@@ -145,7 +142,7 @@ describe('Payment schemes', () => {
       test.each([
         { cookieCrumb: 'incorrect' },
         { cookieCrumb: undefined }
-      ])('returns 400 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
+      ])('returns 403 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
         const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
         const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
 
@@ -156,7 +153,7 @@ describe('Payment schemes', () => {
           headers: { cookie: `crumb=${cookieCrumb}` }
         })
 
-        expect(res.statusCode).toBe(400)
+        expect(res.statusCode).toBe(403)
       })
     })
   })

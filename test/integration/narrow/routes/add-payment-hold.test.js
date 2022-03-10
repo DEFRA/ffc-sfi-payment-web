@@ -17,8 +17,8 @@ describe('Payment holds', () => {
     await server.stop()
   })
 
-  jest.mock('../../../../app/payment-holds')
-  const { getResponse, postRequest } = require('../../../../app/payment-holds')
+  jest.mock('../../../../app/api')
+  const { get, post } = require('../../../../app/api')
 
   const paymentHoldCategories = [{
     holdCategoryId: 123,
@@ -27,12 +27,12 @@ describe('Payment holds', () => {
   }]
 
   function mockGetPaymentHoldCategories (paymentHoldCategories) {
-    getResponse.mockResolvedValue({ payload: { paymentHoldCategories } })
+    get.mockResolvedValue({ payload: { paymentHoldCategories } })
   }
 
   function expectRequestForPaymentHoldCategories (timesCalled = 1) {
-    expect(getResponse).toHaveBeenCalledTimes(timesCalled)
-    expect(getResponse).toHaveBeenCalledWith('/payment-hold-categories')
+    expect(get).toHaveBeenCalledTimes(timesCalled)
+    expect(get).toHaveBeenCalledWith('/payment-hold-categories')
   }
 
   describe('GET requests', () => {
@@ -47,7 +47,7 @@ describe('Payment holds', () => {
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
-      expect($('.govuk-summary-list__value select option').length).toEqual(0)
+      expect($('.govuk-radios__input').length).toEqual(0)
     })
 
     test('returns 200 and correctly lists returned hold category', async () => {
@@ -59,9 +59,9 @@ describe('Payment holds', () => {
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
-      const holdCategories = $('.govuk-summary-list__value select option')
+      const holdCategories = $('.govuk-radios__input')
       expect(holdCategories.length).toEqual(1)
-      expect(holdCategories.text()).toEqual(`${paymentHoldCategories[0].name} - ${paymentHoldCategories[0].schemeName}`)
+      expect(holdCategories.val()).toEqual('123')
     })
   })
 
@@ -72,45 +72,18 @@ describe('Payment holds', () => {
       const mockForCrumbs = () => mockGetPaymentHoldCategories([])
       const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
 
-      const holdCategory = 'hold this'
+      const holdCategoryId = 1
       const res = await server.inject({
         method,
         url,
-        payload: { crumb: viewCrumb, frn: validFrn, holdCategory },
+        payload: { crumb: viewCrumb, frn: validFrn, holdCategoryId },
         headers: { cookie: `crumb=${cookieCrumb}` }
       })
 
-      expect(postRequest).toHaveBeenCalledTimes(1)
-      expect(postRequest).toHaveBeenCalledWith('/add-payment-hold', { frn: validFrn, holdCategoryId: holdCategory }, null)
+      expect(post).toHaveBeenCalledTimes(1)
+      expect(post).toHaveBeenCalledWith('/add-payment-hold', { frn: validFrn, holdCategoryId: holdCategoryId }, null)
       expect(res.statusCode).toBe(302)
-      expect(res.headers.location).toEqual('/')
-    })
-
-    test.each([
-      { frn: 10000000001, holdCategory: 'hold-me', expectedErrorMessage: 'The FRN is too long.' },
-      { frn: 999999998, holdCategory: 'thrill-me', expectedErrorMessage: 'The FRN is too short.' },
-      { frn: 'not-a-number', holdCategory: 'kiss-me', expectedErrorMessage: 'The FRN must be a number.' },
-      { frn: undefined, holdCategory: 'kill-me', expectedErrorMessage: 'The FRN is invalid.' },
-      { frn: 1000000000, holdCategory: undefined, expectedErrorMessage: 'The FRN is invalid.' }
-    ])('returns 400 and view with errors when request fails validation - %p', async ({ frn, holdCategory, expectedErrorMessage }) => {
-      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
-      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
-
-      const res = await server.inject({
-        method,
-        url,
-        payload: { crumb: viewCrumb, frn, holdCategory },
-        headers: { cookie: `crumb=${cookieCrumb}` }
-      })
-
-      expectRequestForPaymentHoldCategories(2)
-      expect(res.statusCode).toBe(400)
-      const $ = cheerio.load(res.payload)
-      expect($('h1').text()).toEqual(pageH1)
-      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
-      const errorMessage = $('.govuk-error-message')
-      expect(errorMessage.length).toEqual(1)
-      expect(errorMessage.text()).toMatch(`Error: ${expectedErrorMessage}`)
+      expect(res.headers.location).toEqual('/payment-holds')
     })
 
     test.each([
@@ -134,7 +107,7 @@ describe('Payment holds', () => {
     test.each([
       { cookieCrumb: 'incorrect' },
       { cookieCrumb: undefined }
-    ])('returns 400 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
+    ])('returns 403 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
       const mockForCrumbs = () => mockGetPaymentHoldCategories([])
       const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
 
@@ -146,7 +119,7 @@ describe('Payment holds', () => {
         headers: { cookie: `crumb=${cookieCrumb}` }
       })
 
-      expect(res.statusCode).toBe(400)
+      expect(res.statusCode).toBe(403)
     })
   })
 })
