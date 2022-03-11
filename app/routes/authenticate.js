@@ -11,8 +11,7 @@ module.exports = {
       await auth.authenticate(request.query.code, request.cookieAuth)
       return h.redirect('/')
     } catch (err) {
-      console.log('Error authenticating')
-      console.log(JSON.stringify(err))
+      console.error('Error authenticating:', err)
     }
 
     return h.view('500').code(500)

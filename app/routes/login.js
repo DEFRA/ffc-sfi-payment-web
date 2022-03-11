@@ -11,8 +11,7 @@ module.exports = {
       const authUrl = await auth.getAuthenticationUrl()
       return h.redirect(authUrl)
     } catch (err) {
-      console.log('Error authenticating')
-      console.log(JSON.stringify(err))
+      console.log('Error authenticating', err)
     }
     return h.view('500').code(500)
   }

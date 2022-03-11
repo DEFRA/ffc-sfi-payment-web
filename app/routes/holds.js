@@ -12,7 +12,6 @@ module.exports = [{
         return h.redirect('/').code(401).takeover()
       }
       const paymentHoldsResponse = await get('/payment-holds')
-      console.log(paymentHoldsResponse.payload)
       return h.view('payment-holds', { paymentHolds: paymentHoldsResponse.payload.paymentHolds?.filter(x => x.dateTimeClosed == null) })
     }
   }
