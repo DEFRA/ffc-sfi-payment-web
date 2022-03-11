@@ -12,8 +12,8 @@ module.exports = {
       return h.view('home', {
         username,
         permissions,
-        totalHolds: paymentHoldsResponse.payload.paymentHolds?.filter(x => x.dateTimeClosed == null).length ?? 0,
-        totalSchemes: schemes.payload.paymentSchemes?.length ?? 0
+        totalHolds: paymentHoldsResponse?.payload?.paymentHolds?.filter(x => x.dateTimeClosed == null).length ?? 0,
+        totalSchemes: schemes?.payload?.paymentSchemes?.length ?? 0
       })
     }
   }

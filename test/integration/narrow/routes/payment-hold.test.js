@@ -26,6 +26,9 @@ describe('Payment holds', () => {
     credentials: {
       account: {
         name: 'A Farmer'
+      },
+      permissions: {
+        holdAdmin: true
       }
     }
   }
@@ -51,8 +54,8 @@ describe('Payment holds', () => {
     }
   ]
 
-  const mockAzureAuthRefresh = (viewPaymentHolds = true) => {
-    refresh.mockResolvedValue({ viewPaymentHolds })
+  const mockAzureAuthRefresh = (holdAdmin = true) => {
+    refresh.mockResolvedValue({ holdAdmin })
   }
 
   function mockGetPaymentHold (paymentHolds) {

@@ -1,6 +1,5 @@
 const cheerio = require('cheerio')
 const createServer = require('../../../../app/server')
-const getCrumbs = require('../../../helpers/get-crumbs')
 
 describe('Payment schemes', () => {
   let server
@@ -45,8 +44,8 @@ describe('Payment schemes', () => {
     }
   ]
 
-  const mockAzureAuthRefresh = (viewPaymentScheme = true) => {
-    refresh.mockResolvedValue({ viewPaymentScheme })
+  const mockAzureAuthRefresh = (schemeAdmin = true) => {
+    refresh.mockResolvedValue({ schemeAdmin })
   }
 
   function mockGetPaymentSchemes (paymentSchemes) {
@@ -132,86 +131,6 @@ describe('Payment schemes', () => {
 
       expect(res.statusCode).toBe(302)
       expect(res.headers.location).toEqual('/login')
-    })
-  })
-
-  describe('POST requests', () => {
-    const method = 'POST'
-    const schemeId = 1
-    const schemeActive = true
-    const schemeName = 'SFI scheme'
-
-    test.each([
-      { active: true },
-      { active: false }
-    ])('redirects to update payment scheme with correct argument values', async ({ active }) => {
-      const name = 'SFI scheme'
-      const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
-      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
-      mockAzureAuthRefresh()
-      const res = await server.inject({
-        method,
-        url,
-        auth,
-        payload: { crumb: viewCrumb, active, name, schemeId },
-        headers: { cookie: `crumb=${cookieCrumb}` }
-      })
-
-      expect(res.statusCode).toBe(302)
-      expect(res.headers.location).toEqual(`/update-payment-scheme?schemeId=${schemeId}&active=${active}&name=${name}`)
-    })
-
-    describe('bad requests', () => {
-      test.each([
-        { viewCrumb: 'incorrect' },
-        { viewCrumb: undefined }
-      ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
-        const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
-        const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
-        mockAzureAuthRefresh()
-        const res = await server.inject({
-          method,
-          url,
-          auth,
-          payload: { crumb: viewCrumb, active: schemeActive, name: schemeName, schemeId },
-          headers: { cookie: `crumb=${cookieCrumb}` }
-        })
-
-        expect(res.statusCode).toBe(403)
-      })
-
-      test.each([
-        { cookieCrumb: 'incorrect' },
-        { cookieCrumb: undefined }
-      ])('returns 403 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
-        const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
-        const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
-        mockAzureAuthRefresh()
-        const res = await server.inject({
-          method,
-          url,
-          auth,
-          payload: { crumb: viewCrumb, active: schemeActive, name: schemeName, schemeId },
-          headers: { cookie: `crumb=${cookieCrumb}` }
-        })
-
-        expect(res.statusCode).toBe(403)
-      })
-
-      test('returns 401 no permission', async () => {
-        const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
-        const { viewCrumb, cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
-        mockAzureAuthRefresh(false)
-        const res = await server.inject({
-          method,
-          url,
-          auth,
-          payload: { crumb: viewCrumb, active: schemeActive, name: schemeName, schemeId },
-          headers: { cookie: `crumb=${cookieCrumb}` }
-        })
-
-        expect(res.statusCode).toBe(401)
-      })
     })
   })
 })

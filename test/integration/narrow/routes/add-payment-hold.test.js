@@ -39,17 +39,17 @@ describe('Payment holds', () => {
     schemeName: 'schemeName'
   }]
 
-  const mockAzureAuthRefresh = (addPaymentHold = true) => {
-    refresh.mockResolvedValue({ addPaymentHold })
+  const mockAzureAuthRefresh = (holdAdmin = true) => {
+    refresh.mockResolvedValue({ holdAdmin })
   }
 
   const mockGetPaymentHoldCategories = (paymentHoldCategories) => {
-    getResponse.mockResolvedValue({ payload: { paymentHoldCategories } })
+    get.mockResolvedValue({ payload: { paymentHoldCategories } })
   }
 
   const expectRequestForPaymentHoldCategories = (timesCalled = 1) => {
-    expect(getResponse).toHaveBeenCalledTimes(timesCalled)
-    expect(getResponse).toHaveBeenCalledWith('/payment-hold-categories')
+    expect(get).toHaveBeenCalledTimes(timesCalled)
+    expect(get).toHaveBeenCalledWith('/payment-hold-categories')
   }
 
   describe('GET requests', () => {
@@ -110,14 +110,14 @@ describe('Payment holds', () => {
         method,
         url,
         auth,
-        payload: { crumb: viewCrumb, frn: validFrn, holdCategory },
+        payload: { crumb: viewCrumb, frn: validFrn, holdCategoryId },
         headers: { cookie: `crumb=${cookieCrumb}` }
       })
 
       expect(post).toHaveBeenCalledTimes(1)
       expect(post).toHaveBeenCalledWith('/add-payment-hold', { frn: validFrn, holdCategoryId: holdCategoryId }, null)
       expect(res.statusCode).toBe(302)
-      expect(res.headers.location).toEqual('/')
+      expect(res.headers.location).toEqual('/payment-holds')
     })
 
     test('redirects unauthorized request to \'/\' and no addPaymentHold permission', async () => {
@@ -138,12 +138,12 @@ describe('Payment holds', () => {
     })
 
     test.each([
-      { frn: 10000000001, holdCategory: 'hold-me', expectedErrorMessage: 'The FRN is too long.' },
-      { frn: 999999998, holdCategory: 'thrill-me', expectedErrorMessage: 'The FRN is too short.' },
-      { frn: 'not-a-number', holdCategory: 'kiss-me', expectedErrorMessage: 'The FRN must be a number.' },
-      { frn: undefined, holdCategory: 'kill-me', expectedErrorMessage: 'The FRN is invalid.' },
-      { frn: 1000000000, holdCategory: undefined, expectedErrorMessage: 'The FRN is invalid.' }
-    ])('returns 400 and view with errors when request fails validation - %p', async ({ frn, holdCategory, expectedErrorMessage }) => {
+      { frn: 10000000001, holdCategoryId: 1, expectedErrorMessage: 'FRN is invalid' },
+      { frn: 999999998, holdCategoryId: 1, expectedErrorMessage: 'FRN is invalid' },
+      { frn: 'not-a-number', holdCategoryId: 1, expectedErrorMessage: 'FRN is invalid' },
+      { frn: undefined, holdCategoryId: 1, expectedErrorMessage: 'FRN is invalid' },
+      { frn: 1000000000, holdCategoryId: undefined, expectedErrorMessage: 'Category is required' }
+    ])('returns 400 and view with errors when request fails validation - %p', async ({ frn, holdCategoryId, expectedErrorMessage }) => {
       mockAzureAuthRefresh()
       const mockForCrumbs = () => mockGetPaymentHoldCategories([])
       const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
@@ -152,7 +152,7 @@ describe('Payment holds', () => {
         method,
         url,
         auth,
-        payload: { crumb: viewCrumb, frn, holdCategory },
+        payload: { crumb: viewCrumb, frn, holdCategoryId },
         headers: { cookie: `crumb=${cookieCrumb}` }
       })
 
