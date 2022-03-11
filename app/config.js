@@ -1,5 +1,4 @@
 const joi = require('joi')
-const authConfig = require('./auth')
 
 // Define config schema
 const schema = joi.object({
@@ -33,7 +32,7 @@ if (result.error) {
 
 // Use the joi validated value
 const value = result.value
-value.authConfig = authConfig
+
 value.isDev = value.env === 'development'
 value.isTest = value.env === 'test'
 value.isProd = value.env === 'production'

@@ -17,8 +17,8 @@ describe('Payment holds', () => {
     await server.stop()
   })
 
-  jest.mock('../../../../app/payment-holds')
-  const { getResponse, postRequest } = require('../../../../app/payment-holds')
+  jest.mock('../../../../app/api')
+  const { get, post } = require('../../../../app/api')
 
   jest.mock('../../../../app/azure-auth')
   const { refresh } = require('../../../../app/azure-auth')
@@ -65,7 +65,7 @@ describe('Payment holds', () => {
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
-      expect($('.govuk-summary-list__value select option').length).toEqual(0)
+      expect($('.govuk-radios__input').length).toEqual(0)
     })
 
     test('returns 401 and no addPaymentHold permission', async () => {
@@ -91,9 +91,9 @@ describe('Payment holds', () => {
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
-      const holdCategories = $('.govuk-summary-list__value select option')
+      const holdCategories = $('.govuk-radios__input')
       expect(holdCategories.length).toEqual(1)
-      expect(holdCategories.text()).toEqual(`${paymentHoldCategories[0].name} - ${paymentHoldCategories[0].schemeName}`)
+      expect(holdCategories.val()).toEqual('123')
     })
   })
 
@@ -105,7 +105,7 @@ describe('Payment holds', () => {
       const mockForCrumbs = () => mockGetPaymentHoldCategories([])
       const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
-      const holdCategory = 'hold this'
+      const holdCategoryId = 1
       const res = await server.inject({
         method,
         url,
@@ -114,8 +114,8 @@ describe('Payment holds', () => {
         headers: { cookie: `crumb=${cookieCrumb}` }
       })
 
-      expect(postRequest).toHaveBeenCalledTimes(1)
-      expect(postRequest).toHaveBeenCalledWith('/add-payment-hold', { frn: validFrn, holdCategoryId: holdCategory }, null)
+      expect(post).toHaveBeenCalledTimes(1)
+      expect(post).toHaveBeenCalledWith('/add-payment-hold', { frn: validFrn, holdCategoryId: holdCategoryId }, null)
       expect(res.statusCode).toBe(302)
       expect(res.headers.location).toEqual('/')
     })
@@ -189,7 +189,7 @@ describe('Payment holds', () => {
     test.each([
       { cookieCrumb: 'incorrect' },
       { cookieCrumb: undefined }
-    ])('returns 400 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
+    ])('returns 403 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
       mockAzureAuthRefresh()
       const mockForCrumbs = () => mockGetPaymentHoldCategories([])
       const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
@@ -203,7 +203,7 @@ describe('Payment holds', () => {
         headers: { cookie: `crumb=${cookieCrumb}` }
       })
 
-      expect(res.statusCode).toBe(400)
+      expect(res.statusCode).toBe(403)
     })
   })
 })

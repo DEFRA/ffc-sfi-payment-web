@@ -1,7 +1,5 @@
 $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "~govuk-frontend/govuk/all";
-@import "./app-task-list";
-@import "./guidance-layout";
 
 .nojs-hidden {
   display: none;
@@ -80,17 +78,4 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
     @extend %govuk-section-break--visible;
     @extend %govuk-section-break--xl;
   }
-}
-
-.map {
-  height: 500px;
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-.disabled {
-  pointer-events: none;
-  text-decoration: none;
-  cursor: default;
-  color: black;
 }

@@ -1,14 +1,14 @@
 function ViewModel (value, error) {
   // Constructor function to create logic dependent nunjucks page
   this.model = {
-    id: 'scheme',
-    name: 'scheme',
+    id: 'confirm',
+    name: 'confirm',
     schemeId: `${value.schemeId}`,
     schemeName: `${value.name}`,
     active: `${value.active}`,
     fieldset: {
       legend: {
-        text: getText(value.active),
+        text: getText(value.name, value.active),
         isPageHeading: true,
         classes: 'govuk-fieldset__legend--l'
       }
@@ -33,12 +33,11 @@ function ViewModel (value, error) {
   }
 }
 
-const getText = (active) => {
-  if (active === 'true') {
-    return 'Would you like to set the payment scheme to Not Active ?'
-  } else {
-    return 'Would you like to set the payment scheme to Active ?'
+const getText = (name, active) => {
+  if (active) {
+    return `Would you like to disable ${name}?`
   }
+  return `Would you like to enable ${name}?`
 }
 
 module.exports = ViewModel
