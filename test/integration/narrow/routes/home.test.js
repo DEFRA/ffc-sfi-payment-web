@@ -1,6 +1,5 @@
 describe('Home test', () => {
   jest.mock('../../../../app/api')
-  const { get } = require('../../../../app/api')
   const createServer = require('../../../../app/server')
   let server
 
