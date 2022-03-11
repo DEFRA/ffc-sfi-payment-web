@@ -19,7 +19,7 @@ describe('Payment schemes', () => {
   const { get } = require('../../../../app/api')
 
   jest.mock('../../../../app/auth/azure-auth')
-  const { refresh } = require('../../../../app/auth')
+  const { refresh } = require('../../../../app/auth/azure-auth')
 
   const auth = {
     strategy: 'session-auth',
