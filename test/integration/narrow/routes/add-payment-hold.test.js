@@ -20,8 +20,8 @@ describe('Payment holds', () => {
   jest.mock('../../../../app/api')
   const { get, post } = require('../../../../app/api')
 
-  jest.mock('../../../../app/azure-auth')
-  const { refresh } = require('../../../../app/auth/azure-auth')
+  jest.mock('../../../../app/auth')
+  const { refresh } = require('../../../../app/auth')
 
   const auth = {
     strategy: 'session-auth',
