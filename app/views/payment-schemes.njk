@@ -15,36 +15,29 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <h1 class="govuk-heading-l">Payment Schemes</h1>
+      <h1 class="govuk-heading-l">Schemes</h1>
 
-      {% if error %}
-        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-          <h2 class="govuk-error-summary__title" id="error-summary-title">There is a problem creating this payment request</h2>
-        </div>
-      {% endif %}
-
-      {% if model.rows.length > 0 %}
+      {% if schemes.length > 0 %}
         <table class="govuk-table">
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-              {% for header in model.head %}
-                <th scope="col" class="govuk-table__header">{{ header.text }}</th>
-              {% endfor %}
+              <th scope="col" class="govuk-table__header">Scheme</th>
+              <th scope="col" class="govuk-table__header">Status</th>
+              <th scope="col" class="govuk-table__header"></th>
             </tr>
           </thead>
           <tbody class="govuk-table__body">
-            {% for paymentScheme in model.rows %}
+            {% for paymentScheme in schemes %}
               <tr class="govuk-table__row">
-                <td class="govuk-table__cell">{{ paymentScheme.schemeId }}</td>
                 <td class="govuk-table__cell">{{ paymentScheme.name }}</td>
-                <td class="govuk-table__cell">{{ paymentScheme.active }}</td>
+                <td class="govuk-table__cell">{% if paymentScheme.active %}Active{% else %}Inactive{% endif %}</td>
                 <td class="govuk-table__cell">
                   <form method="POST" action="/payment-schemes">
                     <input type="hidden" name="crumb" value="{{crumb}}"/>
                     <input type="hidden" id="schemeId" name="schemeId" value="{{ paymentScheme.schemeId }}">
                     <input type="hidden" id="name" name="name" value="{{ paymentScheme.name }}">
                     <input type="hidden" id="active" name="active" value="{{ paymentScheme.active }}">
-                    <button class="govuk-button" data-module="govuk-button">Update</button>
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" style="margin-bottom: 0px;">{% if paymentScheme.active %}Disable{% else %}Enable{% endif %}</button>
                   </form>
                 </td>
               </tr>
@@ -52,7 +45,7 @@
           </tbody>
         </table>
       {% else %}
-        <p class="govuk-body">No Schemes found!</p>
+        <p class="govuk-body">No available schemes</p>
       {% endif %}
     </div>
   </div>

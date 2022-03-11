@@ -37,8 +37,7 @@ module.exports = {
       assetPath: '/static',
       govukAssetPath: '/assets',
       serviceName: config.serviceName,
-      pageTitle: `${config.serviceName} - GOV.UK`,
-      googleTagManagerKey: config.googleTagManagerKey
+      pageTitle: `${config.serviceName}`
     }
   }
 }

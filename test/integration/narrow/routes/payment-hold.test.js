@@ -15,8 +15,8 @@ describe('Payment holds', () => {
     await server.stop()
   })
 
-  jest.mock('../../../../app/payment-holds')
-  const { getResponse } = require('../../../../app/payment-holds')
+  jest.mock('../../../../app/api')
+  const { get } = require('../../../../app/api')
 
   jest.mock('../../../../app/azure-auth')
   const { refresh } = require('../../../../app/azure-auth')
@@ -26,6 +26,9 @@ describe('Payment holds', () => {
     credentials: {
       account: {
         name: 'A Farmer'
+      },
+      permissions: {
+        holdAdmin: true
       }
     }
   }
@@ -51,17 +54,17 @@ describe('Payment holds', () => {
     }
   ]
 
-  const mockAzureAuthRefresh = (viewPaymentHolds = true) => {
-    refresh.mockResolvedValue({ viewPaymentHolds })
+  const mockAzureAuthRefresh = (holdAdmin = true) => {
+    refresh.mockResolvedValue({ holdAdmin })
   }
 
-  const mockGetPaymentHold = (paymentHolds) => {
-    getResponse.mockResolvedValue({ payload: { paymentHolds } })
+  function mockGetPaymentHold (paymentHolds) {
+    get.mockResolvedValue({ payload: { paymentHolds } })
   }
 
-  const expectRequestForPaymentHold = (timesCalled = 1) => {
-    expect(getResponse).toHaveBeenCalledTimes(timesCalled)
-    expect(getResponse).toHaveBeenCalledWith('/payment-holds')
+  function expectRequestForPaymentHold (timesCalled = 1) {
+    expect(get).toHaveBeenCalledTimes(timesCalled)
+    expect(get).toHaveBeenCalledWith('/payment-holds')
   }
 
   describe('GET requests', () => {
@@ -77,7 +80,7 @@ describe('Payment holds', () => {
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
-      expect($('.govuk-body').text()).toEqual('No payment holds')
+      expect($('#no-hold-text').text()).toEqual('No current payment holds')
     })
 
     test('returns 401 no viewPaymentHolds permission', async () => {
@@ -104,14 +107,13 @@ describe('Payment holds', () => {
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
       const holds = $('.govuk-table__body tr')
-      expect(holds.length).toEqual(paymentHolds.length)
+      expect(holds.length).toEqual(1)
       holds.each((i, hold) => {
         const holdCells = $('td', hold)
         expect(holdCells.eq(0).text()).toEqual(paymentHolds[i].frn)
         expect(holdCells.eq(1).text()).toEqual(paymentHolds[i].holdCategoryName)
         expect(holdCells.eq(2).text()).toEqual(paymentHolds[i].holdCategorySchemeName)
         expect(holdCells.eq(3).text()).toEqual(paymentHolds[i].dateTimeAdded)
-        expect(holdCells.eq(4).text()).toEqual(paymentHolds[i].dateTimeClosed ?? '')
       })
     })
   })
