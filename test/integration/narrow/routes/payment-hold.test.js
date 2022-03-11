@@ -18,7 +18,7 @@ describe('Payment holds', () => {
   jest.mock('../../../../app/api')
   const { get } = require('../../../../app/api')
 
-  jest.mock('../../../../app/auth')
+  jest.mock('../../../../app/auth/azure-auth')
   const { refresh } = require('../../../../app/auth')
 
   const auth = {

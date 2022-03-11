@@ -2,7 +2,7 @@ describe('Logout test', () => {
   const createServer = require('../../../../app/server')
   let server
 
-  jest.mock('../../../../app/auth')
+  jest.mock('../../../../app/auth/azure-auth')
   const { logout } = require('../../../../app/auth')
 
   beforeEach(async () => {
