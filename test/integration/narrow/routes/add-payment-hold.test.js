@@ -33,7 +33,7 @@ describe('Payment holds', () => {
     }
   }
 
-  const paymentHoldCategories = [{
+  const mockPaymentHoldCategories = [{
     holdCategoryId: 123,
     name: 'my hold category',
     schemeName: 'schemeName'
@@ -83,7 +83,7 @@ describe('Payment holds', () => {
 
     test('returns 200 and correctly lists returned hold category', async () => {
       mockAzureAuthRefresh()
-      mockGetPaymentHoldCategories(paymentHoldCategories)
+      mockGetPaymentHoldCategories(mockPaymentHoldCategories)
 
       const res = await server.inject({ method, url, auth })
 

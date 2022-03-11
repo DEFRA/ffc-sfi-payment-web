@@ -33,7 +33,7 @@ describe('Payment holds', () => {
     }
   }
 
-  const paymentHolds = [
+  const mockPaymentHolds = [
     {
       holdId: 1,
       frn: '1234567890',
@@ -97,7 +97,7 @@ describe('Payment holds', () => {
     })
 
     test('returns 200 and correctly lists returned hold category', async () => {
-      mockGetPaymentHold(paymentHolds)
+      mockGetPaymentHold(mockPaymentHolds)
       mockAzureAuthRefresh()
 
       const res = await server.inject({ method, url, auth })
@@ -110,10 +110,10 @@ describe('Payment holds', () => {
       expect(holds.length).toEqual(1)
       holds.each((i, hold) => {
         const holdCells = $('td', hold)
-        expect(holdCells.eq(0).text()).toEqual(paymentHolds[i].frn)
-        expect(holdCells.eq(1).text()).toEqual(paymentHolds[i].holdCategoryName)
-        expect(holdCells.eq(2).text()).toEqual(paymentHolds[i].holdCategorySchemeName)
-        expect(holdCells.eq(3).text()).toEqual(paymentHolds[i].dateTimeAdded)
+        expect(holdCells.eq(0).text()).toEqual(mockPaymentHolds[i].frn)
+        expect(holdCells.eq(1).text()).toEqual(mockPaymentHolds[i].holdCategoryName)
+        expect(holdCells.eq(2).text()).toEqual(mockPaymentHolds[i].holdCategorySchemeName)
+        expect(holdCells.eq(3).text()).toEqual(mockPaymentHolds[i].dateTimeAdded)
       })
     })
   })

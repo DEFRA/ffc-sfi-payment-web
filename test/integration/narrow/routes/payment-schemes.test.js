@@ -31,7 +31,7 @@ describe('Payment schemes', () => {
     }
   }
 
-  const paymentSchemes = [
+  const mockPaymentSchemes = [
     {
       schemeId: '1',
       name: 'SFI - active',
@@ -96,7 +96,7 @@ describe('Payment schemes', () => {
 
     test('returns 200 and correctly lists returned payment schemes', async () => {
       mockAzureAuthRefresh()
-      mockGetPaymentSchemes(paymentSchemes)
+      mockGetPaymentSchemes(mockPaymentSchemes)
 
       const res = await server.inject({ method, url, auth })
 
@@ -106,16 +106,16 @@ describe('Payment schemes', () => {
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
       const schemes = $('tbody tr.govuk-table__row')
-      expect(schemes.length).toEqual(paymentSchemes.length)
+      expect(schemes.length).toEqual(mockPaymentSchemes.length)
       schemes.each((i, scheme) => {
         const schemeCells = $('td', scheme)
-        expect(schemeCells.eq(0).text()).toEqual(paymentSchemes[i].name)
-        expect(schemeCells.eq(1).text()).toEqual(paymentSchemes[i].active ? 'Active' : 'Inactive')
+        expect(schemeCells.eq(0).text()).toEqual(mockPaymentSchemes[i].name)
+        expect(schemeCells.eq(1).text()).toEqual(mockPaymentSchemes[i].active ? 'Active' : 'Inactive')
       })
     })
 
     test('returns 401 and redirects to / - no permission', async () => {
-      mockGetPaymentSchemes(paymentSchemes)
+      mockGetPaymentSchemes(mockPaymentSchemes)
       mockAzureAuthRefresh(false)
       const res = await server.inject({ method, url, auth })
 
@@ -125,7 +125,7 @@ describe('Payment schemes', () => {
 
     test('returns 302 and redirects to /login - no auth', async () => {
       mockAzureAuthRefresh()
-      mockGetPaymentSchemes(paymentSchemes)
+      mockGetPaymentSchemes(mockPaymentSchemes)
 
       const res = await server.inject({ method, url })
 

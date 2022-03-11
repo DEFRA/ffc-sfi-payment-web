@@ -22,7 +22,7 @@ describe('Login tests', () => {
 
   describe('Login GET request', () => {
     const method = 'GET'
-    mockGetAuthenticationUrl('/')
+    mockGetAuthenticationUrl()
     test('GET /login route returns 200', async () => {
       const options = {
         method,
