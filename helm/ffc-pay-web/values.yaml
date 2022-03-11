@@ -11,6 +11,7 @@ appInsights:
   key:
 
 azureAppRegistration:
+  enabled: true
   clientId:
   clientSecret:
   tenantId:

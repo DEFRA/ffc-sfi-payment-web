@@ -1,13 +1,13 @@
 const schema = require('./schemas/hold')
 const { get, post } = require('../api')
-const azureAuth = require('../azure-auth')
+const auth = require('../auth')
 
 module.exports = [{
   method: 'GET',
   path: '/payment-holds',
   options: {
     handler: async (request, h) => {
-      const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+      const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
       if (!permissions.holdAdmin) {
         return h.redirect('/').code(401).takeover()
       }
@@ -21,7 +21,7 @@ module.exports = [{
   path: '/add-payment-hold',
   options: {
     handler: async (request, h) => {
-      const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+      const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
       if (!permissions.holdAdmin) {
         return h.redirect('/').code(401).takeover()
       }
@@ -37,7 +37,7 @@ module.exports = [{
     validate: {
       payload: schema,
       failAction: async (request, h, error) => {
-        const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+        const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
         if (!permissions.holdAdmin) {
           return h.redirect('/').code(401).takeover()
         }
@@ -46,7 +46,7 @@ module.exports = [{
       }
     },
     handler: async (request, h) => {
-      const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+      const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
       if (!permissions.holdAdmin) {
         return h.redirect('/').code(401).takeover()
       }
@@ -60,7 +60,7 @@ module.exports = [{
   path: '/remove-payment-hold',
   options: {
     handler: async (request, h) => {
-      const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+      const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
       if (!permissions.holdAdmin) {
         return h.redirect('/').code(401).takeover()
       }

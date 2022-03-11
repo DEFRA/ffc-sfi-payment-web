@@ -1,14 +1,14 @@
 const { get, post } = require('../api')
 const Joi = require('joi')
 const ViewModel = require('./models/update-scheme')
-const azureAuth = require('../azure-auth')
+const auth = require('../auth')
 
 module.exports = [{
   method: 'GET',
   path: '/payment-schemes',
   options: {
     handler: async (request, h) => {
-      const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+      const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
       if (!permissions.schemeAdmin) {
         return h.redirect('/').code(401).takeover()
       }
@@ -22,7 +22,7 @@ module.exports = [{
   path: '/payment-schemes',
   options: {
     handler: async (request, h) => {
-      const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+      const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
       if (!permissions.schemeAdmin) {
         return h.redirect('/').code(401).takeover()
       }
@@ -44,7 +44,7 @@ module.exports = [{
       })
     },
     handler: async (request, h) => {
-      const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+      const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
       if (!permissions.schemeAdmin) {
         return h.redirect('/').code(401).takeover()
       }
@@ -64,7 +64,7 @@ module.exports = [{
         active: Joi.boolean().required()
       }),
       failAction: async (request, h, error) => {
-        const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+        const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
         if (!permissions.schemeAdmin) {
           return h.redirect('/').code(401).takeover()
         }
@@ -72,7 +72,7 @@ module.exports = [{
       }
     },
     handler: async (request, h) => {
-      const permissions = await azureAuth.refresh(request.auth.credentials.account, request.cookieAuth)
+      const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
       if (!permissions.schemeAdmin) {
         return h.redirect('/').code(401).takeover()
       }

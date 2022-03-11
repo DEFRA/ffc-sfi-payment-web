@@ -7,7 +7,8 @@ const routes = [].concat(
   require('../routes/login'),
   require('../routes/logout'),
   require('../routes/holds'),
-  require('../routes/schemes')
+  require('../routes/schemes'),
+  require('../routes/dev-auth')
 )
 
 module.exports = {

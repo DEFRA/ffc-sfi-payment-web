@@ -14,7 +14,7 @@ describe('Login tests', () => {
   })
 
   jest.mock('../../../../app/azure-auth')
-  const mockAzureAuth = require('../../../../app/azure-auth')
+  const mockAzureAuth = require('../../../../app/auth/azure-auth')
 
   const mockGetAuthenticationUrl = () => {
     mockAzureAuth.getAuthenticationUrl.mockResolvedValue('/')

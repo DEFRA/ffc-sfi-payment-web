@@ -2,14 +2,14 @@ const auth = require('../auth')
 
 module.exports = {
   method: 'GET',
-  path: '/login',
+  path: '/dev-auth',
   options: {
     auth: false
   },
   handler: async (request, h) => {
     try {
-      const authUrl = await auth.getAuthenticationUrl()
-      return h.redirect(authUrl)
+      await auth.authenticate(undefined, request.cookieAuth)
+      return h.redirect('/')
     } catch (err) {
       console.log('Error authenticating')
       console.log(JSON.stringify(err))

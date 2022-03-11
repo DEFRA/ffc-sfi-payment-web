@@ -6,4 +6,5 @@ data:
   APPINSIGHTS_CLOUDROLE: {{ quote .Values.name }}
   PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
   REDIRECT_URL: {{ quote .Values.azureAppRegistration.redirectUrl }}
+  AUTHENTICATION_ENABLED: {{ quote .Values.azureAppRegistration.enabled }}
 {{- end -}}

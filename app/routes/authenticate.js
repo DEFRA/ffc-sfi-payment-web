@@ -1,4 +1,4 @@
-const azureAuth = require('../azure-auth')
+const auth = require('../auth')
 
 module.exports = {
   method: 'GET',
@@ -8,7 +8,7 @@ module.exports = {
   },
   handler: async (request, h) => {
     try {
-      await azureAuth.authenticate(request.query.code, request.cookieAuth)
+      await auth.authenticate(request.query.code, request.cookieAuth)
       return h.redirect('/')
     } catch (err) {
       console.log('Error authenticating')

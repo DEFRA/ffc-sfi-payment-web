@@ -16,6 +16,7 @@ services:
       AZURE_CLIENT_ID: NCC-1701-D
       AZURE_TENANT_ID: C3PO-R2D2
       REDIRECT_URL: http://thesearenotthedroidsyouarelookingfor
+      AUTHENTICATION_ENABLED: "true"
     volumes:
       - ./test:/home/node/test
       - ./test-output:/home/node/test-output

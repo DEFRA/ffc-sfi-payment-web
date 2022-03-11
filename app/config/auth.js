@@ -2,6 +2,7 @@ const Joi = require('joi')
 
 // Define config schema
 const schema = Joi.object({
+  enabled: Joi.boolean().default(false),
   azure: Joi.object({
     clientSecret: Joi.string().required(),
     clientId: Joi.string().required(),
@@ -16,6 +17,7 @@ const schema = Joi.object({
 
 // Build config
 const config = {
+  enabled: process.env.AUTHENTICATION_ENABLED,
   azure: {
     clientSecret: process.env.AZURE_CLIENT_SECRET,
     clientId: process.env.AZURE_CLIENT_ID,
