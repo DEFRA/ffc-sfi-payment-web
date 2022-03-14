@@ -18,7 +18,22 @@ describe('Payment holds', () => {
   jest.mock('../../../../app/api')
   const { get } = require('../../../../app/api')
 
-  const paymentHolds = [
+  jest.mock('../../../../app/auth/azure-auth')
+  const { refresh } = require('../../../../app/auth/azure-auth')
+
+  const auth = {
+    strategy: 'session-auth',
+    credentials: {
+      account: {
+        name: 'A Farmer'
+      },
+      permissions: {
+        holdAdmin: true
+      }
+    }
+  }
+
+  const mockPaymentHolds = [
     {
       holdId: 1,
       frn: '1234567890',
@@ -39,6 +54,10 @@ describe('Payment holds', () => {
     }
   ]
 
+  const mockAzureAuthRefresh = (holdAdmin = true) => {
+    refresh.mockResolvedValue({ holdAdmin })
+  }
+
   function mockGetPaymentHold (paymentHolds) {
     get.mockResolvedValue({ payload: { paymentHolds } })
   }
@@ -53,8 +72,9 @@ describe('Payment holds', () => {
 
     test('returns 200 and no hold categories when no categories returned in response', async () => {
       mockGetPaymentHold([])
+      mockAzureAuthRefresh()
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentHold()
       expect(res.statusCode).toBe(200)
@@ -63,10 +83,24 @@ describe('Payment holds', () => {
       expect($('#no-hold-text').text()).toEqual('No current payment holds')
     })
 
-    test('returns 200 and correctly lists returned hold category', async () => {
-      mockGetPaymentHold(paymentHolds)
+    test('returns 401 no viewPaymentHolds permission', async () => {
+      mockAzureAuthRefresh(false)
+      const res = await server.inject({ method, url, auth })
+      expect(res.statusCode).toBe(401)
+      expect(res.headers.location).toEqual('/')
+    })
 
+    test('returns 302 no auth', async () => {
       const res = await server.inject({ method, url })
+      expect(res.statusCode).toBe(302)
+      expect(res.headers.location).toEqual('/login')
+    })
+
+    test('returns 200 and correctly lists returned hold category', async () => {
+      mockGetPaymentHold(mockPaymentHolds)
+      mockAzureAuthRefresh()
+
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentHold()
       expect(res.statusCode).toBe(200)
@@ -76,10 +110,10 @@ describe('Payment holds', () => {
       expect(holds.length).toEqual(1)
       holds.each((i, hold) => {
         const holdCells = $('td', hold)
-        expect(holdCells.eq(0).text()).toEqual(paymentHolds[i].frn)
-        expect(holdCells.eq(1).text()).toEqual(paymentHolds[i].holdCategoryName)
-        expect(holdCells.eq(2).text()).toEqual(paymentHolds[i].holdCategorySchemeName)
-        expect(holdCells.eq(3).text()).toEqual(paymentHolds[i].dateTimeAdded)
+        expect(holdCells.eq(0).text()).toEqual(mockPaymentHolds[i].frn)
+        expect(holdCells.eq(1).text()).toEqual(mockPaymentHolds[i].holdCategoryName)
+        expect(holdCells.eq(2).text()).toEqual(mockPaymentHolds[i].holdCategorySchemeName)
+        expect(holdCells.eq(3).text()).toEqual(mockPaymentHolds[i].dateTimeAdded)
       })
     })
   })

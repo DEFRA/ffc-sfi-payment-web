@@ -30,10 +30,7 @@
             <div class="govuk-error-summary__body">
               <ul class="govuk-list govuk-error-summary__list">
                 {% for errorDetail in errors.details %}
-                  <span class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span>
-                    {{ errorDetail.message }}
-                  </span>
+                  <span class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ errorDetail.message }}</span>
                 {% endfor %}
               </ul>
             </div>

@@ -10,6 +10,13 @@ labels:
 appInsights:
   key:
 
+azureAppRegistration:
+  enabled: true
+  clientId:
+  clientSecret:
+  tenantId:
+  redirectUrl: http://ffc-pay-web/authenticate
+
 azureIdentity:
   clientID: not-a-real-clientID
   resourceID: not-a-real-resourceID

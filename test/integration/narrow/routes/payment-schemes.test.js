@@ -1,6 +1,5 @@
 const cheerio = require('cheerio')
 const createServer = require('../../../../app/server')
-const getCrumbs = require('../../../helpers/get-crumbs')
 
 describe('Payment schemes', () => {
   let server
@@ -19,7 +18,20 @@ describe('Payment schemes', () => {
   jest.mock('../../../../app/api')
   const { get } = require('../../../../app/api')
 
-  const paymentSchemes = [
+  jest.mock('../../../../app/auth/azure-auth')
+  const { refresh } = require('../../../../app/auth/azure-auth')
+
+  const auth = {
+    strategy: 'session-auth',
+    isAuthenticated: true,
+    credentials: {
+      account: {
+        name: 'A Farmer'
+      }
+    }
+  }
+
+  const mockPaymentSchemes = [
     {
       schemeId: '1',
       name: 'SFI - active',
@@ -31,6 +43,10 @@ describe('Payment schemes', () => {
       active: false
     }
   ]
+
+  const mockAzureAuthRefresh = (schemeAdmin = true) => {
+    refresh.mockResolvedValue({ schemeAdmin })
+  }
 
   function mockGetPaymentSchemes (paymentSchemes) {
     get.mockResolvedValueOnce({ payload: { paymentSchemes } })
@@ -51,9 +67,10 @@ describe('Payment schemes', () => {
       { holdResponse: 0 },
       { holdResponse: false }
     ])('returns 500 and no response view when falsy value returned from getting payment schemes', async ({ holdResponse }) => {
+      mockAzureAuthRefresh()
       get.mockResolvedValueOnce(holdResponse)
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentSchemes()
       expect(res.statusCode).toBe(500)
@@ -63,9 +80,10 @@ describe('Payment schemes', () => {
     })
 
     test('returns 200 and no schemes when non are returned', async () => {
+      mockAzureAuthRefresh()
       mockGetPaymentSchemes([])
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentSchemes()
       expect(res.statusCode).toBe(200)
@@ -77,9 +95,10 @@ describe('Payment schemes', () => {
     })
 
     test('returns 200 and correctly lists returned payment schemes', async () => {
-      mockGetPaymentSchemes(paymentSchemes)
+      mockAzureAuthRefresh()
+      mockGetPaymentSchemes(mockPaymentSchemes)
 
-      const res = await server.inject({ method, url })
+      const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentSchemes()
       expect(res.statusCode).toBe(200)
@@ -87,74 +106,31 @@ describe('Payment schemes', () => {
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
       const schemes = $('tbody tr.govuk-table__row')
-      expect(schemes.length).toEqual(paymentSchemes.length)
+      expect(schemes.length).toEqual(mockPaymentSchemes.length)
       schemes.each((i, scheme) => {
         const schemeCells = $('td', scheme)
-        expect(schemeCells.eq(0).text()).toEqual(paymentSchemes[i].name)
-        expect(schemeCells.eq(1).text()).toEqual(paymentSchemes[i].active ? 'Active' : 'Inactive')
+        expect(schemeCells.eq(0).text()).toEqual(mockPaymentSchemes[i].name)
+        expect(schemeCells.eq(1).text()).toEqual(mockPaymentSchemes[i].active ? 'Active' : 'Inactive')
       })
     })
-  })
 
-  describe('POST requests', () => {
-    const method = 'POST'
-    const schemeId = 1
-    const schemeActive = true
-    const schemeName = 'SFI scheme'
+    test('returns 401 and redirects to / - no permission', async () => {
+      mockGetPaymentSchemes(mockPaymentSchemes)
+      mockAzureAuthRefresh(false)
+      const res = await server.inject({ method, url, auth })
 
-    test.each([
-      { active: true },
-      { active: false }
-    ])('redirects to update payment scheme with correct argument values', async ({ active }) => {
-      const name = 'SFI scheme'
-      const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
-      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
+      expect(res.statusCode).toBe(401)
+      expect(res.headers.location).toEqual('/')
+    })
 
-      const res = await server.inject({
-        method,
-        url,
-        payload: { crumb: viewCrumb, active, name, schemeId },
-        headers: { cookie: `crumb=${cookieCrumb}` }
-      })
+    test('returns 302 and redirects to /login - no auth', async () => {
+      mockAzureAuthRefresh()
+      mockGetPaymentSchemes(mockPaymentSchemes)
+
+      const res = await server.inject({ method, url })
 
       expect(res.statusCode).toBe(302)
-      expect(res.headers.location).toEqual(`/update-payment-scheme?schemeId=${schemeId}&active=${active}&name=${name}`)
-    })
-
-    describe('bad requests', () => {
-      test.each([
-        { viewCrumb: 'incorrect' },
-        { viewCrumb: undefined }
-      ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
-        const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
-        const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url)
-
-        const res = await server.inject({
-          method,
-          url,
-          payload: { crumb: viewCrumb, active: schemeActive, name: schemeName, schemeId },
-          headers: { cookie: `crumb=${cookieCrumb}` }
-        })
-
-        expect(res.statusCode).toBe(403)
-      })
-
-      test.each([
-        { cookieCrumb: 'incorrect' },
-        { cookieCrumb: undefined }
-      ])('returns 403 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
-        const mockForCrumbs = () => mockGetPaymentSchemes([paymentSchemes[0]])
-        const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url)
-
-        const res = await server.inject({
-          method,
-          url,
-          payload: { crumb: viewCrumb, active: schemeActive, name: schemeName, schemeId },
-          headers: { cookie: `crumb=${cookieCrumb}` }
-        })
-
-        expect(res.statusCode).toBe(403)
-      })
+      expect(res.headers.location).toEqual('/login')
     })
   })
 })

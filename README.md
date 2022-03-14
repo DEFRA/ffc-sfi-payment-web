@@ -4,12 +4,37 @@ FFC payment services management
 
 ## Prerequisites
 
+- Azure App Registration Setup
 - Docker
 - Docker Compose
 
 Optional:
 - Kubernetes
 - Helm
+
+## Azure App Registration
+
+`ffc-pay-web` has been integrated into Azure App Registration using the msal-node [npm package](https://www.npmjs.com/package/@azure/msal-node)
+
+For `ffc-pay-web` to authenticate it needs to be registered with [Azure App Registration](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+
+The following environment varibles need to be set:
+
+- AZURE_CLIENT_ID
+- AZURE_TENANT_ID
+- AZURE_CLIENT_SECRET
+
+These can be retrieved from the App Restistration overview blade.
+
+The following roles need [setting up](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps)
+
+- Payments.View.Holds
+- Payments.View.Scheme
+- Payments.Update.Scheme
+- Payments.Add.Hold
+- Payments.Remove.Hold
+
+For users to access `ffc-pay-web`, the users need to be assigned to the relevent roles above through Azure Enterprise Applications
 
 ## Running the application
 

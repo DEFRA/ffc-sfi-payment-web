@@ -3,8 +3,12 @@ const routes = [].concat(
   require('../routes/healthz'),
   require('../routes/static'),
   require('../routes/home'),
+  require('../routes/authenticate'),
+  require('../routes/login'),
+  require('../routes/logout'),
   require('../routes/holds'),
-  require('../routes/schemes')
+  require('../routes/schemes'),
+  require('../routes/dev-auth')
 )
 
 module.exports = {

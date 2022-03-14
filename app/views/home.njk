@@ -1,4 +1,9 @@
 {% extends '_layout.njk' %}
+{% from "./macros/logout.njk" import logout %}
+
+{% block beforeContent %}
+  {{ logout(username, permissions) }}
+{% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
