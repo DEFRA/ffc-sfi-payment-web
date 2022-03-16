@@ -4,9 +4,9 @@ const Joi = require('joi')
 const schema = Joi.object({
   enabled: Joi.boolean().default(false),
   azure: Joi.object({
-    clientSecret: Joi.string().required(),
-    clientId: Joi.string().required(),
-    authority: Joi.string().required()
+    clientSecret: Joi.string().allow(''),
+    clientId: Joi.string().allow(''),
+    authority: Joi.string().allow('')
   }),
   cookie: Joi.object({
     password: Joi.string().default('this_is_not_a_real_password_this_is_not_a_real_password'),
