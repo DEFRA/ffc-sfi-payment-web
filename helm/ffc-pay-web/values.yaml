@@ -45,7 +45,7 @@ container:
   limitMemory: 40Mi
   limitCpu: 40m
   port: 3007
-  paymentsEndpoint: http://ffc-payments.ffc-pay
+  paymentsEndpoint: http://ffc-pay-processing.ffc-pay
 
 ingress:
   class: nginx
