@@ -9,7 +9,7 @@ const schema = Joi.object({
     authority: Joi.string().allow('')
   }),
   cookie: Joi.object({
-    password: Joi.string().default('this_is_not_a_real_password_this_is_not_a_real_password'),
+    password: Joi.string().required(),
     ttl: Joi.number().default(60 * 60 * 1000)
   }),
   redirectUrl: Joi.string().default('http://localhost:3007/authenticate')

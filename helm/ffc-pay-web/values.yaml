@@ -46,6 +46,7 @@ container:
   limitCpu: 40m
   port: 3007
   paymentsEndpoint: http://ffc-pay-processing.ffc-pay
+  cookiePassword: cookiecookiecookiecookiecookiecookie
 
 ingress:
   class: nginx

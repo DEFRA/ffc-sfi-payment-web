@@ -15,3 +15,4 @@ services:
       AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
       AZURE_TENANT_ID: ${AZURE_TENANT_ID}
       REDIRECT_URL: ${REDIRECT_URL}
+      COOKIE_PASSWORD: cookiecookiecookiecookiecookiecookie
