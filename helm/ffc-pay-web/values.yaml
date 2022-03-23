@@ -15,7 +15,7 @@ azureAppRegistration:
   clientId:
   clientSecret:
   tenantId:
-  redirectUrl: http://ffc-pay-web/authenticate
+  redirectUrl: authenticate
 
 azureIdentity:
   clientID: not-a-real-clientID

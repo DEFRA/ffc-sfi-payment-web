@@ -14,9 +14,11 @@ Optional:
 
 ## Azure App Registration
 
-`ffc-pay-web` has been integrated into Azure App Registration using the msal-node [npm package](https://www.npmjs.com/package/@azure/msal-node)
+This service has been integrated into Azure App Registration using the msal-node [npm package](https://www.npmjs.com/package/@azure/msal-node)
 
-For `ffc-pay-web` to authenticate it needs to be registered with [Azure App Registration](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+By default, authentication is disabled.  It can be enabled by setting the `AUTHENTICATION_ENABLED` environment variable to `true`
+
+If authentication is enabled, this service needs to be registered with [Azure App Registration](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
 
 The following environment varibles need to be set:
 
@@ -24,17 +26,14 @@ The following environment varibles need to be set:
 - AZURE_TENANT_ID
 - AZURE_CLIENT_SECRET
 
-These can be retrieved from the App Restistration overview blade.
+These can be retrieved from the App Registration overview blade.
 
 The following roles need [setting up](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps)
 
-- Payments.View.Holds
-- Payments.View.Scheme
-- Payments.Update.Scheme
-- Payments.Add.Hold
-- Payments.Remove.Hold
+- Payments.Holds.Admin
+- Payments.Scheme.Admin
 
-For users to access `ffc-pay-web`, the users need to be assigned to the relevent roles above through Azure Enterprise Applications
+For users to access this service, the users need to be assigned to the relevant roles above through Azure Enterprise Applications.
 
 ## Running the application
 
