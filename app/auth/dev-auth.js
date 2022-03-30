@@ -1,4 +1,4 @@
-const { ledger, enrichment } = require('./permissions')
+const { holdAdmin, schemeAdmin } = require('./permissions')
 const { v4: uuidv4 } = require('uuid')
 const devAccount = { homeAccountId: uuidv4(), name: 'Developer' }
 
@@ -8,18 +8,18 @@ const getAuthenticationUrl = () => {
 
 const authenticate = async (redirectCode, cookieAuth) => {
   cookieAuth.set({
-    scope: [ledger, enrichment],
+    scope: [holdAdmin, schemeAdmin],
     account: devAccount
   })
 }
 
 const refresh = async (account, cookieAuth, forceRefresh = true) => {
   cookieAuth.set({
-    scope: [ledger, enrichment],
+    scope: [holdAdmin, schemeAdmin],
     account: devAccount
   })
 
-  return [ledger, enrichment]
+  return [holdAdmin, schemeAdmin]
 }
 
 const logout = async (account) => {
