@@ -3,7 +3,7 @@
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% block beforeContent %}
+{% block content %}
   {{ govukBreadcrumbs({
     items: [{
       text: "Home",
@@ -13,9 +13,6 @@
       href: "/payment-holds"
     }]
   })}}
-{% endblock %}
-
-{% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <form method="POST" action="/add-payment-hold" autocomplete="off" novalidate>
