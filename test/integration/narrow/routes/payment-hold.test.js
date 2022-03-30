@@ -1,12 +1,18 @@
+jest.mock('../../../../app/api')
+const { get } = require('../../../../app/api')
+jest.mock('../../../../app/auth')
 const cheerio = require('cheerio')
+const { holdAdmin } = require('../../../../app/auth/permissions')
 const createServer = require('../../../../app/server')
 
-describe('Payment holds', () => {
-  let server
-  const url = '/payment-holds'
-  const pageH1 = 'Payment Holds'
+let server
+const url = '/payment-holds'
+const pageH1 = 'Payment holds'
+let auth
 
+describe('Payment holds', () => {
   beforeEach(async () => {
+    auth = { strategy: 'session-auth', credentials: { scope: [holdAdmin] } }
     jest.clearAllMocks()
     server = await createServer()
   })
@@ -14,24 +20,6 @@ describe('Payment holds', () => {
   afterEach(async () => {
     await server.stop()
   })
-
-  jest.mock('../../../../app/api')
-  const { get } = require('../../../../app/api')
-
-  jest.mock('../../../../app/auth/azure-auth')
-  const { refresh } = require('../../../../app/auth/azure-auth')
-
-  const auth = {
-    strategy: 'session-auth',
-    credentials: {
-      account: {
-        name: 'A Farmer'
-      },
-      permissions: {
-        holdAdmin: true
-      }
-    }
-  }
 
   const mockPaymentHolds = [
     {
@@ -54,10 +42,6 @@ describe('Payment holds', () => {
     }
   ]
 
-  const mockAzureAuthRefresh = (holdAdmin = true) => {
-    refresh.mockResolvedValue({ holdAdmin })
-  }
-
   function mockGetPaymentHold (paymentHolds) {
     get.mockResolvedValue({ payload: { paymentHolds } })
   }
@@ -72,7 +56,6 @@ describe('Payment holds', () => {
 
     test('returns 200 and no hold categories when no categories returned in response', async () => {
       mockGetPaymentHold([])
-      mockAzureAuthRefresh()
 
       const res = await server.inject({ method, url, auth })
 
@@ -80,14 +63,13 @@ describe('Payment holds', () => {
       expect(res.statusCode).toBe(200)
       const $ = cheerio.load(res.payload)
       expect($('h1').text()).toEqual(pageH1)
-      expect($('#no-hold-text').text()).toEqual('No current payment holds')
+      expect($('#no-hold-text').text()).toEqual('There are no payment holds.')
     })
 
-    test('returns 401 no viewPaymentHolds permission', async () => {
-      mockAzureAuthRefresh(false)
+    test('returns 403 no viewPaymentHolds permission', async () => {
+      auth.credentials.scope = []
       const res = await server.inject({ method, url, auth })
-      expect(res.statusCode).toBe(401)
-      expect(res.headers.location).toEqual('/')
+      expect(res.statusCode).toBe(403)
     })
 
     test('returns 302 no auth', async () => {
@@ -98,7 +80,6 @@ describe('Payment holds', () => {
 
     test('returns 200 and correctly lists returned hold category', async () => {
       mockGetPaymentHold(mockPaymentHolds)
-      mockAzureAuthRefresh()
 
       const res = await server.inject({ method, url, auth })
 
