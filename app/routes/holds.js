@@ -19,8 +19,8 @@ module.exports = [{
   options: {
     auth: { scope: [holdAdmin] },
     handler: async (request, h) => {
-      const paymentHoldCategories = await getHoldCategories()
-      return h.view('add-payment-hold', { paymentHoldCategories })
+      const { schemes, paymentHoldCategories } = await getHoldCategories()
+      return h.view('add-payment-hold', { schemes, paymentHoldCategories })
     }
   }
 },
@@ -32,8 +32,8 @@ module.exports = [{
     validate: {
       payload: schema,
       failAction: async (request, h, error) => {
-        const paymentHoldCategories = await getHoldCategories()
-        return h.view('add-payment-hold', { paymentHoldCategories, errors: error, frn: request.payload.frn }).code(400).takeover()
+        const { schemes, paymentHoldCategories } = await getHoldCategories()
+        return h.view('add-payment-hold', { schemes, paymentHoldCategories, errors: error, frn: request.payload.frn }).code(400).takeover()
       }
     },
     handler: async (request, h) => {

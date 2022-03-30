@@ -10,8 +10,9 @@ const getHolds = async () => {
 }
 
 const getHoldCategories = async () => {
-  const { payload } = await get('/payment-holds')
-  return payload.paymentHoldCategories
+  const { payload } = await get('/payment-hold-categories')
+  const schemes = [...new Set(payload.paymentHoldCategories.map(item => item.schemeName))]
+  return { schemes, paymentHoldCategories: payload.paymentHoldCategories }
 }
 
 module.exports = {
