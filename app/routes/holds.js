@@ -1,7 +1,7 @@
 const schema = require('./schemas/hold')
-const { get, post } = require('../api')
-const auth = require('../auth')
+const { post } = require('../api')
 const { holdAdmin } = require('../auth/permissions')
+const { getHolds, getHoldCategories } = require('../holds')
 
 module.exports = [{
   method: 'GET',
@@ -9,8 +9,8 @@ module.exports = [{
   options: {
     auth: { scope: [holdAdmin] },
     handler: async (request, h) => {
-      const paymentHoldsResponse = await get('/payment-holds')
-      return h.view('payment-holds', { paymentHolds: paymentHoldsResponse.payload.paymentHolds?.filter(x => x.dateTimeClosed == null) })
+      const paymentHolds = await getHolds()
+      return h.view('payment-holds', { paymentHolds })
     }
   }
 }, {
@@ -19,8 +19,8 @@ module.exports = [{
   options: {
     auth: { scope: [holdAdmin] },
     handler: async (request, h) => {
-      const paymentHoldCategoriesResponse = await get('/payment-hold-categories')
-      return h.view('add-payment-hold', { paymentHoldCategories: paymentHoldCategoriesResponse.payload.paymentHoldCategories })
+      const paymentHoldCategories = await getHoldCategories()
+      return h.view('add-payment-hold', { paymentHoldCategories })
     }
   }
 },
@@ -32,8 +32,8 @@ module.exports = [{
     validate: {
       payload: schema,
       failAction: async (request, h, error) => {
-        const paymentHoldCategoriesResponse = await get('/payment-hold-categories')
-        return h.view('add-payment-hold', { paymentHoldCategories: paymentHoldCategoriesResponse.payload.paymentHoldCategories, errors: error, frn: request.payload.frn }).code(400).takeover()
+        const paymentHoldCategories = await getHoldCategories()
+        return h.view('add-payment-hold', { paymentHoldCategories, errors: error, frn: request.payload.frn }).code(400).takeover()
       }
     },
     handler: async (request, h) => {
@@ -48,10 +48,6 @@ module.exports = [{
   options: {
     auth: { scope: [holdAdmin] },
     handler: async (request, h) => {
-      const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
-      if (!permissions.holdAdmin) {
-        return h.redirect('/').code(401).takeover()
-      }
       await post('/remove-payment-hold', { holdId: request.payload.holdId })
       return h.redirect('/')
     }

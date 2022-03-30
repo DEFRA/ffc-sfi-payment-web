@@ -7,6 +7,7 @@
       <h1 class="govuk-heading-xl">{{ serviceName }}</h1>
 
       <div class="govuk-cards govuk-cards--2">
+        {% if auth.isHoldAdminUser %}
         <div class="govuk-cards--2__item govuk-card--dashboard">
           <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Payment holds</h2>
           <p class="govuk-heading-xl govuk-!-margin-bottom-5">
@@ -18,6 +19,8 @@
             </li>
           </ul>
         </div>
+        {% endif %}
+        {% if auth.isSchemeAdminUser %}
         <div class="govuk-cards--2__item govuk-card--dashboard">
           <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Schemes</h2>
           <p class="govuk-heading-xl govuk-!-margin-bottom-5">
@@ -29,6 +32,7 @@
             </li>
           </ul>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
