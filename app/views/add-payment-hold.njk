@@ -56,7 +56,7 @@
                   <div class="govuk-radios__item">
                     <input class="govuk-radios__input" id="holdCategoryId" name="holdCategoryId" type="radio" value="{{ paymentHoldCategory.holdCategoryId }}">
                     <label class="govuk-label govuk-radios__label" for="where-do-you-live">
-                      {{ paymentHoldCategory.name}}
+                      {{ paymentHoldCategory.name | lower | capitalize }}
                     </label>
                   </div>
                 {% endif %}
