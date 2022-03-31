@@ -30,7 +30,10 @@
 </header>
 {% endblock %}
 
-{% block bodyStart %}
+{% block beforeContent %}
+  {% if auth.isAuthenticated %}
+    <a href="/logout" class="govuk-body govuk-link">Sign out</a>
+  {% endif %}
 {% endblock %}
 
 {% block pageTitle %}

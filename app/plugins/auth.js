@@ -1,5 +1,6 @@
 const config = require('../config')
 const authCookie = require('@hapi/cookie')
+const auth = require('../auth')
 
 module.exports = {
   plugin: {
@@ -21,6 +22,13 @@ module.exports = {
       })
 
       server.auth.default('session-auth')
+
+      server.ext('onPreAuth', async (request, h) => {
+        if (request.auth.credentials) {
+          await auth.refresh(request.auth.credentials.account, request.cookieAuth)
+        }
+        return h.continue
+      })
     }
   }
 }
