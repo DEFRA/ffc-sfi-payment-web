@@ -1,5 +1,6 @@
 const joi = require('joi')
 const authConfig = require('./auth')
+const storageConfig = require('./storage-config')
 
 // Define config schema
 const schema = joi.object({
@@ -37,5 +38,7 @@ value.authConfig = authConfig
 value.isDev = value.env === 'development'
 value.isTest = value.env === 'test'
 value.isProd = value.env === 'production'
+
+value.storageConfig = storageConfig
 
 module.exports = value

@@ -17,6 +17,9 @@ services:
       REDIRECT_URL: ${REDIRECT_URL}
       COOKIE_PASSWORD: cookiecookiecookiecookiecookiecookie
       AZURE_STORAGE_USE_CONNECTION_STRING: "true"      
-      AZURE_STORAGE_CREATE_CONTAINERS: "false"
+      AZURE_STORAGE_CREATE_CONTAINERS: "true"
       AZURE_STORAGE_ACCOUNT_NAME: ${AZURE_STORAGE_ACCOUNT_NAME:-devstoreaccount1}
-      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING:-DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10016/devstoreaccount1}
+
+  ffc-pay-web-azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: "azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose"

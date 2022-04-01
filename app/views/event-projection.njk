@@ -1,0 +1,15 @@
+{% extends '_layout.njk' %}
+{% from "./macros/logout.njk" import logout %}
+
+{% block beforeContent %}
+  {{ logout(username, permissions) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-xl">Projection</h1>
+    </div>
+  </div>
+</div>
+{% endblock %}
