@@ -57,7 +57,7 @@ describe('Reset payment request', () => {
   test('returns 302 to success if valid invoice', async () => {
     const res = await server.inject({ method: 'POST', url, auth, payload: { invoiceNumber: validInvoiceNumber } })
     expect(res.statusCode).toBe(302)
-    expect(res.headers.location).toBe('/reset-payment-request-success?invoiceNumber=S1234567S123456V001')
+    expect(res.headers.location).toBe('/payment-request/reset-success?invoiceNumber=S1234567S123456V001')
   })
 
   test('returns error if rejected request', async () => {

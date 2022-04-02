@@ -32,7 +32,7 @@ module.exports = [{
       const { invoiceNumber } = request.payload
       try {
         await post('/payment-request/reset', { invoiceNumber })
-        return h.redirect(`/reset-payment-request-success?invoiceNumber=${invoiceNumber}`)
+        return h.redirect(`/payment-request/reset-success?invoiceNumber=${invoiceNumber}`)
       } catch (err) {
         return h.view('reset-payment-request', { error: err.data?.payload?.message ?? err.message, invoiceNumber }).code(412)
       }
@@ -45,7 +45,7 @@ module.exports = [{
   options: {
     auth: { scope: [schemeAdmin] },
     handler: async (request, h) => {
-      return h.view('payment-request/reset-success')
+      return h.view('reset-payment-request-success', { invoiceNumber: request.query.invoiceNumber })
     }
   }
 }]
