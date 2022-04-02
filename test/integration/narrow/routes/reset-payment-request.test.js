@@ -1,0 +1,61 @@
+jest.mock('../../../../app/plugins/crumb')
+jest.mock('../../../../app/api')
+const { post } = require('../../../../app/api')
+jest.mock('../../../../app/auth')
+const createServer = require('../../../../app/server')
+const { schemeAdmin } = require('../../../../app/auth/permissions')
+
+const url = '/payment-request/reset'
+const validInvoiceNumber = 'S1234567S123456V001'
+let server
+let auth
+
+describe('Reset payment request', () => {
+  beforeEach(async () => {
+    auth = { strategy: 'session-auth', credentials: { scope: [schemeAdmin] } }
+    jest.clearAllMocks()
+    server = await createServer()
+  })
+
+  afterEach(async () => {
+    await server.stop()
+  })
+
+  test('returns 403 and no permission', async () => {
+    auth.credentials.scope = []
+    const res = await server.inject({ method: 'GET', url, auth })
+    expect(res.statusCode).toBe(403)
+  })
+
+  test('returns 302 no auth', async () => {
+    const res = await server.inject({ method: 'GET', url })
+    expect(res.statusCode).toBe(302)
+    expect(res.headers.location).toEqual('/login')
+  })
+
+  test('returns 200 page if authorised', async () => {
+    const res = await server.inject({ method: 'GET', url, auth })
+    expect(res.statusCode).toBe(200)
+  })
+
+  test('returns 400 if no invoice', async () => {
+    const res = await server.inject({ method: 'POST', url, auth, payload: {} })
+    expect(res.statusCode).toBe(400)
+  })
+
+  test('returns 400 if invalid invoice', async () => {
+    const res = await server.inject({ method: 'POST', url, auth, payload: { invoiceNumber: true } })
+    expect(res.statusCode).toBe(400)
+  })
+
+  test('returns 400 if undefined invoice', async () => {
+    const res = await server.inject({ method: 'POST', url, auth, payload: { invoiceNumber: undefined } })
+    expect(res.statusCode).toBe(400)
+  })
+
+  test('returns 302 to success if valid invoice', async () => {
+    const res = await server.inject({ method: 'POST', url, auth, payload: { invoiceNumber: validInvoiceNumber } })
+    expect(res.statusCode).toBe(302)
+    console.log(res)
+  })
+})

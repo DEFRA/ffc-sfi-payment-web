@@ -8,6 +8,7 @@ const routes = [].concat(
   require('../routes/logout'),
   require('../routes/holds'),
   require('../routes/schemes'),
+  require('../routes/payment-requests'),
   require('../routes/dev-auth')
 )
 

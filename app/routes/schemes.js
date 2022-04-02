@@ -1,7 +1,6 @@
 const { get, post } = require('../api')
 const Joi = require('joi')
 const ViewModel = require('./models/update-scheme')
-const auth = require('../auth')
 const { schemeAdmin } = require('../auth/permissions')
 
 module.exports = [{
@@ -57,18 +56,10 @@ module.exports = [{
         active: Joi.boolean().required()
       }),
       failAction: async (request, h, error) => {
-        const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
-        if (!permissions.schemeAdmin) {
-          return h.redirect('/').code(401).takeover()
-        }
         return h.view('update-payment-scheme', new ViewModel(request.payload, error)).code(400).takeover()
       }
     },
     handler: async (request, h) => {
-      const permissions = await auth.refresh(request.auth.credentials.account, request.cookieAuth)
-      if (!permissions.schemeAdmin) {
-        return h.redirect('/').code(401).takeover()
-      }
       if (request.payload.confirm) {
         await post('/change-payment-status', { schemeId: request.payload.schemeId, active: !request.payload.active })
       }
