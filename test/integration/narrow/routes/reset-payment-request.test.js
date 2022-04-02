@@ -4,6 +4,7 @@ const { post } = require('../../../../app/api')
 jest.mock('../../../../app/auth')
 const createServer = require('../../../../app/server')
 const { schemeAdmin } = require('../../../../app/auth/permissions')
+const Boom = require('@hapi/boom')
 
 const url = '/payment-request/reset'
 const validInvoiceNumber = 'S1234567S123456V001'
@@ -56,6 +57,14 @@ describe('Reset payment request', () => {
   test('returns 302 to success if valid invoice', async () => {
     const res = await server.inject({ method: 'POST', url, auth, payload: { invoiceNumber: validInvoiceNumber } })
     expect(res.statusCode).toBe(302)
-    console.log(res)
+    expect(res.headers.location).toBe('/reset-payment-request-success?invoiceNumber=S1234567S123456V001')
+  })
+
+  test('returns error if rejected request', async () => {
+    post.mockImplementation(() => { throw Boom.preconditionFailed('Rejected') })
+    const res = await server.inject({ method: 'POST', url, auth, payload: { invoiceNumber: validInvoiceNumber } })
+    expect(res.statusCode).toBe(412)
+    console.log(res.request.response.source.context)
+    expect(res.request.response.source.context.error).toBe('Rejected')
   })
 })
