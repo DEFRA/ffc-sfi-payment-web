@@ -1,12 +1,18 @@
+jest.mock('../../../../app/auth')
 const cheerio = require('cheerio')
 const createServer = require('../../../../app/server')
+jest.mock('../../../../app/api')
+const { get } = require('../../../../app/api')
+const { schemeAdmin } = require('../../../../app/auth/permissions')
+
+let server
+const url = '/payment-schemes'
+const pageH1 = 'Schemes'
+let auth
 
 describe('Payment schemes', () => {
-  let server
-  const url = '/payment-schemes'
-  const pageH1 = 'Schemes'
-
   beforeEach(async () => {
+    auth = { strategy: 'session-auth', credentials: { scope: [schemeAdmin] } }
     jest.clearAllMocks()
     server = await createServer()
   })
@@ -14,22 +20,6 @@ describe('Payment schemes', () => {
   afterEach(async () => {
     await server.stop()
   })
-
-  jest.mock('../../../../app/api')
-  const { get } = require('../../../../app/api')
-
-  jest.mock('../../../../app/auth/azure-auth')
-  const { refresh } = require('../../../../app/auth/azure-auth')
-
-  const auth = {
-    strategy: 'session-auth',
-    isAuthenticated: true,
-    credentials: {
-      account: {
-        name: 'A Farmer'
-      }
-    }
-  }
 
   const mockPaymentSchemes = [
     {
@@ -43,10 +33,6 @@ describe('Payment schemes', () => {
       active: false
     }
   ]
-
-  const mockAzureAuthRefresh = (schemeAdmin = true) => {
-    refresh.mockResolvedValue({ schemeAdmin })
-  }
 
   function mockGetPaymentSchemes (paymentSchemes) {
     get.mockResolvedValueOnce({ payload: { paymentSchemes } })
@@ -67,7 +53,6 @@ describe('Payment schemes', () => {
       { holdResponse: 0 },
       { holdResponse: false }
     ])('returns 500 and no response view when falsy value returned from getting payment schemes', async ({ holdResponse }) => {
-      mockAzureAuthRefresh()
       get.mockResolvedValueOnce(holdResponse)
 
       const res = await server.inject({ method, url, auth })
@@ -80,7 +65,6 @@ describe('Payment schemes', () => {
     })
 
     test('returns 200 and no schemes when non are returned', async () => {
-      mockAzureAuthRefresh()
       mockGetPaymentSchemes([])
 
       const res = await server.inject({ method, url, auth })
@@ -95,7 +79,6 @@ describe('Payment schemes', () => {
     })
 
     test('returns 200 and correctly lists returned payment schemes', async () => {
-      mockAzureAuthRefresh()
       mockGetPaymentSchemes(mockPaymentSchemes)
 
       const res = await server.inject({ method, url, auth })
@@ -114,17 +97,15 @@ describe('Payment schemes', () => {
       })
     })
 
-    test('returns 401 and redirects to / - no permission', async () => {
+    test('returns 403 and redirects to / - no permission', async () => {
+      auth.credentials.scope = []
       mockGetPaymentSchemes(mockPaymentSchemes)
-      mockAzureAuthRefresh(false)
       const res = await server.inject({ method, url, auth })
 
-      expect(res.statusCode).toBe(401)
-      expect(res.headers.location).toEqual('/')
+      expect(res.statusCode).toBe(403)
     })
 
     test('returns 302 and redirects to /login - no auth', async () => {
-      mockAzureAuthRefresh()
       mockGetPaymentSchemes(mockPaymentSchemes)
 
       const res = await server.inject({ method, url })

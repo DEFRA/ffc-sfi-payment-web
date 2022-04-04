@@ -3,19 +3,16 @@
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% block beforeContent %}
+{% block content %}
   {{ govukBreadcrumbs({
     items: [{
       text: "Home",
       href: "/"
     }]
   })}}
-{% endblock %}
-
-{% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <h1 class="govuk-heading-l">Payment Holds</h1>
+      <h1 class="govuk-heading-l">Payment holds</h1>
 
       <p class="govuk-body">
         Payment holds will pause all payment requests for a customer and scheme.
@@ -49,7 +46,7 @@
                   <form method="POST" action="/remove-payment-hold">
                     <input type="hidden" name="crumb" value="{{crumb}}"/>
                     <input type="hidden" id="holdId" name="holdId" value="{{ paymentHold.holdId }}">
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" style="margin-bottom: 0px;">Remove</button>
+                    <button class="govuk-button-link">Remove</button>
                   </form>
                 </td>
               </tr>
@@ -57,7 +54,7 @@
           </tbody>
         </table>
       {% else %}
-        <p id="no-hold-text" class="govuk-body">No current payment holds</p>
+        <p id="no-hold-text" class="govuk-body">There are no payment holds.</p>
       {% endif %}
     </div>
   </div>
