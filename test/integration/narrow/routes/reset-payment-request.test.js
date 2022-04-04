@@ -28,7 +28,7 @@ describe('Reset payment request', () => {
     expect(res.statusCode).toBe(403)
   })
 
-  test('returns 302 no auth', async () => {
+  test('returns 302 if not authorised', async () => {
     const res = await server.inject({ method: 'GET', url })
     expect(res.statusCode).toBe(302)
     expect(res.headers.location).toEqual('/login')
@@ -64,7 +64,6 @@ describe('Reset payment request', () => {
     post.mockImplementation(() => { throw Boom.preconditionFailed('Rejected') })
     const res = await server.inject({ method: 'POST', url, auth, payload: { invoiceNumber: validInvoiceNumber } })
     expect(res.statusCode).toBe(412)
-    console.log(res.request.response.source.context)
     expect(res.request.response.source.context.error).toBe('Rejected')
   })
 })
