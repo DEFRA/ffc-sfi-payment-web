@@ -7,7 +7,7 @@ module.exports = [{
   path: '/payment-request/reset',
   options: {
     auth: { scope: [schemeAdmin] },
-    handler: async (request, h) => {
+    handler: async (_request, h) => {
       return h.view('reset-payment-request')
     }
   }
