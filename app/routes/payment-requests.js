@@ -1,5 +1,5 @@
 const { post } = require('../api')
-const Joi = require('joi')
+const schema = require('./schemas/invoice-number')
 const { schemeAdmin } = require('../auth/permissions')
 
 module.exports = [{
@@ -18,12 +18,7 @@ module.exports = [{
   options: {
     auth: { scope: [schemeAdmin] },
     validate: {
-      payload: Joi.object({
-        invoiceNumber: Joi.string().required().error(errors => {
-          errors.forEach(err => { err.message = 'Enter a valid invoice number' })
-          return errors
-        })
-      }),
+      payload: schema,
       failAction: async (request, h, error) => {
         return h.view('reset-payment-request', { error, invoiceNumber: request.payload.invoiceNumber }).code(400).takeover()
       }
