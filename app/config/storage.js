@@ -4,8 +4,7 @@ const Joi = require('joi')
 const schema = Joi.object({
   connectionStr: Joi.string().when('useConnectionStr', { is: true, then: Joi.required(), otherwise: Joi.allow('').optional() }),
   storageAccount: Joi.string().required(),
-  container: Joi.string().default('dax'),
-  folder: Joi.string().default('outbound'),
+  container: Joi.string().default('eventprojection'),
   useConnectionStr: Joi.boolean().default(false),
   createContainers: Joi.boolean().default(true)
 })

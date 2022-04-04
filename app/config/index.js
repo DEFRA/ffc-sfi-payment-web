@@ -1,6 +1,6 @@
 const joi = require('joi')
 const authConfig = require('./auth')
-const storageConfig = require('./storage-config')
+const storageConfig = require('./storage')
 
 // Define config schema
 const schema = joi.object({

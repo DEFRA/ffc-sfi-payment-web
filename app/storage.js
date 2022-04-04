@@ -26,7 +26,7 @@ const initialiseContainers = async () => {
 
 async function initialiseFolders () {
   const placeHolderText = 'Placeholder'
-  const client = container.getBlockBlobClient(`${config.folder}/default.txt`)
+  const client = container.getBlockBlobClient('default.txt')
   await client.upload(placeHolderText, placeHolderText.length)
 }
 
@@ -34,13 +34,13 @@ const getBlobList = async () => {
   initialiseContainers()
 }
 
-const getOutboundBlobClient = async (filename) => {
+const getBlobClient = async (filename) => {
   containersInitialised ?? await initialiseContainers()
-  return container.getBlockBlobClient(`${config.folder}/${filename}`)
+  return container.getBlockBlobClient(filename)
 }
 
 module.exports = {
   blobServiceClient,
-  getOutboundBlobClient,
+  getBlobClient,
   getBlobList
 }
