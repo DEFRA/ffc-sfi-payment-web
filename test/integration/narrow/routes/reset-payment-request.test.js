@@ -34,7 +34,7 @@ describe('Reset payment request', () => {
     expect(res.headers.location).toEqual('/login')
   })
 
-  test('returns 200 page if authorised', async () => {
+  test('returns 200 if authorised', async () => {
     const res = await server.inject({ method: 'GET', url, auth })
     expect(res.statusCode).toBe(200)
   })
