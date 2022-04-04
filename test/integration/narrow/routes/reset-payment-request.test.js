@@ -22,7 +22,7 @@ describe('Reset payment request', () => {
     await server.stop()
   })
 
-  test('returns 403 and if no permissions in scope', async () => {
+  test('returns 403 if no permissions in scope', async () => {
     auth.credentials.scope = []
     const res = await server.inject({ method: 'GET', url, auth })
     expect(res.statusCode).toBe(403)
