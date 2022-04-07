@@ -22,9 +22,9 @@ If authentication is enabled, this service needs to be registered with [Azure Ap
 
 The following environment varibles need to be set:
 
-- AZURE_CLIENT_ID
-- AZURE_TENANT_ID
-- AZURE_CLIENT_SECRET
+- AZUREID_CLIENT_ID
+- AZUREID_TENANT_ID
+- AZUREID_CLIENT_SECRET
 
 These can be retrieved from the App Registration overview blade.
 
