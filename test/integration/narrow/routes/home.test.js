@@ -1,21 +1,12 @@
+const { holdAdmin } = require('../../../../app/auth/permissions')
+
 describe('Home test', () => {
   jest.mock('../../../../app/api')
+  jest.mock('../../../../app/auth')
   const createServer = require('../../../../app/server')
   let server
 
-  const auth = {
-    strategy: 'session-auth',
-    isAuthenticated: true,
-    credentials: {
-      account: {
-        name: 'A Farmer',
-        username: 'farmer'
-      },
-      permissions: {
-        holdAdmin: true
-      }
-    }
-  }
+  const auth = { strategy: 'session-auth', credentials: { scope: [holdAdmin] } }
 
   beforeEach(async () => {
     server = await createServer()

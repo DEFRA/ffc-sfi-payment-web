@@ -1,14 +1,20 @@
+jest.mock('../../../../app/api')
+const { get, post } = require('../../../../app/api')
+jest.mock('../../../../app/auth')
 const cheerio = require('cheerio')
 const createServer = require('../../../../app/server')
 const getCrumbs = require('../../../helpers/get-crumbs')
+const { holdAdmin } = require('../../../../app/auth/permissions')
+
+const url = '/add-payment-hold'
+const pageH1 = 'Add payment hold'
+const validFrn = 1000000000
+let server
+let auth
 
 describe('Payment holds', () => {
-  let server
-  const url = '/add-payment-hold'
-  const pageH1 = 'Add payment hold'
-  const validFrn = 1000000000
-
   beforeEach(async () => {
+    auth = { strategy: 'session-auth', credentials: { scope: [holdAdmin] } }
     jest.clearAllMocks()
     server = await createServer()
   })
@@ -17,31 +23,11 @@ describe('Payment holds', () => {
     await server.stop()
   })
 
-  jest.mock('../../../../app/api')
-  const { get, post } = require('../../../../app/api')
-
-  jest.mock('../../../../app/auth/azure-auth')
-  const { refresh } = require('../../../../app/auth/azure-auth')
-
-  const auth = {
-    strategy: 'session-auth',
-    isAuthenticated: true,
-    credentials: {
-      account: {
-        name: 'A Farmer'
-      }
-    }
-  }
-
   const mockPaymentHoldCategories = [{
     holdCategoryId: 123,
     name: 'my hold category',
     schemeName: 'schemeName'
   }]
-
-  const mockAzureAuthRefresh = (holdAdmin = true) => {
-    refresh.mockResolvedValue({ holdAdmin })
-  }
 
   const mockGetPaymentHoldCategories = (paymentHoldCategories) => {
     get.mockResolvedValue({ payload: { paymentHoldCategories } })
@@ -56,7 +42,6 @@ describe('Payment holds', () => {
     const method = 'GET'
 
     test('returns 200 and no hold categories when no categories returned in response', async () => {
-      mockAzureAuthRefresh()
       mockGetPaymentHoldCategories([])
 
       const res = await server.inject({ method, url, auth })
@@ -68,11 +53,10 @@ describe('Payment holds', () => {
       expect($('.govuk-radios__input').length).toEqual(0)
     })
 
-    test('returns 401 and no addPaymentHold permission', async () => {
-      mockAzureAuthRefresh(false)
+    test('returns 403 and no addPaymentHold permission', async () => {
+      auth.credentials.scope = []
       const res = await server.inject({ method, url, auth })
-      expect(res.statusCode).toBe(401)
-      expect(res.headers.location).toEqual('/')
+      expect(res.statusCode).toBe(403)
     })
 
     test('returns 302 no auth', async () => {
@@ -82,7 +66,6 @@ describe('Payment holds', () => {
     })
 
     test('returns 200 and correctly lists returned hold category', async () => {
-      mockAzureAuthRefresh()
       mockGetPaymentHoldCategories(mockPaymentHoldCategories)
 
       const res = await server.inject({ method, url, auth })
@@ -101,7 +84,6 @@ describe('Payment holds', () => {
     const method = 'POST'
 
     test('redirects successful request to \'/\' and correctly POSTs hold details', async () => {
-      mockAzureAuthRefresh()
       const mockForCrumbs = () => mockGetPaymentHoldCategories([])
       const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
@@ -120,31 +102,13 @@ describe('Payment holds', () => {
       expect(res.headers.location).toEqual('/payment-holds')
     })
 
-    test('redirects unauthorized request to \'/\' and no addPaymentHold permission', async () => {
-      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
-      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
-      mockAzureAuthRefresh(false)
-      const holdCategory = 'hold this'
-      const res = await server.inject({
-        method,
-        url,
-        auth,
-        payload: { crumb: viewCrumb, frn: validFrn, holdCategory },
-        headers: { cookie: `crumb=${cookieCrumb}` }
-      })
-
-      expect(res.statusCode).toBe(401)
-      expect(res.headers.location).toEqual('/')
-    })
-
     test.each([
-      { frn: 10000000001, holdCategoryId: 1, expectedErrorMessage: 'FRN is invalid' },
-      { frn: 999999998, holdCategoryId: 1, expectedErrorMessage: 'FRN is invalid' },
-      { frn: 'not-a-number', holdCategoryId: 1, expectedErrorMessage: 'FRN is invalid' },
-      { frn: undefined, holdCategoryId: 1, expectedErrorMessage: 'FRN is invalid' },
+      { frn: 10000000001, holdCategoryId: 1, expectedErrorMessage: 'Enter a 10-digit FRN' },
+      { frn: 999999998, holdCategoryId: 1, expectedErrorMessage: 'Enter a 10-digit FRN' },
+      { frn: 'not-a-number', holdCategoryId: 1, expectedErrorMessage: 'Enter a 10-digit FRN' },
+      { frn: undefined, holdCategoryId: 1, expectedErrorMessage: 'Enter a 10-digit FRN' },
       { frn: 1000000000, holdCategoryId: undefined, expectedErrorMessage: 'Category is required' }
     ])('returns 400 and view with errors when request fails validation - %p', async ({ frn, holdCategoryId, expectedErrorMessage }) => {
-      mockAzureAuthRefresh()
       const mockForCrumbs = () => mockGetPaymentHoldCategories([])
       const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
@@ -170,7 +134,6 @@ describe('Payment holds', () => {
       { viewCrumb: 'incorrect' },
       { viewCrumb: undefined }
     ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
-      mockAzureAuthRefresh()
       const mockForCrumbs = () => mockGetPaymentHoldCategories([])
       const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
@@ -190,7 +153,6 @@ describe('Payment holds', () => {
       { cookieCrumb: 'incorrect' },
       { cookieCrumb: undefined }
     ])('returns 403 when cookie crumb is invalid or not included', async ({ cookieCrumb }) => {
-      mockAzureAuthRefresh()
       const mockForCrumbs = () => mockGetPaymentHoldCategories([])
       const { viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
 
