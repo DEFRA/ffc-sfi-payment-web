@@ -1,14 +1,50 @@
 {% extends '_layout.njk' %}
-{% from "./macros/logout.njk" import logout %}
+{% from "macros/search-box.njk" import searchBox %}
 
 {% block beforeContent %}
-  {{ logout(username, permissions) }}
 {% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <h1 class="govuk-heading-xl">Projection</h1>
+      <h1 class="govuk-heading-xl">Events</h1>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          <div class="user-search-box">
+            <form class="search-form" action="/event-projection" method="GET">
+              {{ searchBox(model.search) }}
+            </form>
+          </div>
+          {% if blobData.blobList.length > 0 %}
+            <table class="govuk-table">
+              <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                  <th scope="col" class="govuk-table__header">FRN</th>
+                  <th scope="col" class="govuk-table__header">Agreement Number</th>
+                  <th scope="col" class="govuk-table__header">Payment Request Number</th>
+                  <th scope="col" class="govuk-table__header">Last Updated</th>
+                  <th scope="col" class="govuk-table__header"></th>
+                </tr>
+              </thead>
+              <tbody class="govuk-table__body">
+                {% for blob in blobData.blobList %}
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">{{ blob.frn }}</td>
+                    <td class="govuk-table__cell">{{ blob.agreementNumber }}</td>
+                    <td class="govuk-table__cell">{{ blob.requestNumber }}</td>
+                    <td class="govuk-table__cell">{{ blob.updatedDate }}</td>
+                    <td class="govuk-table__cell"><a href="/event-projection-detail/{{blob.frn}}/{{blob.agreementNumber}}/{{blob.requestNumber}}">View</a></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+          {{ model.frn.length }}
+          {% if (blobData.blobList.length === 0) and (model.frn)  %}
+            <p id="no-event-text" class="govuk-body">No events found.</p>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -9,7 +9,8 @@ const routes = [].concat(
   require('../routes/holds'),
   require('../routes/schemes'),
   require('../routes/dev-auth'),
-  require('../routes/event-projection')
+  require('../routes/event-projection'),
+  require('../routes/event-projection-detail')
 )
 
 module.exports = {

@@ -4,8 +4,7 @@ const Joi = require('joi')
 const schema = Joi.object({
   connectionStr: Joi.string().when('useConnectionStr', { is: true, then: Joi.required(), otherwise: Joi.allow('').optional() }),
   storageAccount: Joi.string().required(),
-  container: Joi.string().default('dax'),
-  folder: Joi.string().default('outbound'),
+  container: Joi.string().default('payeventprojectionstore'),
   useConnectionStr: Joi.boolean().default(false),
   createContainers: Joi.boolean().default(true)
 })
@@ -15,7 +14,6 @@ const config = {
   connectionStr: process.env.AZURE_STORAGE_CONNECTION_STRING,
   storageAccount: process.env.AZURE_STORAGE_ACCOUNT_NAME,
   container: process.env.AZURE_STORAGE_CONTAINER,
-  folder: process.env.AZURE_STORAGE_FOLDER,
   useConnectionStr: process.env.AZURE_STORAGE_USE_CONNECTION_STRING,
   createContainers: process.env.AZURE_STORAGE_CREATE_CONTAINERS
 }

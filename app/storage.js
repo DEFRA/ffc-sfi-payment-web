@@ -1,5 +1,6 @@
 const { DefaultAzureCredential } = require('@azure/identity')
 const { BlobServiceClient } = require('@azure/storage-blob')
+const parseJsonDate = require('./parse-json-date')
 const config = require('./config').storageConfig
 let blobServiceClient
 let containersInitialised
@@ -20,27 +21,49 @@ const initialiseContainers = async () => {
     console.log('Making sure blob containers exist')
     await container.createIfNotExists()
   }
-  await initialiseFolders()
   containersInitialised = true
 }
 
-async function initialiseFolders () {
-  const placeHolderText = 'Placeholder'
-  const client = container.getBlockBlobClient(`${config.folder}/default.txt`)
-  await client.upload(placeHolderText, placeHolderText.length)
+const getBlobList = async (prefix) => {
+  console.log(`Getting blob list for prefix ${prefix}`)
+  !containersInitialised && await initialiseContainers()
+  const eventBlobList = {
+    prefix,
+    blobList: []
+  }
+
+  const blobList = await container.listBlobsFlat({ prefix: prefix.toString() })
+
+  for await (const blob of blobList) {
+    const split = blob.name.split('/')
+    const data = {
+      frn: split[0],
+      agreementNumber: split[1],
+      requestNumber: split[2],
+      fileName: split[3],
+      blob: blob.name,
+      updatedDate: parseJsonDate(blob.properties.lastModified, false)
+    }
+
+    eventBlobList.blobList.push(data)
+  }
+
+  return eventBlobList
 }
 
-const getBlobList = async () => {
-  initialiseContainers()
-}
-
-const getOutboundBlobClient = async (filename) => {
+const getBlob = async (blobPath) => {
   containersInitialised ?? await initialiseContainers()
-  return container.getBlockBlobClient(`${config.folder}/${filename}`)
+  return container.getBlockBlobClient(blobPath)
+}
+
+async function getProjection (blobPath) {
+  const blob = await getBlob(blobPath)
+  const blobBuffer = await blob.downloadToBuffer()
+  return JSON.parse(blobBuffer.toString('utf-8'))
 }
 
 module.exports = {
   blobServiceClient,
-  getOutboundBlobClient,
+  getProjection,
   getBlobList
 }
