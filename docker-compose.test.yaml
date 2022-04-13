@@ -12,9 +12,9 @@ services:
     command: npm run test
     environment:
       NODE_ENV: ${NODE_ENV:-test}
-      AZURE_CLIENT_SECRET: itsasecretshhhhhhhh
-      AZURE_CLIENT_ID: NCC-1701-D
-      AZURE_TENANT_ID: C3PO-R2D2
+      AZUREID_CLIENT_SECRET: itsasecretshhhhhhhh
+      AZUREID_CLIENT_ID: NCC-1701-D
+      AZUREID_TENANT_ID: C3PO-R2D2
       REDIRECT_URL: http://thesearenotthedroidsyouarelookingfor
       AUTHENTICATION_ENABLED: "true"
       AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://ffc-pay-web-azurite:10000/devstoreaccount1;

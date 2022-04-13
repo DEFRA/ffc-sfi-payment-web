@@ -42,8 +42,8 @@ container:
   imagePullPolicy: IfNotPresent
   requestMemory: 10Mi
   requestCpu: 10m
-  limitMemory: 40Mi
-  limitCpu: 40m
+  limitMemory: 120Mi
+  limitCpu: 60m
   port: 3007
   paymentsEndpoint: http://ffc-pay-processing.ffc-pay
   cookiePassword: cookiecookiecookiecookiecookiecookie
