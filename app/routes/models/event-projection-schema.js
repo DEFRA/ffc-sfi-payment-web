@@ -60,42 +60,54 @@ module.exports = [{
 {
   eventType: 'payment-request-submission',
   service: 'ffc-pay-submission',
-  eventLinks: [{
-    link: 'dax-outbound'
-  }]
+  eventLinks: [
+    {
+      link: 'dax-outbound'
+    }
+  ]
 },
 {
   eventType: 'payment-request-debt-response',
   service: 'debt-enrichment',
-  eventLinks: [{
-    link: 'request-editor'
-  }]
+  eventLinks: [
+    {
+      link: 'request-editor'
+    }
+  ]
 },
 {
   eventType: 'payment-request-manual-ledger-response',
   service: 'manual-ledger-check',
-  eventLinks: [{
-    link: 'request-editor'
-  }]
+  eventLinks: [
+    {
+      link: 'request-editor'
+    }
+  ]
 },
 {
   eventType: 'request-editor',
   service: 'ffc-pay-request-editor',
-  eventLinks: [{
-    link: 'payment-request-ledger-assignment-quality-checked'
-  }]
+  eventLinks: [
+    {
+      link: 'payment-request-ledger-assignment-quality-checked'
+    }
+  ]
 },
 {
   eventType: 'payment-request-ledger-assignment-quality-checked',
   service: 'quality-check',
-  eventLinks: [{
-    link: 'payment-request-processing'
-  }]
+  eventLinks: [
+    {
+      link: 'payment-request-processing'
+    }
+  ]
 },
 {
   eventType: 'payment-request-return',
   service: 'ffc-pay-responses',
-  eventLinks: [{
-    link: 'payment-request-processing'
-  }]
+  eventLinks: [
+    {
+      link: 'payment-request-processing'
+    }
+  ]
 }]
