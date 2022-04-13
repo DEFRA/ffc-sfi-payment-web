@@ -1,7 +1,7 @@
 const projectionSchema = require('./event-projection-schema')
 const parseJsonDate = require('../../parse-json-date')
 
-function ViewModel (projection, frn, error) {
+function ViewModel (projection, frn) {
   this.model = {
     projection,
     graphDefinition: buildGraphDefinition(projection),
