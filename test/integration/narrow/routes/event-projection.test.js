@@ -95,7 +95,6 @@ describe('event projection', () => {
       expect(res.statusCode).toBe(400)
 
       const $ = cheerio.load(res.payload)
-      console.log(res.payload)
       expect($('#error-message').text()).toContain('must be a number')
     })
   })

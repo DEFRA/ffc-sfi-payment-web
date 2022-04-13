@@ -11,25 +11,21 @@ module.exports = [{
       const requestNumber = request.params.requestNumber
       const eventType = request.query.eventType
 
-      if (frn && agreementNumber && requestNumber) {
-        const blobData = await getBlobList(`${frn}/${agreementNumber}/${requestNumber}`)
-        let projectionData = {}
-        let eventDetails = {}
+      const blobData = await getBlobList(`${frn}/${agreementNumber}/${requestNumber}`)
+      let projectionData = {}
+      let eventDetails = {}
 
-        if (blobData.blobList.length) {
-          projectionData = await getProjection(`${blobData.blobList[0].blob}`)
-          eventDetails = eventType ? projectionData.events.find(x => x.eventType === eventType) : projectionData.events.find(x => x.eventType === 'batch-processing')
-          if (!eventDetails) {
-            return h.redirect('/404')
-          }
-        } else {
+      if (blobData?.blobList.length) {
+        projectionData = await getProjection(`${blobData.blobList[0].blob}`)
+        eventDetails = eventType ? projectionData?.events.find(x => x.eventType === eventType) : projectionData.events.find(x => x.eventType === 'batch-processing')
+        if (!eventDetails) {
           return h.redirect('/404')
         }
-
-        return h.view('event-projection-detail', { eventDetails, ...new ViewModel(projectionData, frn) })
+      } else {
+        return h.redirect('/404')
       }
 
-      return h.redirect('/404').code(404).takeover()
+      return h.view('event-projection-detail', { eventDetails, ...new ViewModel(projectionData, frn) })
     }
   }
 }]
