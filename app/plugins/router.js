@@ -9,7 +9,7 @@ const routes = [].concat(
   require('../routes/holds'),
   require('../routes/schemes'),
   require('../routes/event-projection'),
-  require('../routes/event-projection-detail')
+  require('../routes/event-projection-detail'),
   require('../routes/payment-requests'),
   require('../routes/dev-auth')
 )
