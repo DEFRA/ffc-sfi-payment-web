@@ -4,18 +4,22 @@ const Joi = require('joi')
 const schema = Joi.object({
   connectionStr: Joi.string().when('useConnectionStr', { is: true, then: Joi.required(), otherwise: Joi.allow('').optional() }),
   storageAccount: Joi.string().required(),
-  container: Joi.string().default('payeventprojectionstore'),
+  projectionContainer: Joi.string().default('payeventstore'),
+  reportContainer: Joi.string().default('reports'),
   useConnectionStr: Joi.boolean().default(false),
-  createContainers: Joi.boolean().default(true)
+  createContainers: Joi.boolean().default(true),
+  miReportName: Joi.boolean().default('ffc-pay-mi-report.csv')
 })
 
 // Build config
 const config = {
   connectionStr: process.env.AZURE_STORAGE_CONNECTION_STRING,
   storageAccount: process.env.AZURE_STORAGE_ACCOUNT_NAME,
-  container: process.env.AZURE_STORAGE_CONTAINER,
+  projectionContainer: process.env.AZURE_STORAGE_CONTAINER_PROJECTION,
+  reportContainer: process.env.AZURE_STORAGE_CONTAINER_REPORT,
   useConnectionStr: process.env.AZURE_STORAGE_USE_CONNECTION_STRING,
-  createContainers: process.env.AZURE_STORAGE_CREATE_CONTAINERS
+  createContainers: process.env.AZURE_STORAGE_CREATE_CONTAINERS,
+  miReportName: process.env.MI_REPORT_NAME
 }
 
 // Validate config

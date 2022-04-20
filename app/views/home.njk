@@ -6,48 +6,61 @@
     <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-xl">{{ serviceName }}</h1>
 
-      <div class="govuk-cards govuk-cards--2">
-        {% if auth.isHoldAdminUser %}
-        <div class="govuk-cards--2__item govuk-card--dashboard">
-          <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Payment holds</h2>
-          <p class="govuk-heading-xl govuk-!-margin-bottom-5">
-            {{ totalHolds }}
-          </p>
-          <ul class="govuk-list">
-            <li>
-              <a href="/payment-holds" class="govuk-link">Manage holds</a>
-            </li>
-          </ul>
+      {% if auth.isHoldAdminUser %}
+        <div class="govuk-cards govuk-cards--2">
+          <div class="govuk-cards--2__item govuk-card--dashboard">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Payment holds</h2>
+            <p class="govuk-heading-xl govuk-!-margin-bottom-5">
+              {{ totalHolds }}
+            </p>
+            <ul class="govuk-list">
+              <li>
+                <a href="/payment-holds" class="govuk-link">Manage holds</a>
+              </li>
+            </ul>
+          </div>
+          <div class="govuk-cards--2__item govuk-card--dashboard">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Report</h2>
+            <p class="govuk-body govuk-!-margin-bottom-5">
+              Download payment request statuses
+            </p>
+            <ul class="govuk-list">
+              <li>
+                <a href="/report" class="govuk-link">Download report</a>
+              </li>
+            </ul>
+          </div>
         </div>
         {% endif %}
         {% if auth.isSchemeAdminUser %}
-        <div class="govuk-cards--2__item govuk-card--dashboard">
-          <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Schemes</h2>
-          <p class="govuk-heading-xl govuk-!-margin-bottom-5">
-            {{ totalSchemes }}
-          </p>
-          <ul class="govuk-list">
-            <li>
-              <a href="/payment-schemes" class="govuk-link">Manage schemes</a>
-            </li>
-            <li>
-              <a href="/payment-request/reset" class="govuk-link">Reset payment request</a>
-            </li>
-          </ul>
+          <div class="govuk-cards govuk-cards--2">
+            <div class="govuk-cards--2__item govuk-card--dashboard">
+              <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Schemes</h2>
+              <p class="govuk-heading-xl govuk-!-margin-bottom-5">
+                {{ totalSchemes }}
+              </p>
+              <ul class="govuk-list">
+                <li>
+                  <a href="/payment-schemes" class="govuk-link">Manage schemes</a>
+                </li>
+                <li>
+                  <a href="/payment-request/reset" class="govuk-link">Reset payment request</a>
+                </li>
+              </ul>
+            </div>
+          <div class="govuk-cards--2__item govuk-card--dashboard">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Events</h2>
+            <p class="govuk-body govuk-!-margin-bottom-8">
+              View payment events by FRN
+            </p>
+            <ul class="govuk-list">
+              <li>
+                <a href="/event-projection" class="govuk-link">View events</a>
+              </li>
+            </ul>
+          </div>
         </div>
-        {% endif %}
-        <div class="govuk-cards--2__item govuk-card--dashboard">
-          <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Events</h2>
-          <p class="govuk-heading-s govuk-!-margin-bottom-8">
-            View event projections by FRN
-          </p>
-          <ul class="govuk-list">
-            <li>
-              <a href="/event-projection" class="govuk-link">View events</a>
-            </li>
-          </ul>
-        </div>
-      </div>
+      {% endif %}
     </div>
   </div>
 </div>

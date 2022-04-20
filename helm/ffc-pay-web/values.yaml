@@ -47,6 +47,9 @@ container:
   port: 3007
   paymentsEndpoint: http://ffc-pay-processing.ffc-pay
   cookiePassword: cookiecookiecookiecookiecookiecookie
+  azureStorageConnectionString: dummy
+  azureStorageUseConnectionString: false
+  azureStorageCreateContainers: false
 
 ingress:
   class: nginx

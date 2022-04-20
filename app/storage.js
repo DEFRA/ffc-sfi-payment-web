@@ -14,12 +14,14 @@ if (config.useConnectionStr) {
   blobServiceClient = new BlobServiceClient(uri, new DefaultAzureCredential())
 }
 
-const container = blobServiceClient.getContainerClient(config.container)
+const projectionContainer = blobServiceClient.getContainerClient(config.projectionContainer)
+const reportContainer = blobServiceClient.getContainerClient(config.reportContainer)
 
 const initialiseContainers = async () => {
   if (config.createContainers) {
     console.log('Making sure blob containers exist')
-    await container.createIfNotExists()
+    await projectionContainer.createIfNotExists()
+    await reportContainer.createIfNotExists()
   }
   containersInitialised = true
 }
@@ -32,7 +34,7 @@ const getBlobList = async (prefix) => {
     blobList: []
   }
 
-  const blobList = await container.listBlobsFlat({ prefix: prefix.toString() })
+  const blobList = await projectionContainer.listBlobsFlat({ prefix: prefix.toString() })
 
   for await (const blob of blobList) {
     const split = blob.name.split('/')
@@ -53,7 +55,7 @@ const getBlobList = async (prefix) => {
 
 const getBlob = async (blobPath) => {
   containersInitialised ?? await initialiseContainers()
-  return container.getBlockBlobClient(blobPath)
+  return projectionContainer.getBlockBlobClient(blobPath)
 }
 
 async function getProjection (blobPath) {
@@ -62,8 +64,15 @@ async function getProjection (blobPath) {
   return JSON.parse(blobBuffer.toString('utf-8'))
 }
 
+async function getMIReport () {
+  containersInitialised ?? await initialiseContainers()
+  const blob = await reportContainer.getBlockBlobClient(config.miReportName)
+  return blob.download()
+}
+
 module.exports = {
   blobServiceClient,
   getProjection,
-  getBlobList
+  getBlobList,
+  getMIReport
 }
