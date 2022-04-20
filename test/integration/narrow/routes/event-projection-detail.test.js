@@ -1,5 +1,6 @@
+const { schemeAdmin } = require('../../../../app/auth/permissions')
 const createServer = require('../../../../app/server')
-jest.mock('../../../../app/auth/azure-auth')
+jest.mock('../../../../app/auth')
 jest.mock('../../../../app/storage')
 const { getBlobList, getProjection } = require('../../../../app/storage')
 
@@ -11,15 +12,7 @@ describe('event projection detail', () => {
   const paymentRequestNumber = '1'
   const prefix = `${frn}/${agreementNumber}/${paymentRequestNumber}`
   const parseJsonDate = require('../../../../app/parse-json-date')
-
-  const auth = {
-    strategy: 'session-auth',
-    credentials: {
-      account: {
-        name: 'A Farmer'
-      }
-    }
-  }
+  let auth
 
   const blobs = {
     prefix,
@@ -49,6 +42,7 @@ describe('event projection detail', () => {
   }
 
   beforeEach(async () => {
+    auth = { strategy: 'session-auth', credentials: { scope: [schemeAdmin] } }
     jest.clearAllMocks()
     server = await createServer()
   })
