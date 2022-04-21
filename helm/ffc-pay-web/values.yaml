@@ -50,6 +50,7 @@ container:
   azureStorageConnectionString: dummy
   azureStorageUseConnectionString: false
   azureStorageCreateContainers: false
+  azureStorageAccountName: ffcpay
 
 ingress:
   class: nginx
