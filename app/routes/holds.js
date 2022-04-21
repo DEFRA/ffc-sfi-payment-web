@@ -8,7 +8,7 @@ module.exports = [{
   path: '/payment-holds',
   options: {
     auth: { scope: [holdAdmin] },
-    handler: async (request, h) => {
+    handler: async (_request, h) => {
       const paymentHolds = await getHolds()
       return h.view('payment-holds', { paymentHolds })
     }
@@ -18,7 +18,7 @@ module.exports = [{
   path: '/add-payment-hold',
   options: {
     auth: { scope: [holdAdmin] },
-    handler: async (request, h) => {
+    handler: async (_request, h) => {
       const { schemes, paymentHoldCategories } = await getHoldCategories()
       return h.view('add-payment-hold', { schemes, paymentHoldCategories })
     }
