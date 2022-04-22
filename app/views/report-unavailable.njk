@@ -1,8 +1,15 @@
 {% extends '_layout.njk' %}
 
 {% set mainClasses = "govuk-main-wrapper--l" %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 
 {% block content %}
+  {{ govukBreadcrumbs({
+    items: [{
+      text: "Home",
+      href: "/"
+    }]
+  })}}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Payment report unavailable</h1>

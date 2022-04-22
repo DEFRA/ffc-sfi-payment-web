@@ -1,10 +1,14 @@
 {% extends '_layout.njk' %}
 {% from "macros/search-box.njk" import searchBox %}
-
-{% block beforeContent %}
-{% endblock %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 
 {% block content %}
+  {{ govukBreadcrumbs({
+      items: [{
+        text: "Home",
+        href: "/"
+      }]
+    })}}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-xl">Events</h1>

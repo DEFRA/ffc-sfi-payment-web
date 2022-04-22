@@ -1,11 +1,17 @@
 {% extends '_layout.njk' %}
 {% from "macros/search-box.njk" import searchBox %}
 
-{% block beforeContent %}
-  <a href="/event-projection?frn={{ model.projection.frn }}" class="govuk-back-link">Back</a>
-{% endblock %}
-
 {% block content %}
+  <div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="/">Home</a>
+      </li>
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="/event-projection?frn={{ model.projection.frn }}">Projection for {{ model.projection.frn }}</a>
+      </li>
+    </ol>
+  </div>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-xl">Event Details</h1>
