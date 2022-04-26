@@ -1,0 +1,35 @@
+const Joi = require('joi')
+
+// Define config schema
+const schema = Joi.object({
+  connectionStr: Joi.string().when('useConnectionStr', { is: true, then: Joi.required(), otherwise: Joi.allow('').optional() }),
+  storageAccount: Joi.string().required(),
+  projectionContainer: Joi.string().default('payeventstore'),
+  reportContainer: Joi.string().default('reports'),
+  useConnectionStr: Joi.boolean().default(false),
+  createContainers: Joi.boolean().default(true),
+  miReportName: Joi.boolean().default('ffc-pay-mi-report.csv')
+})
+
+// Build config
+const config = {
+  connectionStr: process.env.AZURE_STORAGE_CONNECTION_STRING,
+  storageAccount: process.env.AZURE_STORAGE_ACCOUNT_NAME,
+  projectionContainer: process.env.AZURE_STORAGE_CONTAINER_PROJECTION,
+  reportContainer: process.env.AZURE_STORAGE_CONTAINER_REPORT,
+  useConnectionStr: process.env.AZURE_STORAGE_USE_CONNECTION_STRING,
+  createContainers: process.env.AZURE_STORAGE_CREATE_CONTAINERS,
+  miReportName: process.env.MI_REPORT_NAME
+}
+
+// Validate config
+const result = schema.validate(config, {
+  abortEarly: false
+})
+
+// Throw if config is invalid
+if (result.error) {
+  throw new Error(`The blob storage config is invalid. ${result.error.message}`)
+}
+
+module.exports = result.value

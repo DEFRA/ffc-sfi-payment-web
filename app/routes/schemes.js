@@ -8,7 +8,7 @@ module.exports = [{
   path: '/payment-schemes',
   options: {
     auth: { scope: [schemeAdmin] },
-    handler: async (request, h) => {
+    handler: async (_request, h) => {
       const schemes = await get('/payment-schemes')
       return h.view('payment-schemes', { schemes: schemes.payload.paymentSchemes })
     }

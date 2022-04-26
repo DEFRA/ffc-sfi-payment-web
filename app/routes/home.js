@@ -6,7 +6,7 @@ module.exports = {
   path: '/',
   options: {
     auth: { scope: [holdAdmin, schemeAdmin] },
-    handler: async (request, h) => {
+    handler: async (_request, h) => {
       const paymentHoldsResponse = await get('/payment-holds')
       const schemes = await get('/payment-schemes')
       return h.view('home', {
