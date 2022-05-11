@@ -3,19 +3,16 @@
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% block beforeContent %}
+{% block content %}
   {{ govukBreadcrumbs({
     items: [{
       text: "Home",
       href: "/"
     },{
-      text: "Payment Holds",
+      text: "Payment holds",
       href: "/payment-holds"
     }]
   })}}
-{% endblock %}
-
-{% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <form method="POST" action="/add-payment-hold" autocomplete="off" novalidate>
@@ -23,47 +20,54 @@
         <h1 class="govuk-heading-l">Add payment hold</h1>
 
         {% if errors %}
-        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-          <h2 class="govuk-error-summary__title" id="error-summary-title">
+          <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
             There is a problem
           </h2>
-          <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-              {% for errorDetail in errors.details %}
-                <span class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span> {{ errorDetail.message }}
-                </span>
-              {% endfor %}
-            </ul>
+            <div class="govuk-error-summary__body">
+              <ul class="govuk-list govuk-error-summary__list">
+                {% for errorDetail in errors.details %}
+                  <span class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ errorDetail.message }}</span>
+                {% endfor %}
+              </ul>
+            </div>
           </div>
-        </div>
-      {% endif %}
+        {% endif %}
 
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">FRN</dt>
-            <dd class="govuk-summary-list__value">
-              <input class="govuk-input govuk-input--width-10" id="frn" name="frn" type="text">
-            </dd>
+        <div class="govuk-form-group">
+          <label class="govuk-label govuk-label--s" for="frn">
+            Firm reference number (FRN)
+          </label>
+          <div class="govuk-hint">
+            Enter a 10-digit FRN
           </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Select payment hold category
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if paymentHoldCategories.length > 0 %}
-                <select class="govuk-select" id="holdCategory" name="holdCategory">
-                  {% for paymentHoldCategory in paymentHoldCategories %}
-                    <option value="{{ paymentHoldCategory.holdCategoryId }}">{{ paymentHoldCategory.name}} - {{ paymentHoldCategory.schemeName}}</option>
-                  {% endfor %}
-                </select>
-              {% endif %}
-            </dd>
+          <input class="govuk-input govuk-input--width-10" id="frn" name="frn" type="text" value="{{ frn }}">
+        </div>
+
+        {% for scheme in schemes %}
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <label class="govuk-label govuk-label--s" for="frn">
+                Select a hold category for {{ scheme }}
+              </label>
+              <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+              {% for paymentHoldCategory in paymentHoldCategories %}
+                {% if paymentHoldCategory.schemeName === scheme %}
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="holdCategoryId" name="holdCategoryId" type="radio" value="{{ paymentHoldCategory.holdCategoryId }}">
+                    <label class="govuk-label govuk-radios__label" for="where-do-you-live">
+                      {{ paymentHoldCategory.name | lower | capitalize }}
+                    </label>
+                  </div>
+                {% endif %}
+              {% endfor %}
+              </div>
+            </fieldset>
           </div>
-        </dl>
+        {% endfor %}
 
         {{ govukButton({
-        text: "Submit",
+        text: "Create",
         attributes: {
           id: "submit"
         }

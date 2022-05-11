@@ -10,6 +10,13 @@ labels:
 appInsights:
   key:
 
+azureAppRegistration:
+  enabled: true
+  clientId:
+  clientSecret:
+  tenantId:
+  redirectUrl: authenticate
+
 azureIdentity:
   clientID: not-a-real-clientID
   resourceID: not-a-real-resourceID
@@ -35,11 +42,15 @@ container:
   imagePullPolicy: IfNotPresent
   requestMemory: 10Mi
   requestCpu: 10m
-  limitMemory: 40Mi
-  limitCpu: 40m
+  limitMemory: 120Mi
+  limitCpu: 60m
   port: 3007
-  googleTagManagerKey:
-  paymentsEndpoint: http://ffc-payments.ffc-pay
+  paymentsEndpoint: http://ffc-pay-processing.ffc-pay
+  cookiePassword: cookiecookiecookiecookiecookiecookie
+  azureStorageConnectionString: dummy
+  azureStorageUseConnectionString: false
+  azureStorageCreateContainers: false
+  azureStorageAccountName: ffcpay
 
 ingress:
   class: nginx

@@ -1,25 +1,13 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.22.0
+version: v1.22.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  SNYK-JS-AXIOS-1579269:
-    - '@azure/identity > @azure/msal-node > axios':
+  SNYK-JS-HAPISTATEHOOD-2769251:
+    - '@hapi/hapi > @hapi/statehood':
         reason: None given
-        expires: '2021-10-06T14:44:32.284Z'
-    - ffc-messaging > @azure/identity > @azure/msal-node > axios:
+        expires: '2022-05-21T10:25:13.298Z'
+  SNYK-JS-MOMENT-2440688:
+    - moment:
         reason: None given
-        expires: '2021-10-06T14:44:32.284Z'
-  SNYK-JS-ANSIREGEX-1583908:
-    - '@azure/identity > keytar > prebuild-install > npmlog > gauge > strip-ansi > ansi-regex':
-        reason: No fix
-        expires: '2021-10-22T16:23:11.439Z'
-    - '@azure/identity > keytar > prebuild-install > npmlog > gauge > string-width > strip-ansi > ansi-regex':
-        reason: No fix
-        expires: '2021-10-22T16:23:11.439Z'
-    - '@azure/identity > keytar > prebuild-install > npmlog > gauge > wide-align > string-width > strip-ansi > ansi-regex':
-        reason: No fix
-        expires: '2021-10-22T16:23:11.440Z'
-    - blipp > easy-table > ansi-regex:
-        reason: No fix
-        expires: '2021-10-22T16:23:11.440Z'
+        expires: '2022-05-21T10:25:13.298Z'
 patch: {}

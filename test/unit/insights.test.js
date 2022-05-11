@@ -54,6 +54,6 @@ describe('App Insight', () => {
     insights.setup()
 
     expect(consoleLogSpy).toHaveBeenCalledTimes(1)
-    expect(consoleLogSpy).toHaveBeenCalledWith('App Insights Not Running!')
+    expect(consoleLogSpy).toHaveBeenCalledWith('App Insights Not Running')
   })
 })

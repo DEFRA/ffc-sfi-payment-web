@@ -9,10 +9,15 @@ module.exports = {
       server.ext('onPreResponse', (request, h) => {
         const response = request.response
 
-        if (response.isBoom && !request.path.startsWith('/api/')) {
+        if (response.isBoom) {
           // An error was raised during
           // processing the request
           const statusCode = response.output.statusCode
+
+          // if not authorised then request login
+          if (statusCode === 401 || statusCode === 403) {
+            return h.view('unauthorized').code(statusCode)
+          }
 
           // In the event of 404
           // return the `404` view

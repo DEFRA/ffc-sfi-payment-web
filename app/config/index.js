@@ -1,6 +1,7 @@
 const joi = require('joi')
-const cacheConfig = require('./cache')
 const mqConfig = require('./mq-config')
+const authConfig = require('./auth')
+const storageConfig = require('./storage')
 
 // Define config schema
 const schema = joi.object({
@@ -9,16 +10,7 @@ const schema = joi.object({
   env: joi.string().valid('development', 'test', 'production').default('development'),
   staticCacheTimeoutMillis: joi.number().default(7 * 24 * 60 * 60 * 1000),
   googleTagManagerKey: joi.string().default(''),
-  paymentsEndpoint: joi.string().uri().required(),
-  cookieOptions: joi.object({
-    ttl: joi.number().default(1000 * 60 * 60 * 24 * 365),
-    isSameSite: joi.string().valid('Lax').default('Lax'),
-    encoding: joi.string().valid('base64json').default('base64json'),
-    isSecure: joi.bool().default(true),
-    isHttpOnly: joi.bool().default(true),
-    clearInvalid: joi.bool().default(false),
-    strictHeader: joi.bool().default(true)
-  })
+  paymentsEndpoint: joi.string().uri().required()
 })
 
 // Build config
@@ -28,16 +20,7 @@ const config = {
   env: process.env.NODE_ENV,
   staticCacheTimeoutMillis: process.env.STATIC_CACHE_TIMEOUT_IN_MILLIS,
   googleTagManagerKey: process.env.GOOGLE_TAG_MANAGER_KEY,
-  paymentsEndpoint: process.env.PAYMENTS_SERVICE_ENDPOINT,
-  cookieOptions: {
-    ttl: process.env.COOKIE_TTL_IN_MILLIS,
-    isSameSite: 'Lax',
-    encoding: 'base64json',
-    isSecure: process.env.NODE_ENV === 'production',
-    isHttpOnly: true,
-    clearInvalid: false,
-    strictHeader: true
-  }
+  paymentsEndpoint: process.env.PAYMENTS_SERVICE_ENDPOINT
 }
 
 // Validate config
@@ -52,9 +35,7 @@ if (result.error) {
 
 // Use the joi validated value
 const value = result.value
-
-value.cacheConfig = cacheConfig
-
+value.authConfig = authConfig
 value.isDev = value.env === 'development'
 value.isTest = value.env === 'test'
 value.isProd = value.env === 'production'
@@ -72,7 +53,7 @@ value.returnTopic = mqConfig.returnTopic
 value.returnSubscription = mqConfig.returnSubscription
 
 // Don't try to connect to Redis for testing or if Redis not available
-value.useRedis = !value.isTest && value.cacheConfig.redisCatboxOptions.host !== undefined
+// value.useRedis = !value.isTest && value.cacheConfig.redisCatboxOptions.host !== undefined
 
 if (!value.useRedis) {
   console.info('Redis disabled, using in memory cache')
@@ -85,5 +66,7 @@ value.catboxOptions = {
   tls: value.isProd ? {} : undefined,
   partition: value.redisPartition
 }
+
+value.storageConfig = storageConfig
 
 module.exports = value
