@@ -9,7 +9,8 @@ const schema = joi.object({
   env: joi.string().valid('development', 'test', 'production').default('development'),
   staticCacheTimeoutMillis: joi.number().default(7 * 24 * 60 * 60 * 1000),
   googleTagManagerKey: joi.string().default(''),
-  paymentsEndpoint: joi.string().uri().required()
+  paymentsEndpoint: joi.string().uri().required(),
+  holdReportName: joi.boolean().default('ffc-pay-hold-report.csv')
 })
 
 // Build config
@@ -19,7 +20,8 @@ const config = {
   env: process.env.NODE_ENV,
   staticCacheTimeoutMillis: process.env.STATIC_CACHE_TIMEOUT_IN_MILLIS,
   googleTagManagerKey: process.env.GOOGLE_TAG_MANAGER_KEY,
-  paymentsEndpoint: process.env.PAYMENTS_SERVICE_ENDPOINT
+  paymentsEndpoint: process.env.PAYMENTS_SERVICE_ENDPOINT,
+  holdReportName: process.env.HOLD_REPORT_NAME
 }
 
 // Validate config
