@@ -64,15 +64,9 @@ async function getProjection (blobPath) {
   return JSON.parse(blobBuffer.toString('utf-8'))
 }
 
-async function getMIReport (asString = false) {
+async function getMIReport () {
   containersInitialised ?? await initialiseContainers()
   const blob = await reportContainer.getBlockBlobClient(config.miReportName)
-
-  if (asString) {
-    const blobBuffer = await blob.downloadToBuffer()
-    return JSON.parse(blobBuffer.toString('utf-8'))
-  }
-
   return blob.download()
 }
 
