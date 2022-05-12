@@ -35,24 +35,27 @@ module.exports = [{
     handler: async (_request, h) => {
       try {
         const paymentHolds = await getHolds()
-        const paymentHoldsData = paymentHolds.map(hold => {
-          return {
-            frn: hold.frn,
-            scheme: hold.holdCategorySchemeName,
-            holdCategory: hold.holdCategoryName,
-            dateAdded: formatDate(hold.dateTimeAdded)
+        if (paymentHolds) {
+          const paymentHoldsData = paymentHolds.map(hold => {
+            return {
+              frn: hold.frn,
+              scheme: hold.holdCategorySchemeName,
+              holdCategory: hold.holdCategoryName,
+              dateAdded: formatDate(hold.dateTimeAdded)
+            }
+          })
+          const response = convertToCsv(paymentHoldsData)
+          if (response) {
+            return h.response(response)
+              .type('text/csv')
+              .header('Connection', 'keep-alive')
+              .header('Cache-Control', 'no-cache')
+              .header('Content-Disposition', `attachment;filename=${config.holdReportName}`)
           }
-        })
-        const response = convertToCsv(paymentHoldsData)
-        if (response) {
-          return h.response(response)
-            .type('text/csv')
-            .header('Connection', 'keep-alive')
-            .header('Cache-Control', 'no-cache')
-            .header('Content-Disposition', `attachment;filename=${config.holdReportName}`)
         }
-      } catch (ex) {
-        console.log(ex)
+
+        return h.view('report-unavailable')
+      } catch {
         return h.view('report-unavailable')
       }
     }

@@ -21,6 +21,8 @@ jest.mock('@azure/storage-blob', () => {
     }
   }
 })
+jest.mock('../../../../app/holds')
+const { getHolds } = require('../../../../app/holds')
 
 describe('Report test', () => {
   const createServer = require('../../../../app/server')
@@ -31,6 +33,7 @@ describe('Report test', () => {
     mockDownload = jest.fn().mockReturnValue({
       readableStreamBody: 'Hello'
     })
+
     auth = { strategy: 'session-auth', credentials: { scope: [schemeAdmin] } }
     server = await createServer()
     await server.initialize()
@@ -54,6 +57,15 @@ describe('Report test', () => {
   })
 
   test('GET /report/holds route returns stream if report available', async () => {
+    getHolds.mockReturnValue([{
+      holdId: 1,
+      frn: '123',
+      holdCategorySchemeName: 'Scheme 1',
+      holdCategorySchemeId: 2,
+      holdCategoryName: 'Category 1',
+      dateTimeAdded: new Date()
+    }])
+
     const options = {
       method: 'GET',
       url: '/report/holds',
@@ -79,6 +91,7 @@ describe('Report test', () => {
 
   test('GET /report/holds route returns unavailable page if report not available', async () => {
     mockDownload = jest.fn().mockReturnValue(undefined)
+    getHolds.mockReturnValue(undefined)
     const options = {
       method: 'GET',
       url: '/report/holds',
@@ -86,7 +99,6 @@ describe('Report test', () => {
     }
 
     const response = await server.inject(options)
-    console.log(response)
     expect(response.payload).toContain('Payment report unavailable')
   })
 
