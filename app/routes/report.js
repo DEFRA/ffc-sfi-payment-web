@@ -22,7 +22,7 @@ module.exports = [{
             .header('Content-Disposition', `attachment;filename=${storageConfig.miReportName}`)
         }
       } catch {
-        return h.view('report-unavailable')
+        return h.view('payment-report-unavailable')
       }
     }
   }
@@ -54,9 +54,9 @@ module.exports = [{
           }
         }
 
-        return h.view('report-unavailable')
+        return h.view('hold-report-unavailable')
       } catch {
-        return h.view('report-unavailable')
+        return h.view('hold-report-unavailable')
       }
     }
   }

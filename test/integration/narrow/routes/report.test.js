@@ -99,7 +99,7 @@ describe('Report test', () => {
     }
 
     const response = await server.inject(options)
-    expect(response.payload).toContain('Payment report unavailable')
+    expect(response.payload).toContain('Hold report unavailable')
   })
 
   afterEach(async () => {
