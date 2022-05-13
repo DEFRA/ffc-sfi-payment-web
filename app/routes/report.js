@@ -1,10 +1,14 @@
 const { getMIReport } = require('../storage')
+const { getHolds } = require('../holds')
 const { holdAdmin, schemeAdmin } = require('../auth/permissions')
-const config = require('../config/storage')
+const formatDate = require('../format-date')
+const convertToCsv = require('../convert-to-csv')
+const storageConfig = require('../config/storage')
+const config = require('../config')
 
-module.exports = {
+module.exports = [{
   method: 'GET',
-  path: '/report',
+  path: '/report/payment-requests',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin] },
     handler: async (_request, h) => {
@@ -15,11 +19,45 @@ module.exports = {
             .type('text/csv')
             .header('Connection', 'keep-alive')
             .header('Cache-Control', 'no-cache')
-            .header('Content-Disposition', `attachment;filename=${config.miReportName}`)
+            .header('Content-Disposition', `attachment;filename=${storageConfig.miReportName}`)
         }
       } catch {
-        return h.view('report-unavailable')
+        return h.view('payment-report-unavailable')
       }
     }
   }
-}
+},
+{
+  method: 'GET',
+  path: '/report/holds',
+  options: {
+    auth: { scope: [schemeAdmin, holdAdmin] },
+    handler: async (_request, h) => {
+      try {
+        const paymentHolds = await getHolds()
+        if (paymentHolds) {
+          const paymentHoldsData = paymentHolds.map(hold => {
+            return {
+              frn: hold.frn,
+              scheme: hold.holdCategorySchemeName,
+              holdCategory: hold.holdCategoryName,
+              dateAdded: formatDate(hold.dateTimeAdded)
+            }
+          })
+          const response = convertToCsv(paymentHoldsData)
+          if (response) {
+            return h.response(response)
+              .type('text/csv')
+              .header('Connection', 'keep-alive')
+              .header('Cache-Control', 'no-cache')
+              .header('Content-Disposition', `attachment;filename=${config.holdReportName}`)
+          }
+        }
+
+        return h.view('hold-report-unavailable')
+      } catch {
+        return h.view('hold-report-unavailable')
+      }
+    }
+  }
+}]

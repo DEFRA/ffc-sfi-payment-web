@@ -22,14 +22,19 @@
         {% endif %}
         {% if auth.isHoldAdminUser or auth.isSchemeAdminUser %}
           <div class="govuk-cards--2__item govuk-card--dashboard">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Report</h2>
-            <p class="govuk-body govuk-!-margin-bottom-5">
-              Download payment request statuses
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Reports</h2>
+            <p class="govuk-body govuk-!-margin-bottom-8">
+              Download reports
             </p>
             <ul class="govuk-list">
               <li>
-                <a href="/report" class="govuk-link">Download report</a>
+                <a href="/report/payment-requests" class="govuk-link">Payment request statuses</a>
               </li>
+              {% if totalHolds > 0 %}
+                <li>
+                  <a href="/report/holds" class="govuk-link">Holds</a>
+                </li>
+              {% endif %}
             </ul>
           </div>
         {% endif %}
