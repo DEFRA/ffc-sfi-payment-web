@@ -4,7 +4,11 @@ data:
   NODE_ENV: {{ quote .Values.environment }}
   PORT: {{ quote .Values.container.port }}
   APPINSIGHTS_CLOUDROLE: {{ quote .Values.name }}
+  {{- if and (.Values.environmentCode) (not .Values.pr) }}
+  PAYMENTS_SERVICE_ENDPOINT: {{ .Values.container.paymentsEndpoint }}-{{ .Values.environmentCode }}
+  {{ else }}
   PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
+  {{- end }}
   {{- if .Values.pr }}
   REDIRECT_URL: https://{{ .Values.ingress.endpoint }}-{{ .Values.pr }}.{{ .Values.ingress.server }}/{{ .Values.azureAppRegistration.redirectUrl }}
   {{ else }}
