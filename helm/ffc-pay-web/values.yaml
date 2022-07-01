@@ -40,7 +40,7 @@ deployment:
   minReadySeconds: 0
 
 container:
-  imagePullPolicy: IfNotPresent
+  imagePullPolicy: Always
   requestMemory: 10Mi
   requestCpu: 10m
   limitMemory: 120Mi
