@@ -11,7 +11,12 @@ const getHolds = async () => {
 
 const getHoldCategories = async () => {
   const { payload } = await get('/payment-hold-categories')
-  const schemes = [...new Set(payload.paymentHoldCategories.map(item => item.schemeName))]
+  const schemes = [...new Set(payload.paymentHoldCategories.map((item) => {
+    if (item.schemeName === 'Vet Visits') {
+      item.schemeName = 'Annual Health and Welfare Review'
+    }
+    return item.schemeName
+  }))]
   return { schemes, paymentHoldCategories: payload.paymentHoldCategories }
 }
 
