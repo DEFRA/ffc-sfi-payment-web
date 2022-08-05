@@ -1,6 +1,6 @@
 {
   "name": "ffc-pay-web",
-  "version": "1.11.5",
+  "version": "1.11.6",
   "description": "FFC payment management service",
   "homepage": "https://github.com/DEFRA/ffc-pay-web",
   "main": "app/index.js",
@@ -36,7 +36,7 @@
     "@hapi/wreck": "^17.1.0",
     "applicationinsights": "^1.8.10",
     "govuk-frontend": "^3.14.0",
-    "hapi-pino": "^8.3.0",
+    "hapi-pino": "10.1.0",
     "joi": "^17.4.0",
     "log-timestamp": "^0.3.0",
     "moment": "^2.29.3",
