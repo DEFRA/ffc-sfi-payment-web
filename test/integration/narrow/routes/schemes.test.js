@@ -112,6 +112,13 @@ describe('Payment schemes', () => {
       expect(res.headers.location).toBe('/update-payment-scheme?schemeId=1&active=true&name=SFI')
     })
 
+    test('/update-payment-scheme get returns 200 and update scheme view', async () => {
+      const res = await server.inject({ method, url: '/update-payment-scheme?schemeId=1&active=true&name=SFI', auth })
+      expect(res.statusCode).toBe(200)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toContain('Would you like to disable SFI?')
+    })
+
     test('/update-payment-scheme post returns 302 and redirects to payment-schemes', async () => {
       const mockForCrumbs = () => mockGetPaymentSchemes(mockPaymentSchemes)
       const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
