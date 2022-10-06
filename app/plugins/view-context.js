@@ -3,7 +3,7 @@ const { mapAuth, getUser } = require('../auth')
 module.exports = {
   plugin: {
     name: 'view-context',
-    register: (server, options) => {
+    register: (server, _options) => {
       server.ext('onPreResponse', (request, h) => {
         const statusCode = request.response.statusCode
         if (request.response.variety === 'view' && statusCode !== 404 && statusCode !== 500 && request.response.source.context) {
