@@ -98,7 +98,7 @@ describe('Payment schemes', () => {
       })
     })
 
-    test('/POST returns 302 and redirects to update-payment-scheme', async () => {
+    test('/post returns 302 and redirects to update-payment-scheme', async () => {
       const mockForCrumbs = () => mockGetPaymentSchemes(mockPaymentSchemes)
       const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
       const res = await server.inject({
@@ -110,6 +110,20 @@ describe('Payment schemes', () => {
       })
       expect(res.statusCode).toBe(302)
       expect(res.headers.location).toBe('/update-payment-scheme?schemeId=1&active=true&name=SFI')
+    })
+
+    test('/update-payment-scheme post returns 302 and redirects to payment-schemes', async () => {
+      const mockForCrumbs = () => mockGetPaymentSchemes(mockPaymentSchemes)
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      const res = await server.inject({
+        method: 'POST',
+        url: '/update-payment-scheme',
+        auth,
+        payload: { crumb: viewCrumb, schemeId: '1', active: 'true', name: 'SFI', confirm: 'true' },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+      expect(res.statusCode).toBe(302)
+      expect(res.headers.location).toBe('/payment-schemes')
     })
 
     test('returns 403 and redirects to / - no permission', async () => {
