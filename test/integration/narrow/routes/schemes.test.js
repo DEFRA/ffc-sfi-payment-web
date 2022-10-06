@@ -4,6 +4,7 @@ const createServer = require('../../../../app/server')
 jest.mock('../../../../app/api')
 const { get } = require('../../../../app/api')
 const { schemeAdmin } = require('../../../../app/auth/permissions')
+const getCrumbs = require('../../../helpers/get-crumbs')
 
 let server
 const url = '/payment-schemes'
@@ -12,8 +13,8 @@ let auth
 
 describe('Payment schemes', () => {
   beforeEach(async () => {
-    auth = { strategy: 'session-auth', credentials: { scope: [schemeAdmin] } }
     jest.clearAllMocks()
+    auth = { strategy: 'session-auth', credentials: { scope: [schemeAdmin] } }
     server = await createServer()
   })
 
@@ -95,6 +96,20 @@ describe('Payment schemes', () => {
         expect(schemeCells.eq(0).text()).toEqual(mockPaymentSchemes[i].name)
         expect(schemeCells.eq(1).text()).toEqual(mockPaymentSchemes[i].active ? 'Active' : 'Inactive')
       })
+    })
+
+    test('/POST returns 302 and redirects to update-payment-scheme', async () => {
+      const mockForCrumbs = () => mockGetPaymentSchemes(mockPaymentSchemes)
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      const res = await server.inject({
+        method: 'POST',
+        url,
+        auth,
+        payload: { crumb: viewCrumb, schemeId: '1', active: 'true', name: 'SFI' },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+      expect(res.statusCode).toBe(302)
+      expect(res.headers.location).toBe('/update-payment-scheme?schemeId=1&active=true&name=SFI')
     })
 
     test('returns 403 and redirects to / - no permission', async () => {
