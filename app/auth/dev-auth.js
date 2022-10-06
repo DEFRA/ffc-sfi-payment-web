@@ -1,6 +1,6 @@
 const { holdAdmin, schemeAdmin } = require('./permissions')
 const { v4: uuidv4 } = require('uuid')
-const devAccount = { homeAccountId: uuidv4(), name: 'Developer' }
+const devAccount = require('./dev-account')
 
 const getAuthenticationUrl = () => {
   return '/dev-auth'
