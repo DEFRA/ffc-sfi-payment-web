@@ -5,7 +5,7 @@
 module.exports = {
   plugin: {
     name: 'error-pages',
-    register: (server, options) => {
+    register: (server, _options) => {
       server.ext('onPreResponse', (request, h) => {
         const response = request.response
 
@@ -26,7 +26,7 @@ module.exports = {
           }
 
           request.log('error', {
-            statusCode: statusCode,
+            statusCode,
             data: response.data,
             message: response.message
           })

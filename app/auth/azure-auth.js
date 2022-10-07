@@ -4,7 +4,7 @@ const msal = require('@azure/msal-node')
 const msalLogging = config.isProd
   ? {}
   : {
-      loggerCallback (loglevel, message, containsPii) {
+      loggerCallback (_loglevel, message, _containsPii) {
         console.log(message)
       },
       piiLoggingEnabled: false,
