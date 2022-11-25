@@ -189,7 +189,7 @@ docker-compose down
 docker-compose down -v
 ```
 
-## How to test
+## How to test the service
 
 The tests have been structured into subfolders of `./test` as per the
 [Microservice test approach and repository structure](https://eaflood.atlassian.net/wiki/spaces/FPS/pages/1845396477/Microservice+test+approach+and+repository+structure)
