@@ -124,9 +124,9 @@ docker-compose -f docker-compose.yaml -f docker-compose.link.yaml up
 
 There are several different possible outputs:
 
-1. **To access the web front-end for the service**  
-**Pre-requisite:** Start the ffc-pay-processing service (as described in the README.md of it's repository).
-**Input:** Start this service (as described [above](#how-to-start)).  
+1. **To access the web front-end for the service**
+**Pre-requisite:** Start the ffc-pay-processing service (as described in the README.md of it's repository. 
+**Input:** Start this service (as described [above](#how-to-start-the-service)).
 **Output:** If you then go to `localhost:3007` you should see the home screen for the Payment Management Portal's web front-end.
 
 2. **To create a new payment hold**
@@ -135,7 +135,7 @@ There are several different possible outputs:
   - Then from the Payment holds page, click on the `Create new hold` button.
   - Enter the customer's 10 digit Firm Reference Number (FRN) and select a hold category from the scheme options.
   - Click on the `Create` button at the bottom of the page.
-**Output:** A hold created will block every payment request for that customer and specified scheme. Payments for other customers are unaffected and payments for the same customer, but different schemes, are unaffected.
+  **Output:** A hold created will block every payment request for that customer and specified scheme. Payments for other customers are unaffected and payments for the same customer, but different schemes, are unaffected.
 
 3. **To remove a payment hold**
 **Pre-requisite:** At least one payment hold must exist already.
