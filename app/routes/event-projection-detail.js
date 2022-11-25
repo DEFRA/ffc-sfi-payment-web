@@ -19,7 +19,7 @@ module.exports = [{
 
       if (blobData?.blobList.length) {
         projectionData = await getProjection(`${blobData.blobList[0].blob}`)
-        eventDetails = eventType ? projectionData?.events.find(x => x.eventType === eventType) : projectionData.events.find(x => x.eventType === 'batch-processing')
+        eventDetails = eventType ? projectionData?.events.find(x => x.eventType === eventType) : projectionData.events.find(x => x.eventType === 'payment-request-enrichment')
         if (!eventDetails) {
           return h.redirect('/404')
         }
