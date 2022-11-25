@@ -13,7 +13,6 @@ For how the repository fits into the architecture and what components or depende
 ## Prerequisites
 ### Software required
 
-- [Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/)
 - [Docker](https://www.docker.com/)
 - Either:
   - [Docker-Compose](https://docs.docker.com/compose/install/linux/#install-the-plugin-manually)
@@ -23,29 +22,7 @@ Optional:
 - [Kubernetes](https://kubernetes.io/)
 - [Helm](https://helm.sh/)
 
-## Configuration
-### Azure Service Bus
-
-This service depends on a valid Azure Service Bus connection string for
-asynchronous communication.  The following environment variables need to be set
-in any non-production (`!config.isProd`) environment before the Docker
-container is started or tests are run.
-
-When deployed into an appropriately configured AKS
-cluster (where [AAD Pod Identity](https://github.com/Azure/aad-pod-identity) is
-configured) the microservice will use AAD Pod Identity through the manifests
-for
-[azure-identity](./helm/ffc-pay-batch-processor/templates/azure-identity.yaml)
-and
-[azure-identity-binding](./helm/ffc-pay-batch-processor/templates/azure-identity-binding.yaml).
-
-| Name                                   | Description                                                            |
-| ----                                   | -----------                                                            |
-| MESSAGE_QUEUE_HOST                     | Azure Service Bus hostname, e.g. `myservicebus.servicebus.windows.net` |
-| MESSAGE_QUEUE_PASSWORD                 | Azure Service Bus SAS policy key                                       |
-| MESSAGE_QUEUE_USER                     | Azure Service Bus SAS policy name, e.g. `RootManageSharedAccessKey`    |
-| MESSAGE_QUEUE_SUFFIX                   | Developer initials   
-
+## Configuration  
 ### Azure App Registration
 
 This service has been integrated into Azure App Registration using the msal-node [npm package](https://www.npmjs.com/package/@azure/msal-node)
@@ -118,7 +95,7 @@ Link to other services:
 docker-compose -f docker-compose.yaml -f docker-compose.link.yaml up
 ```
 
-> Note: This service depends on the 'ffc-pay-processing' service to be able to run correctly.
+> Note: This service depends on the [`ffc-pay-processing`](https://github.com/DEFRA/ffc-pay-processing) service to be able to run correctly.
 
 ## How to get output
 
@@ -126,7 +103,7 @@ There are several different possible outputs:
 
 1. **To access the web front-end for the service**
 
-**Pre-requisite:** Start the ffc-pay-processing service (as described in the README.md of it's repository.
+**Pre-requisite:** Start the `ffc-pay-processing` service (as described in the [README.md](https://github.com/DEFRA/ffc-pay-processing/blob/main/README.md) of it's repository.
 
 **Input:** Start this service (as described [above](#how-to-start-the-service)).
 
