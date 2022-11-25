@@ -33,14 +33,9 @@ service:
   port: 80
   type: ClusterIP
 
-deployment:
-  restartPolicy: Always
-  priorityClassName: default
-  replicas: 1
-  minReadySeconds: 0
+deployment: {}
 
 container:
-  imagePullPolicy: Always
   requestMemory: 10Mi
   requestCpu: 10m
   limitMemory: 120Mi
