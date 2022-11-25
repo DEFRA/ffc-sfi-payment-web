@@ -125,50 +125,69 @@ docker-compose -f docker-compose.yaml -f docker-compose.link.yaml up
 There are several different possible outputs:
 
 1. **To access the web front-end for the service**
-**Pre-requisite:** Start the ffc-pay-processing service (as described in the README.md of it's repository. 
+
+**Pre-requisite:** Start the ffc-pay-processing service (as described in the README.md of it's repository.
+
 **Input:** Start this service (as described [above](#how-to-start-the-service)).
+
 **Output:** If you then go to `localhost:3007` you should see the home screen for the Payment Management Portal's web front-end.
 
 2. **To create a new payment hold**
+
 **Input:** 
   - From the home screen of the web service, click on `Manage holds`.
   - Then from the Payment holds page, click on the `Create new hold` button.
   - Enter the customer's 10 digit Firm Reference Number (FRN) and select a hold category from the scheme options.
   - Click on the `Create` button at the bottom of the page.
+
   **Output:** A hold created will block every payment request for that customer and specified scheme. Payments for other customers are unaffected and payments for the same customer, but different schemes, are unaffected.
 
 3. **To remove a payment hold**
+
 **Pre-requisite:** At least one payment hold must exist already.
+
 **Input:** 
   - From the home screen of the web service, click on `Manage holds`.
   - Then from the Payment holds page, click on `Remove` beside the hold you want to delete.
+
 **Output:** A hold that is removed will no longer block payment requests for that customer and specified scheme.
 
 4. **To download a payment hold report**
+
 **Pre-requisite:** At least one payment hold must exist already.
+
 **Input:** 
   - From the home screen of the web service, click on `Holds`.
   - This will then download a report that can be opened in Excel, for example.
+
 **Output:** The report produced is in a `.csv` file format, containing a list of all the current holds that exist. 
 
 5. **To download a payment request status report**
+
 **Pre-requisite:** At least one payment request msut exist already.
+
 **Input:** 
   - From the home screen of the web service, click on `Payment request statuses`.
   - This will then download a report that can be opened in Excel, for example.
+
 **Output:** The report produced is in a `.csv` file format, containing a list of all the payment request's stauses and all the information tied to them.
 
 6. **To manage a payment scheme**
+
 **Input:** 
   - From the home screen of the web service, click on `Manage schemes`.
   - From this page you can `Disable` any of the active schemes and `Enable` any of the inactive schemes.
+
 **Output:** Disabling a scheme will block every customer from the specified scheme and enabling a scheme will no longer block every customer from the specified scheme.
 
 7. **To view any events**
+
 **Pre-requisite:** To view a payment event, an event must already exist.
+
 **Input:** 
   - From the home screen of the web service, click on `View events`.
   - Then on this page, enter the Firm Reference Number (FRN) to search or events by FRN.
+  
 **Output:** Events provide the business with traceability of every payment request and decision made by the service. 
 
 ## How to stop the service
