@@ -1,6 +1,6 @@
 {
   "name": "ffc-pay-web",
-  "version": "1.11.13",
+  "version": "1.11.14",
   "description": "FFC payment management service",
   "homepage": "https://github.com/DEFRA/ffc-pay-web",
   "main": "app/index.js",
@@ -25,7 +25,7 @@
   "license": "OGL-UK-3.0",
   "dependencies": {
     "@azure/identity": "2.0.5",
-    "@azure/msal-node": "1.14.4",
+    "@azure/msal-node": "1.14.6",
     "@azure/storage-blob": "12.10.0",
     "@hapi/boom": "9.1.1",
     "@hapi/cookie": "11.0.2",
