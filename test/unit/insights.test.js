@@ -28,6 +28,11 @@ describe('App Insight setup', () => {
       expect(mockApplicationInsights.setup).toHaveBeenCalledTimes(1)
     })
 
+    test('should call mockApplicationInsights.setup with process.env.APPINSIGHTS_CONNECTIONSTRING', () => {
+      insights.setup()
+      expect(mockApplicationInsights.setup).toHaveBeenCalledWith(process.env.APPINSIGHTS_CONNECTIONSTRING)
+    })
+
     test('should call mockApplicationInsights.setup.start', () => {
       insights.setup()
       expect(mockApplicationInsights.setup().start).toHaveBeenCalled()
