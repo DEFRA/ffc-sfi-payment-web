@@ -7,15 +7,17 @@ const applicationName = require('../mocks/components/application-name')
 describe('App Insight setup', () => {
   beforeEach(() => {
     process.env.APPINSIGHTS_CLOUDROLE = applicationName
-    process.env.APPINSIGHTS_CONNECTIONSTRING = 'something'
   })
 
   afterEach(() => {
-    delete process.env.APPINSIGHTS_CONNECTIONSTRING
     jest.clearAllMocks()
   })
 
   describe('When process.env.APPINSIGHTS_CONNECTIONSTRING exists', () => {
+    beforeEach(() => {
+      process.env.APPINSIGHTS_CONNECTIONSTRING = 'something'
+    })
+
     test('should call mockApplicationInsights.setup', () => {
       insights.setup()
       expect(mockApplicationInsights.setup).toHaveBeenCalled()
@@ -56,10 +58,5 @@ describe('App Insight setup', () => {
       insights.setup()
       expect(mockApplicationInsights.setup().start).not.toHaveBeenCalled()
     })
-
-    // test('should have undefined value for tags cloudRoleTag key', () => {
-    //   insights.setup()
-    //   expect(tags[cloudRoleTag]).toBeUndefined()
-    // })
   })
 })
