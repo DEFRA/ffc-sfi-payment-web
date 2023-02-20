@@ -15,7 +15,7 @@
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
           <div class="user-search-box">
-            <form class="search-form" action="/monitoring/payments" method="GET">
+            <form class="search-form" action="/monitoring/payments/frn" method="GET">
               {{ searchBox(model.searchByFrn) }}
             </form>
           </div>
@@ -24,7 +24,7 @@
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
           <div class="user-search-box">
-            <form class="search-form" action="/monitoring/batch" method="GET">
+            <form class="search-form" action="/monitoring/payments/batch" method="GET">
               {{ searchBox(model.searchByBatch) }}
             </form>
           </div>

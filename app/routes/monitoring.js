@@ -1,6 +1,6 @@
 const { schemeAdmin, holdAdmin } = require('../auth/permissions')
 const config = require('../config')
-const { getPaymentsByFrn } = require('../payments')
+const { getPaymentsByFrn, getPaymentsByCorrelationId } = require('../payments')
 const ViewModel = require('./models/monitoring')
 
 module.exports = [{
@@ -17,7 +17,7 @@ module.exports = [{
   }
 }, {
   method: 'GET',
-  path: '/monitoring/payments',
+  path: '/monitoring/payments/frn',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin] }
   },
@@ -26,7 +26,21 @@ module.exports = [{
       return h.view('404')
     }
     const frn = request.query.frn
-    const payments = getPaymentsByFrn(frn)
+    const payments = await getPaymentsByFrn(frn)
     return h.view('monitoring-frn', { frn, payments })
+  }
+}, {
+  method: 'GET',
+  path: '/monitoring/payments/correlation-id',
+  options: {
+    auth: { scope: [schemeAdmin, holdAdmin] }
+  },
+  handler: async (request, h) => {
+    if (!config.useV2Events) {
+      return h.view('404')
+    }
+    const correlationId = request.query.correlationId
+    const payments = await getPaymentsByCorrelationId(correlationId)
+    return h.view('monitoring-correlation-id', { correlationId, payments })
   }
 }]

@@ -21,25 +21,23 @@
         <table class="govuk-table">
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-              <th scope="col" class="govuk-table__header">FRN</th>
-              <th scope="col" class="govuk-table__header">Scheme</th>
-              <th scope="col" class="govuk-table__header">Agreement</th>
-              <th scope="col" class="govuk-table__header">Payment request</th>
-              <th scope="col" class="govuk-table__header">Status</th>
-              <th scope="col" class="govuk-table__header">Last updated</th>
-              <th scope="col" class="govuk-table__header"></th>
+              <th scope="col" class="govuk-table__header govuk-body-s">Scheme</th>
+              <th scope="col" class="govuk-table__header govuk-body-s">Agreement</th>
+              <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-body-s">Payment request</th>
+              <th scope="col" class="govuk-table__header govuk-body-s">Status</th>
+              <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-body-s">Last updated</th>
+              <th scope="col" class="govuk-table__header govuk-body-s"></th>
             </tr>
           </thead>
           <tbody class="govuk-table__body">
             {% for payment in payments %}
               <tr class="govuk-table__row">
-                <td class="govuk-table__cell">{{ payment.frn }}</td>
-                <td class="govuk-table__cell">{{ payment.schemeId }}</td>
-                <td class="govuk-table__cell">{{ payment.agreementNumber }}</td>
-                <td class="govuk-table__cell">{{ payment.paymentRequest }}</td>
-                <td class="govuk-table__cell">{{ payment.status }}</td>
-                <td class="govuk-table__cell">{{ payment.lastUpdated }}</td>
-                <td class="govuk-table__cell">View</td>
+                <td class="govuk-table__cell govuk-body-s">{{ payment.scheme }}</td>
+                <td class="govuk-table__cell govuk-body-s">{{ payment.agreementNumber }}</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-body-s">{{ payment.paymentRequestNumber }}</td>
+                <td class="govuk-table__cell govuk-body-s"><strong class="govuk-tag {% if payment.status.category == 'Completed' %}govuk-tag--green{% elif payment.status.category == 'Waiting' %}govuk-tag--yellow{% endif %}">{{ payment.status.detail }}</strong></td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-body-s">{{ payment.lastUpdated }}</td>
+                <td class="govuk-table__cell govuk-body-s"><a href="/monitoring/payments/correlation-id?correlationId={{ payment.correlationId }}">View</a></td>
               </tr>
             {% endfor %}
           </tbody>

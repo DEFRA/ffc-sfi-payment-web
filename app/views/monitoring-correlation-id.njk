@@ -1,0 +1,43 @@
+{% extends '_layout.njk' %}
+{% from "macros/search-box.njk" import searchBox %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+
+{% block content %}
+  {{ govukBreadcrumbs({
+      items: [{
+        text: "Home",
+        href: "/"
+      }, {
+        text: "Monitoring",
+        href: "/monitoring"
+      }]
+    })}}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l">Monitoring</h1>
+
+      {% if payments.length %}
+        <table class="govuk-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header govuk-body-s">Event</th>
+              <th scope="col" class="govuk-table__header govuk-body-s">Status</th>
+              <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-body-s">Last updated</th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            {% for event in payments[0].events %}
+              <tr class="govuk-table__row">
+                <td class="govuk-table__cell govuk-body-s">{{ event.status.detail }}</td>
+                <td class="govuk-table__cell govuk-body-s"><strong class="govuk-tag {% if event.status.category == 'Completed' %}govuk-tag--green{% elif event.status.category == 'Waiting' %}govuk-tag--yellow{% endif %}">{{ event.status.detail }}</strong></td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-body-s">{{ event.lastUpdated }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p id="no-hold-text" class="govuk-body">No payments found for FRN {{frn}}.</p>
+      {% endif %}
+  </div>
+</div>
+{% endblock %}
