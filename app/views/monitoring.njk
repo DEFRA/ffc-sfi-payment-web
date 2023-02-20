@@ -1,0 +1,36 @@
+{% extends '_layout.njk' %}
+{% from "macros/search-box.njk" import searchBox %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+
+{% block content %}
+  {{ govukBreadcrumbs({
+      items: [{
+        text: "Home",
+        href: "/"
+      }]
+    })}}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l">Monitoring</h1>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          <div class="user-search-box">
+            <form class="search-form" action="/monitoring/payments" method="GET">
+              {{ searchBox(model.searchByFrn) }}
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          <div class="user-search-box">
+            <form class="search-form" action="/monitoring/batch" method="GET">
+              {{ searchBox(model.searchByBatch) }}
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

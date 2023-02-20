@@ -1,0 +1,52 @@
+{% extends '_layout.njk' %}
+{% from "macros/search-box.njk" import searchBox %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+
+{% block content %}
+  {{ govukBreadcrumbs({
+      items: [{
+        text: "Home",
+        href: "/"
+      }, {
+        text: "Monitoring",
+        href: "/monitoring"
+      }]
+    })}}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <span class="govuk-caption-l">{{frn}}</span>
+      <h1 class="govuk-heading-l">Monitoring</h1>
+
+      {% if payments.length %}
+        <table class="govuk-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header">FRN</th>
+              <th scope="col" class="govuk-table__header">Scheme</th>
+              <th scope="col" class="govuk-table__header">Agreement</th>
+              <th scope="col" class="govuk-table__header">Payment request</th>
+              <th scope="col" class="govuk-table__header">Status</th>
+              <th scope="col" class="govuk-table__header">Last updated</th>
+              <th scope="col" class="govuk-table__header"></th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            {% for payment in payments %}
+              <tr class="govuk-table__row">
+                <td class="govuk-table__cell">{{ payment.frn }}</td>
+                <td class="govuk-table__cell">{{ payment.schemeId }}</td>
+                <td class="govuk-table__cell">{{ payment.agreementNumber }}</td>
+                <td class="govuk-table__cell">{{ payment.paymentRequest }}</td>
+                <td class="govuk-table__cell">{{ payment.status }}</td>
+                <td class="govuk-table__cell">{{ payment.lastUpdated }}</td>
+                <td class="govuk-table__cell">View</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p id="no-hold-text" class="govuk-body">No payments found for FRN {{frn}}.</p>
+      {% endif %}
+  </div>
+</div>
+{% endblock %}

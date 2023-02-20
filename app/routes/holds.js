@@ -2,6 +2,7 @@ const schema = require('./schemas/hold')
 const { post } = require('../api')
 const { holdAdmin } = require('../auth/permissions')
 const { getHolds, getHoldCategories } = require('../holds')
+const { PAYMENT_ENDPOINT } = require('../constants/endpoints')
 
 module.exports = [{
   method: 'GET',
@@ -37,7 +38,7 @@ module.exports = [{
       }
     },
     handler: async (request, h) => {
-      await post('/add-payment-hold', { holdCategoryId: request.payload.holdCategoryId, frn: request.payload.frn }, null)
+      await post(PAYMENT_ENDPOINT, '/add-payment-hold', { holdCategoryId: request.payload.holdCategoryId, frn: request.payload.frn }, null)
       return h.redirect('/payment-holds')
     }
   }
@@ -48,7 +49,7 @@ module.exports = [{
   options: {
     auth: { scope: [holdAdmin] },
     handler: async (request, h) => {
-      await post('/remove-payment-hold', { holdId: request.payload.holdId })
+      await post(PAYMENT_ENDPOINT, '/remove-payment-hold', { holdId: request.payload.holdId })
       return h.redirect('/')
     }
   }
