@@ -40,7 +40,7 @@ module.exports = [{
       return h.view('404')
     }
     const correlationId = request.query.correlationId
-    const payments = await getPaymentsByCorrelationId(correlationId)
-    return h.view('monitoring-correlation-id', { correlationId, payments })
+    const events = await getPaymentsByCorrelationId(correlationId)
+    return h.view('monitoring-correlation-id', { correlationId, events })
   }
 }]
