@@ -22,6 +22,11 @@ services:
       AZURE_STORAGE_USE_CONNECTION_STRING: "true"
       AZURE_STORAGE_CREATE_CONTAINERS: "true"
       AZURE_STORAGE_ACCOUNT_NAME: ${AZURE_STORAGE_ACCOUNT_NAME:-devstoreaccount1}
+      MESSAGE_QUEUE_HOST: ${MESSAGE_QUEUE_HOST}
+      MESSAGE_QUEUE_PASSWORD: ${MESSAGE_QUEUE_PASSWORD}
+      MESSAGE_QUEUE_USER: ${MESSAGE_QUEUE_USER}
+      DATA_TOPIC_ADDRESS: ${DATA_TOPIC_ADDRESS:-ffc-pay-data-request}${MESSAGE_QUEUE_SUFFIX}
+      DATA_QUEUE_ADDRESS: ${DATA_QUEUE_ADDRESS:-ffc-pay-data-request-response}${MESSAGE_QUEUE_SUFFIX}
 
   ffc-pay-web-azurite:
     image: mcr.microsoft.com/azure-storage/azurite:3.17.1

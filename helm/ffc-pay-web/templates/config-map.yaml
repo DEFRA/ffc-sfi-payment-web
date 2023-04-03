@@ -27,4 +27,12 @@ data:
   AZURE_STORAGE_CREATE_CONTAINERS: {{ quote .Values.container.azureStorageCreateContainers }}
   AZURE_STORAGE_ACCOUNT_NAME: {{ quote .Values.container.azureStorageAccountName }}
   USE_V2_EVENTS: {{ quote .Values.container.useV2Events }}
+  MESSAGE_QUEUE_HOST: {{ quote .Values.container.messageQueueHost }}
+  {{- if and (.Values.environmentCode) (not .Values.pr) }}
+  DATA_TOPIC_ADDRESS: {{ .Values.container.dataTopicAddress }}-{{ .Values.environmentCode }}
+  DATA_QUEUE_ADDRESS: {{ .Values.container.dataQueueAddress }}-{{ .Values.environmentCode }}
+  {{ else }}
+  DATA_TOPIC_ADDRESS: {{ quote .Values.container.dataTopicAddress }}
+  DATA_QUEUE_ADDRESS: {{ quote .Values.container.dataQueueAddress }}
+  {{- end }}
 {{- end -}}

@@ -49,6 +49,9 @@ container:
   azureStorageCreateContainers: false
   azureStorageAccountName: ffcpay
   useV2Events: true
+  messageQueueHost: namespace.servicebus.windows.net
+  dataTopicAddress: ffc-pay-data-request
+  dataResponseQueueAddress: ffc-pay-data-request-response
 
 ingress:
   class: nginx
