@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require('uuid')
 const { sendMessage, receiveMessage } = require('./messaging')
-const { messageConfig } = require('./config')
+const config = require('./config')
 const util = require('util')
 
 const getPaymentsByFrn = async (frn) => {
@@ -14,12 +14,12 @@ const getPaymentsByCorrelationId = async (correlationId) => {
 const getData = async (category, value) => {
   const messageId = uuidv4()
   const request = { category, value }
-  await sendMessage(request, 'uk.gov.defra.ffc.pay.data.request', messageConfig.dataTopic, { messageId })
+  await sendMessage(request, 'uk.gov.defra.ffc.pay.data.request', config.messageConfig.dataTopic, { messageId })
   console.info('Data request sent:', util.inspect(request, false, null, true))
-  const response = await receiveMessage(messageId, messageConfig.dataQueue)
+  const response = await receiveMessage(messageId, config.messageConfig.dataQueue)
   if (response) {
     console.info('Data response received:', util.inspect(response, false, null, true))
-    return response
+    return response.data
   }
 }
 

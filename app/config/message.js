@@ -41,7 +41,7 @@ if (result.error) {
   throw new Error(`The message config is invalid. ${result.error.message}`)
 }
 
-const dataTopic = { ...result.value.messageQueue, ...result.value.dataSubscription }
+const dataTopic = { ...result.value.messageQueue, ...result.value.dataTopic }
 const dataQueue = { ...result.value.messageQueue, ...result.value.dataQueue }
 
 module.exports = {
