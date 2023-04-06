@@ -35,7 +35,7 @@
                 <td class="govuk-table__cell govuk-body-s">{{ payment.scheme }}</td>
                 <td class="govuk-table__cell govuk-body-s">{{ payment.agreementNumber }}</td>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-body-s">{{ payment.paymentRequestNumber }}</td>
-                <td class="govuk-table__cell govuk-body-s"><strong class="govuk-tag {% if payment.status.category == 'Completed' %}govuk-tag--green{% elif payment.status.category == 'Waiting' %}govuk-tag--yellow{% endif %}">{{ payment.status.detail }}</strong></td>
+                <td class="govuk-table__cell govuk-body-s"><strong class="govuk-tag {% if payment.status.state == 'Completed' %}govuk-tag--green{% elif payment.status.state == 'Waiting' %}govuk-tag--yellow{% endif %}">{{ payment.status.detail }}</strong></td>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-body-s">{{ payment.lastUpdated }}</td>
                 <td class="govuk-table__cell govuk-body-s"><a href="/monitoring/payments/correlation-id?correlationId={{ payment.correlationId }}">View</a></td>
               </tr>
