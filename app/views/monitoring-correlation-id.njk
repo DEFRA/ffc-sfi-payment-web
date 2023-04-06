@@ -33,7 +33,7 @@
                 <td class="govuk-table__cell govuk-body-s">
                   {% if event.timestamp %}
                     <strong class="govuk-tag govuk-tag--green">Completed</strong>
-                  {% elif events[loop.index0].lastEvent %}
+                  {% elif events.events[loop.index0 - 1].lastEvent %}
                     <span class="govuk-tag">In progress</span>
                   {% else %}
                     <strong class="govuk-tag govuk-tag--grey">Not started yet</strong>
