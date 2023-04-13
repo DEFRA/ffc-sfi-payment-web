@@ -29,7 +29,7 @@
           <tbody class="govuk-table__body">
             {% for event in events.events %}
               <tr class="govuk-table__row">
-                <td class="govuk-table__cell govuk-body-s">{{ event.status.detail }}</td>
+                <td class="govuk-table__cell govuk-body-s">{{ event.status.name }}</td>
                 <td class="govuk-table__cell govuk-body-s">
                   {% if event.timestamp %}
                     <strong class="govuk-tag govuk-tag--green">Completed</strong>
