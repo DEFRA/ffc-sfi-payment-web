@@ -1,10 +1,14 @@
+const { SOURCE } = require('../constants/source')
+
 const createMessage = (body, type, options) => {
   return {
     body,
     type,
-    source: 'ffc-pay-web',
+    source: SOURCE,
     ...options
   }
 }
 
-module.exports = createMessage
+module.exports = {
+  createMessage
+}

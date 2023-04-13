@@ -1,6 +1,6 @@
 const { MessageReceiver } = require('ffc-messaging')
 
-async function receiveMessage (messageId, config) {
+const receiveMessage = async (messageId, config) => {
   let result
   const receiver = new MessageReceiver(config)
   await receiver.acceptSession(messageId)
@@ -13,4 +13,6 @@ async function receiveMessage (messageId, config) {
   return result
 }
 
-module.exports = receiveMessage
+module.exports = {
+  receiveMessage
+}
