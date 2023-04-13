@@ -13,7 +13,6 @@ services:
       APPINSIGHTS_CLOUDROLE: ffc-pay-web-local
       APPINSIGHTS_INSTRUMENTATIONKEY: ${APPINSIGHTS_INSTRUMENTATIONKEY}
       PAYMENTS_SERVICE_ENDPOINT: http://ffc-pay-processing:3008
-      DATA_HUB_SERVICE_ENDPOINT: http://ffc-pay-data-hub:3009
       AZUREID_CLIENT_SECRET: ${AZUREID_CLIENT_SECRET}
       AZUREID_CLIENT_ID: ${AZUREID_CLIENT_ID}
       AZUREID_TENANT_ID: ${AZUREID_TENANT_ID}
@@ -26,8 +25,8 @@ services:
       MESSAGE_QUEUE_PASSWORD: ${MESSAGE_QUEUE_PASSWORD}
       MESSAGE_QUEUE_USER: ${MESSAGE_QUEUE_USER}
       DATA_TOPIC_ADDRESS: ${DATA_TOPIC_ADDRESS:-ffc-pay-data-request}${MESSAGE_QUEUE_SUFFIX}
-      DATA_QUEUE_ADDRESS: ${DATA_QUEUE_ADDRESS:-ffc-pay-data-request-response}${MESSAGE_QUEUE_SUFFIX}
+      DATARESPONSE_QUEUE_ADDRESS: ${DATARESPONSE_QUEUE_ADDRESS:-ffc-pay-data-request-response}${MESSAGE_QUEUE_SUFFIX}
 
   ffc-pay-web-azurite:
-    image: mcr.microsoft.com/azure-storage/azurite:3.17.1
+    image: mcr.microsoft.com/azure-storage/azurite:3.23.0
     command: "azurite --blobHost 0.0.0.0 --tableHost 0.0.0.0 --loose"

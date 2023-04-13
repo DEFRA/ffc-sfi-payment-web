@@ -2,7 +2,6 @@ const { get, post } = require('../api')
 const Joi = require('joi')
 const ViewModel = require('./models/update-scheme')
 const { schemeAdmin } = require('../auth/permissions')
-const { PAYMENT_ENDPOINT } = require('../constants/endpoints')
 
 module.exports = [{
   method: 'GET',
@@ -10,7 +9,7 @@ module.exports = [{
   options: {
     auth: { scope: [schemeAdmin] },
     handler: async (_request, h) => {
-      const schemes = await get(PAYMENT_ENDPOINT, '/payment-schemes')
+      const schemes = await get('/payment-schemes')
       return h.view('payment-schemes', { schemes: schemes.payload.paymentSchemes })
     }
   }
@@ -62,7 +61,7 @@ module.exports = [{
     },
     handler: async (request, h) => {
       if (request.payload.confirm) {
-        await post(PAYMENT_ENDPOINT, '/change-payment-status', { schemeId: request.payload.schemeId, active: !request.payload.active })
+        await post('/change-payment-status', { schemeId: request.payload.schemeId, active: !request.payload.active })
       }
       return h.redirect('/payment-schemes')
     }

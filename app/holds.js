@@ -1,9 +1,8 @@
 const moment = require('moment')
 const { get } = require('./api')
-const { PAYMENT_ENDPOINT } = require('./constants/endpoints')
 
 const getHolds = async () => {
-  const { payload } = await get(PAYMENT_ENDPOINT, '/payment-holds')
+  const { payload } = await get('/payment-holds')
   return payload.paymentHolds?.filter(x => x.dateTimeClosed == null).map(x => {
     x.dateTimeAdded = moment(x.dateTimeAdded).format('DD/MM/YYYY HH:mm')
     return x
@@ -11,7 +10,7 @@ const getHolds = async () => {
 }
 
 const getHoldCategories = async () => {
-  const { payload } = await get(PAYMENT_ENDPOINT, '/payment-hold-categories')
+  const { payload } = await get('/payment-hold-categories')
   const schemes = [...new Set(payload.paymentHoldCategories.map(mapScheme))]
   return { schemes, paymentHoldCategories: payload.paymentHoldCategories }
 }

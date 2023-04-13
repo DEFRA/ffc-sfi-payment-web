@@ -1,7 +1,6 @@
 const { post } = require('../api')
 const schema = require('./schemas/invoice-number')
 const { schemeAdmin } = require('../auth/permissions')
-const { PAYMENT_ENDPOINT } = require('../constants/endpoints')
 
 module.exports = [{
   method: 'GET',
@@ -27,7 +26,7 @@ module.exports = [{
     handler: async (request, h) => {
       const { invoiceNumber } = request.payload
       try {
-        await post(PAYMENT_ENDPOINT, '/payment-request/reset', { invoiceNumber })
+        await post('/payment-request/reset', { invoiceNumber })
         return h.redirect(`/payment-request/reset-success?invoiceNumber=${invoiceNumber}`)
       } catch (err) {
         return h.view('reset-payment-request', { error: err.data?.payload?.message ?? err.message, invoiceNumber }).code(412)

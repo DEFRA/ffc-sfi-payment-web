@@ -29,7 +29,7 @@ const config = {
     address: process.env.DATA_TOPIC_ADDRESS
   },
   dataQueue: {
-    address: process.env.DATA_QUEUE_ADDRESS
+    address: process.env.DATARESPONSE_QUEUE_ADDRESS
   }
 }
 

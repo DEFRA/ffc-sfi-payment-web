@@ -7,14 +7,11 @@ data:
   {{- if and (.Values.environmentCode) (not .Values.pr) }}
     {{- if ne .Values.environmentCode "snd" }}
   PAYMENTS_SERVICE_ENDPOINT: {{ .Values.container.paymentsEndpoint }}-{{ .Values.environmentCode }}
-  DATA_HUB_SERVICE_ENDPOINT: {{ .Values.container.dataHubEndpoint }}-{{ .Values.environmentCode }}
     {{ else }}
   PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
-  DATA_HUB_SERVICE_ENDPOINT: {{ quote .Values.container.dataHubEndpoint }}
     {{- end }}
   {{ else }}
   PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
-  DATA_HUB_SERVICE_ENDPOINT: {{ quote .Values.container.dataHubEndpoint }}
   {{- end }}
   {{- if .Values.pr }}
   REDIRECT_URL: https://{{ .Values.ingress.endpoint }}-{{ .Values.pr }}.{{ .Values.ingress.server }}/{{ .Values.azureAppRegistration.redirectUrl }}
@@ -30,9 +27,9 @@ data:
   MESSAGE_QUEUE_HOST: {{ quote .Values.container.messageQueueHost }}
   {{- if and (.Values.environmentCode) (not .Values.pr) }}
   DATA_TOPIC_ADDRESS: {{ .Values.container.dataTopicAddress }}-{{ .Values.environmentCode }}
-  DATA_QUEUE_ADDRESS: {{ .Values.container.dataQueueAddress }}-{{ .Values.environmentCode }}
+  DATARESPONSE_QUEUE_ADDRESS: {{ .Values.container.dataResponseQueueAddress }}-{{ .Values.environmentCode }}
   {{ else }}
   DATA_TOPIC_ADDRESS: {{ quote .Values.container.dataTopicAddress }}
-  DATA_QUEUE_ADDRESS: {{ quote .Values.container.dataQueueAddress }}
+  DATARESPONSE_QUEUE_ADDRESS: {{ quote .Values.container.dataResponseQueueAddress }}
   {{- end }}
 {{- end -}}

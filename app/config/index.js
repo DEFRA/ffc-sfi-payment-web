@@ -11,7 +11,6 @@ const schema = joi.object({
   staticCacheTimeoutMillis: joi.number().default(7 * 24 * 60 * 60 * 1000),
   googleTagManagerKey: joi.string().default(''),
   paymentsEndpoint: joi.string().uri().required(),
-  dataHubEndpoint: joi.string().uri().required(),
   holdReportName: joi.boolean().default('ffc-pay-hold-report.csv'),
   useV2Events: joi.boolean().default(true)
 })
@@ -24,7 +23,6 @@ const config = {
   staticCacheTimeoutMillis: process.env.STATIC_CACHE_TIMEOUT_IN_MILLIS,
   googleTagManagerKey: process.env.GOOGLE_TAG_MANAGER_KEY,
   paymentsEndpoint: process.env.PAYMENTS_SERVICE_ENDPOINT,
-  dataHubEndpoint: process.env.DATA_HUB_SERVICE_ENDPOINT,
   holdReportName: process.env.HOLD_REPORT_NAME,
   useV2Events: process.env.USE_V2_EVENTS
 }

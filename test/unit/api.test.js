@@ -1,5 +1,4 @@
 const { paymentsEndpoint } = require('../../app/config')
-const { PAYMENT_ENDPOINT } = require('../../app/constants/endpoints')
 
 describe('API', () => {
   const api = require('../../app/api')
@@ -20,7 +19,7 @@ describe('API', () => {
     const responseMock = { payload: 'something' }
     wreck.get.mockResolvedValueOnce(responseMock)
 
-    const response = await api.get(PAYMENT_ENDPOINT, url, token)
+    const response = await api.get(url, token)
 
     expect(wreck.get).toHaveBeenCalledTimes(1)
     expect(wreck.get).toHaveBeenCalledWith(`${paymentsEndpoint}${url}`, { headers: { Authorization: expectedAuthVal }, json: true })
@@ -36,7 +35,7 @@ describe('API', () => {
     wreck.post.mockResolvedValueOnce(responseMock)
     const data = { hi: 'world' }
 
-    const response = await api.post(PAYMENT_ENDPOINT, url, data, token)
+    const response = await api.post(url, data, token)
 
     expect(wreck.post).toHaveBeenCalledTimes(1)
     expect(wreck.post).toHaveBeenCalledWith(`${paymentsEndpoint}${url}`, {

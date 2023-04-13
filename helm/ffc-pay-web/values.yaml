@@ -42,7 +42,6 @@ container:
   limitCpu: 120m
   port: 3007
   paymentsEndpoint: http://ffc-pay-processing.ffc-pay
-  dataHubEndpoint: http://ffc-pay-data-hub.ffc-pay
   cookiePassword: cookiecookiecookiecookiecookiecookie
   azureStorageConnectionString: dummy
   azureStorageUseConnectionString: false
