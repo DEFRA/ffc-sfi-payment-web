@@ -20,7 +20,8 @@
   "contributors": [
     "John Watson john.watson2@rpa.gov.uk",
     "Steve Dickinson steve.dickinson@defra.gov.uk",
-    "Simon Dunn simon.dunn1@defra.gov.uk"
+    "Simon Dunn simon.dunn1@defra.gov.uk",
+    "Marc Templeton m.templeton@kainos.com"
   ],
   "license": "OGL-UK-3.0",
   "dependencies": {
@@ -38,7 +39,6 @@
     "ffc-messaging": "2.6.5",
     "govuk-frontend": "4.4.0",
     "hapi-pino": "10.1.0",
-    "install": "0.13.0",
     "joi": "17.4.0",
     "log-timestamp": "0.3.0",
     "moment": "2.29.4",

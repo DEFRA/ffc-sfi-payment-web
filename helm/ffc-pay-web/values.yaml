@@ -9,7 +9,7 @@ labels:
   component: web
 
 appInsights:
-  key:
+  connectionString:
 
 azureAppRegistration:
   enabled: true
