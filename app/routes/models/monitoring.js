@@ -1,7 +1,6 @@
 function ViewModel () {
   this.model = {
-    searchByFrn: searchByFrn(),
-    searchByBatch: searchByBatch()
+    searchByFrn: searchByFrn()
   }
 }
 
@@ -21,27 +20,6 @@ const searchByFrn = () => {
       classes: 'search-button'
     },
     inputmode: 'numeric'
-  }
-
-  return searchModel
-}
-
-const searchByBatch = () => {
-  const searchModel = {
-    id: 'batch-search-input',
-    name: 'batch',
-    label: {
-      text: 'Search for payments by batch name',
-      hint: 'For example, SITISFI_0001_AP_2022110909115624.dat',
-      classes: 'govuk-!-font-weight-bold'
-    },
-    input: {
-      classes: 'govuk-input--width-20'
-    },
-    button: {
-      classes: 'search-button'
-    },
-    inputmode: 'text'
   }
 
   return searchModel
