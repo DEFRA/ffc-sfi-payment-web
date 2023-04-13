@@ -8,4 +8,6 @@ const sendMessage = async (body, type, config, options) => {
   await sender.closeConnection()
 }
 
-module.exports = sendMessage
+module.exports = {
+  sendMessage
+}
