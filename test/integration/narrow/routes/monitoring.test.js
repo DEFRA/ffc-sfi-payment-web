@@ -23,6 +23,28 @@ describe('monitoring test', () => {
     await server.stop()
   })
 
+  test('GET /monitoring route returns 403 if user not in role', async () => {
+    auth.credentials.scope = []
+    const options = {
+      method: 'GET',
+      url: '/monitoring',
+      auth
+    }
+
+    const res = await server.inject(options)
+    expect(res.statusCode).toBe(403)
+  })
+
+  test('GET /monitoring route redirects to login page if not authorised', async () => {
+    const options = {
+      method: 'GET',
+      url: '/monitoring'
+    }
+
+    expect(res.statusCode).toBe(302)
+    expect(res.headers.location).toEqual('/login')
+  })
+
   test('GET /monitoring route returns 200 if V2 events enabled', async () => {
     const options = {
       method: 'GET',
@@ -57,4 +79,6 @@ describe('monitoring test', () => {
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe('/event-projection')
   })
+
+
 })
