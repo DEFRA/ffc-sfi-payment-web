@@ -3,9 +3,12 @@ jest.mock('../../../../app/auth')
 jest.mock('../../../../app/config')
 const config = require('../../../../app/config')
 
-const createServer = require('../../../../app/server')
+jest.mock('../../../../app/payments')
+const { getPaymentsByFrn: mockGetPaymentsByFrn, getPaymentsByCorrelationId: mockGetPaymentsByCorrelationId } = require('../../../../app/payments')
 
 const { holdAdmin } = require('../../../../app/auth/permissions')
+const { DATA } = require('../../../mocks/values/data')
+const createServer = require('../../../../app/server')
 
 let server
 let auth
@@ -14,7 +17,12 @@ describe('monitoring test', () => {
   beforeEach(async () => {
     config.useV1Events = true
     config.useV2Events = true
+
     auth = { strategy: 'session-auth', credentials: { scope: [holdAdmin] } }
+
+    mockGetPaymentsByCorrelationId.mockResolvedValue(DATA)
+    mockGetPaymentsByFrn.mockResolvedValue(DATA)
+
     server = await createServer()
     await server.initialize()
   })
@@ -31,8 +39,8 @@ describe('monitoring test', () => {
       auth
     }
 
-    const res = await server.inject(options)
-    expect(res.statusCode).toBe(403)
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(403)
   })
 
   test('GET /monitoring route redirects to login page if not authorised', async () => {
@@ -41,8 +49,9 @@ describe('monitoring test', () => {
       url: '/monitoring'
     }
 
-    expect(res.statusCode).toBe(302)
-    expect(res.headers.location).toEqual('/login')
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toEqual('/login')
   })
 
   test('GET /monitoring route returns 200 if V2 events enabled', async () => {
