@@ -2,7 +2,7 @@ const { SOURCE } = require('../../../app/constants/source')
 const { TYPE } = require('../../../app/constants/type')
 const { REQUEST } = require('../request')
 const { BODY } = require('./body')
-const { SESSION_ID } = require('./message-id')
+const { MESSAGE_ID } = require('./message-id')
 
 module.exports = {
   REQUEST_MESSAGE: {
@@ -12,6 +12,6 @@ module.exports = {
     body: BODY,
     type: TYPE,
     source: SOURCE,
-    sessionId: SESSION_ID
+    sessionId: MESSAGE_ID
   }
 }
