@@ -23,7 +23,7 @@ module.exports = [{
   },
   handler: async (request, h) => {
     if (!config.useV2Events) {
-      return h.view('404')
+      return h.view('404').code(404)
     }
     const frn = request.query.frn
     const payments = await getPaymentsByFrn(frn)
@@ -37,7 +37,7 @@ module.exports = [{
   },
   handler: async (request, h) => {
     if (!config.useV2Events) {
-      return h.view('404')
+      return h.view('404').code(404)
     }
     const correlationId = request.query.correlationId
     const events = await getPaymentsByCorrelationId(correlationId)

@@ -89,5 +89,117 @@ describe('monitoring test', () => {
     expect(response.headers.location).toBe('/event-projection')
   })
 
+  test('GET /monitoring/payments/frn route returns 403 if user not in role', async () => {
+    auth.credentials.scope = []
+    const options = {
+      method: 'GET',
+      url: '/monitoring/payments/frn',
+      auth
+    }
 
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(403)
+  })
+
+  test('GET /monitoring/payments/frn route redirects to login page if not authorised', async () => {
+    const options = {
+      method: 'GET',
+      url: '/monitoring/payments/frn'
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toEqual('/login')
+  })
+
+  test('GET /monitoring/payments/frn route returns 200 if V2 events enabled', async () => {
+    const options = {
+      method: 'GET',
+      url: '/monitoring/payments/frn',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(200)
+  })
+
+  test('GET /monitoring/payments/frn route returns monitoring frn view if V2 events enabled', async () => {
+    const options = {
+      method: 'GET',
+      url: '/monitoring/payments/frn',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.payload).toContain('Monitoring')
+  })
+
+  test('GET /monitoring/payments/frn route returns 404 if V2 events disabled', async () => {
+    config.useV2Events = false
+    const options = {
+      method: 'GET',
+      url: '/monitoring/payments/correlation-id',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(404)
+  })
+
+  test('GET /monitoring/payments/correlation-id route returns 403 if user not in role', async () => {
+    auth.credentials.scope = []
+    const options = {
+      method: 'GET',
+      url: '/monitoring/payments/correlation-id',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(403)
+  })
+
+  test('GET /monitoring/payments/correlation-id route redirects to login page if not authorised', async () => {
+    const options = {
+      method: 'GET',
+      url: '/monitoring/payments/correlation-id'
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toEqual('/login')
+  })
+
+  test('GET /monitoring/payments/correlation-id route returns 200 if V2 events enabled', async () => {
+    const options = {
+      method: 'GET',
+      url: '/monitoring/payments/correlation-id',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(200)
+  })
+
+  test('GET /monitoring/payments/correlation-id route returns monitoring frn view if V2 events enabled', async () => {
+    const options = {
+      method: 'GET',
+      url: '/monitoring/payments/correlation-id',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.payload).toContain('Monitoring')
+  })
+
+  test('GET /monitoring/payments/correlation-id route returns 404 if V2 events disabled', async () => {
+    config.useV2Events = false
+    const options = {
+      method: 'GET',
+      url: '/monitoring/payments/correlation-id',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(404)
+  })
 })
