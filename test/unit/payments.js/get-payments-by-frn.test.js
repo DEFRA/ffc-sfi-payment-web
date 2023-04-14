@@ -2,6 +2,7 @@ jest.mock('../../../app/payments/get-data')
 const { getData: mockGetData } = require('../../../app/payments/get-data')
 
 const { FRN: FRN_CATEGORY } = require('../../../app/constants/categories')
+
 const { FRN: FRN_VALUE } = require('../../mocks/values/frn')
 const { DATA } = require('../../mocks/values/data')
 
