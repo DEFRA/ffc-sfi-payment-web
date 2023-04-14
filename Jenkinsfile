@@ -1,3 +1,3 @@
-@Library('defra-library@allow-out-of-synk') _
+@Library('defra-library@v-9') _
 
 buildNodeJs()
