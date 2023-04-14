@@ -1,0 +1,6 @@
+resources:
+  topics:
+    - name: data
+  queues:
+    - name: dataResponse
+      enableSessions: true

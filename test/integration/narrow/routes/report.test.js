@@ -85,7 +85,6 @@ describe('Report test', () => {
     }
 
     const response = await server.inject(options)
-    console.log(response)
     expect(response.payload).toContain('Payment report unavailable')
   })
 

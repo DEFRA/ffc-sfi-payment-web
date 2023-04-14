@@ -1,6 +1,7 @@
 const joi = require('joi')
 const authConfig = require('./auth')
 const storageConfig = require('./storage')
+const messageConfig = require('./message')
 
 // Define config schema
 const schema = joi.object({
@@ -10,7 +11,8 @@ const schema = joi.object({
   staticCacheTimeoutMillis: joi.number().default(7 * 24 * 60 * 60 * 1000),
   googleTagManagerKey: joi.string().default(''),
   paymentsEndpoint: joi.string().uri().required(),
-  holdReportName: joi.boolean().default('ffc-pay-hold-report.csv')
+  holdReportName: joi.boolean().default('ffc-pay-hold-report.csv'),
+  useV2Events: joi.boolean().default(true)
 })
 
 // Build config
@@ -21,7 +23,8 @@ const config = {
   staticCacheTimeoutMillis: process.env.STATIC_CACHE_TIMEOUT_IN_MILLIS,
   googleTagManagerKey: process.env.GOOGLE_TAG_MANAGER_KEY,
   paymentsEndpoint: process.env.PAYMENTS_SERVICE_ENDPOINT,
-  holdReportName: process.env.HOLD_REPORT_NAME
+  holdReportName: process.env.HOLD_REPORT_NAME,
+  useV2Events: process.env.USE_V2_EVENTS
 }
 
 // Validate config
@@ -42,5 +45,6 @@ value.isTest = value.env === 'test'
 value.isProd = value.env === 'production'
 
 value.storageConfig = storageConfig
+value.messageConfig = messageConfig
 
 module.exports = value
