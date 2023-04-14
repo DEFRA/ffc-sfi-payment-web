@@ -12,6 +12,7 @@ const post = async (url, data, token) => {
   })
   return payload
 }
+
 const getConfiguration = (token) => {
   return {
     headers: {
@@ -20,6 +21,7 @@ const getConfiguration = (token) => {
     json: true
   }
 }
+
 module.exports = {
   get,
   post
