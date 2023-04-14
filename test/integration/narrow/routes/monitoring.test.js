@@ -6,8 +6,10 @@ const config = require('../../../../app/config')
 jest.mock('../../../../app/payments')
 const { getPaymentsByFrn: mockGetPaymentsByFrn, getPaymentsByCorrelationId: mockGetPaymentsByCorrelationId } = require('../../../../app/payments')
 
-const { holdAdmin } = require('../../../../app/auth/permissions')
 const { DATA } = require('../../../mocks/values/data')
+
+const { holdAdmin } = require('../../../../app/auth/permissions')
+
 const createServer = require('../../../../app/server')
 
 let server
