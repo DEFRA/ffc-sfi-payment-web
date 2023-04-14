@@ -17,9 +17,10 @@ jest.mock('ffc-messaging', () => {
 jest.mock('../../../app/messaging/create-message')
 const { createMessage: mockCreateMessage } = require('../../../app/messaging/create-message')
 
-const { BODY } = require('../../mocks/messaging/body')
 const { TYPE } = require('../../../app/constants/type')
 const { MESSAGE_ID } = require('../../mocks/messaging/message-id')
+
+const { BODY } = require('../../mocks/messaging/body')
 const { RESPONSE_MESSAGE } = require('../../mocks/messaging/message')
 
 const { sendMessage } = require('../../../app/messaging/send-message')

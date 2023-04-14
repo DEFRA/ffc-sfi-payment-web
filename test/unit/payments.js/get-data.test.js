@@ -4,11 +4,12 @@ const { v4: mockUuid } = require('uuid')
 jest.mock('../../../app/messaging')
 const { sendMessage: mockSendMessage, receiveMessage: mockReceiveMessage } = require('../../../app/messaging')
 
+const { TYPE } = require('../../../app/constants/type')
+
 const { RESPONSE } = require('../../mocks/response')
 const { MESSAGE_ID } = require('../../mocks/messaging/message-id')
 const { VALUE } = require('../../mocks/values/value')
 const { CATEGORY } = require('../../mocks/values/category')
-const { TYPE } = require('../../../app/constants/type')
 const { DATA } = require('../../mocks/values/data')
 
 const { getData } = require('../../../app/payments/get-data')
@@ -45,7 +46,7 @@ describe('get data', () => {
     expect(result).toBe(DATA)
   })
 
-  test('should return undefined  if no response received', async () => {
+  test('should return undefined if no response received', async () => {
     mockReceiveMessage.mockResolvedValue(undefined)
     const result = await getData(CATEGORY, VALUE)
     expect(result).toBe(undefined)

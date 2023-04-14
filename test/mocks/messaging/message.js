@@ -1,7 +1,7 @@
-const { SOURCE } = require('../../../app/constants/source')
-const { TYPE } = require('../../../app/constants/type')
 const { REQUEST } = require('../request')
 const { BODY } = require('./body')
+const { TYPE } = require('../../../app/constants/type')
+const { SOURCE } = require('../../../app/constants/source')
 const { MESSAGE_ID } = require('./message-id')
 
 module.exports = {

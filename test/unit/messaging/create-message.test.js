@@ -1,9 +1,10 @@
-const { BODY } = require('../../mocks/messaging/body')
 const { TYPE } = require('../../../app/constants/type')
 const { SOURCE } = require('../../../app/constants/source')
 
-const { createMessage } = require('../../../app/messaging/create-message')
+const { BODY } = require('../../mocks/messaging/body')
 const { MESSAGE_ID } = require('../../mocks/messaging/message-id')
+
+const { createMessage } = require('../../../app/messaging/create-message')
 
 describe('create message', () => {
   test('should create message with body as body', () => {
