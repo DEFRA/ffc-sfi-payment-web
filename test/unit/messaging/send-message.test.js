@@ -18,8 +18,8 @@ jest.mock('../../../app/messaging/create-message')
 const { createMessage: mockCreateMessage } = require('../../../app/messaging/create-message')
 
 const { TYPE } = require('../../../app/constants/type')
-const { MESSAGE_ID } = require('../../mocks/messaging/message-id')
 
+const { MESSAGE_ID } = require('../../mocks/messaging/message-id')
 const { BODY } = require('../../mocks/messaging/body')
 const { RESPONSE_MESSAGE } = require('../../mocks/messaging/message')
 
