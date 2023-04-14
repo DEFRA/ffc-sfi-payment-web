@@ -1,8 +1,8 @@
 const { v4: uuidv4 } = require('uuid')
-const { sendMessage, receiveMessage } = require('../messaging')
-const config = require('../config')
 const util = require('util')
 const { TYPE } = require('../constants/type')
+const config = require('../config')
+const { sendMessage, receiveMessage } = require('../messaging')
 
 const getData = async (category, value) => {
   const messageId = uuidv4()
