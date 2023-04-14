@@ -2,6 +2,7 @@ jest.mock('../../../app/payments/get-data')
 const { getData: mockGetData } = require('../../../app/payments/get-data')
 
 const { CORRELATION_ID: CORRELATION_ID_CATEGORY } = require('../../../app/constants/categories')
+
 const { CORRELATION_ID: CORRELATION_ID_VALUE } = require('../../mocks/values/correlation-id')
 const { DATA } = require('../../mocks/values/data')
 
