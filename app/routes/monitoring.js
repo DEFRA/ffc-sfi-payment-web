@@ -1,5 +1,5 @@
 const config = require('../config')
-const { schemeAdmin, holdAdmin } = require('../auth/permissions')
+const { schemeAdmin, holdAdmin, dataView } = require('../auth/permissions')
 const { getPaymentsByFrn, getPaymentsByCorrelationId } = require('../payments')
 const ViewModel = require('./models/monitoring')
 
@@ -7,7 +7,7 @@ module.exports = [{
   method: 'GET',
   path: '/monitoring',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin] }
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] }
   },
   handler: async (request, h) => {
     if (!config.useV2Events) {
@@ -19,7 +19,7 @@ module.exports = [{
   method: 'GET',
   path: '/monitoring/payments/frn',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin] }
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] }
   },
   handler: async (request, h) => {
     if (!config.useV2Events) {
@@ -33,7 +33,7 @@ module.exports = [{
   method: 'GET',
   path: '/monitoring/payments/correlation-id',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin] }
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] }
   },
   handler: async (request, h) => {
     if (!config.useV2Events) {

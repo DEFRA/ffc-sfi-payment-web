@@ -1,13 +1,13 @@
 const { getBlobList } = require('../storage')
 const ViewModel = require('./models/event-projection')
 const Joi = require('joi')
-const { schemeAdmin, holdAdmin } = require('../auth/permissions')
+const { schemeAdmin, holdAdmin, dataView } = require('../auth/permissions')
 
 module.exports = {
   method: 'GET',
   path: '/event-projection',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin] },
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     validate: {
       query: Joi.object({
         frn: Joi.number().greater(999999999).less(10000000000)

@@ -1,4 +1,4 @@
-const { schemeAdmin, holdAdmin } = require('../auth/permissions')
+const { schemeAdmin, holdAdmin, dataView } = require('../auth/permissions')
 const { getProjection, getBlobList } = require('../storage')
 const ViewModel = require('./models/event-projection-detail')
 
@@ -6,7 +6,7 @@ module.exports = [{
   method: 'GET',
   path: '/event-projection-detail/{frn}/{agreementNumber}/{requestNumber}',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin] },
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (request, h) => {
       const frn = request.params.frn
       const agreementNumber = request.params.agreementNumber

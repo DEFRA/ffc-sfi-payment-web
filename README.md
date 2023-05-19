@@ -45,8 +45,9 @@ These can be retrieved from the App Registration overview blade.
 
 The following roles need [setting up](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps)
 
-- Payments.Holds.Admin
-- Payments.Scheme.Admin
+- Payment.Holds.Admin
+- Payment.Scheme.Admin
+- Payment.Data.View
 
 For users to access this service, the users need to be assigned to the relevant roles above through Azure Enterprise Applications.
 
