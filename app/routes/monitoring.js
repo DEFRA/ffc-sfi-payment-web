@@ -54,7 +54,7 @@ module.exports = [{
       return h.view('404').code(404)
     }
     const batch = request.query.batch
-    const events = await getPaymentsByBatch(batch)
-    return h.view('monitoring/batch', { batch, events })
+    const payments = await getPaymentsByBatch(batch)
+    return h.view('monitoring/batch', { batch, payments })
   }
 }]
