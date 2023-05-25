@@ -1,6 +1,6 @@
 {
   "name": "ffc-pay-web",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "FFC payment management service",
   "homepage": "https://github.com/DEFRA/ffc-pay-web",
   "main": "app/index.js",
@@ -18,7 +18,7 @@
   },
   "author": "Defra",
   "contributors": [
-    "John Watson john.watson2@rpa.gov.uk",
+    "John Watson john.watson1@defra.gov.uk",
     "Steve Dickinson steve.dickinson@defra.gov.uk",
     "Simon Dunn simon.dunn1@defra.gov.uk",
     "Marc Templeton m.templeton@kainos.com"
