@@ -24,6 +24,7 @@
               <th scope="col" class="govuk-table__header govuk-body-s">Scheme</th>
               <th scope="col" class="govuk-table__header govuk-body-s">Agreement</th>
               <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-body-s">Payment request</th>
+              <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-body-s">Value</th>
               <th scope="col" class="govuk-table__header govuk-body-s">Status</th>
               <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-body-s">Last updated</th>
               <th scope="col" class="govuk-table__header govuk-body-s"></th>
@@ -35,6 +36,7 @@
                 <td class="govuk-table__cell govuk-body-s">{{ payment.scheme }}</td>
                 <td class="govuk-table__cell govuk-body-s">{{ payment.agreementNumber }}</td>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-body-s">{{ payment.paymentRequestNumber }}</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-body-s">{{ payment.originalValueText }}</td>
                 <td class="govuk-table__cell govuk-body-s"><strong class="govuk-tag {% if payment.status.state == 'Completed' %}govuk-tag--green{% elif payment.status.state == 'Waiting' %}govuk-tag--yellow{% endif %}">{{ payment.status.detail }}</strong></td>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-body-s">{{ payment.lastUpdated }}</td>
                 <td class="govuk-table__cell govuk-body-s"><a href="/monitoring/payments/correlation-id?correlationId={{ payment.correlationId }}">View</a></td>
