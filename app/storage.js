@@ -1,6 +1,5 @@
 const { DefaultAzureCredential } = require('@azure/identity')
 const { BlobServiceClient } = require('@azure/storage-blob')
-const parseJsonDate = require('./parse-json-date')
 const config = require('./config').storageConfig
 let blobServiceClient
 let containersInitialised
