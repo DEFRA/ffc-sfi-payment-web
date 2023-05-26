@@ -11,7 +11,7 @@ module.exports = [{
   },
   handler: async (request, h) => {
     if (!config.useV2Events) {
-      return h.redirect('/event-projection')
+      return h.view('404').code(404)
     }
     return h.view('monitoring/monitoring', new ViewModel())
   }

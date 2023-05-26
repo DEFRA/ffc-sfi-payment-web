@@ -78,7 +78,7 @@ describe('monitoring test', () => {
     expect(response.payload).toContain('Monitoring')
   })
 
-  test('GET /monitoring route redirects to event projection route if V2 events disabled', async () => {
+  test('GET /monitoring route returns 404 if V2 events disabled', async () => {
     config.useV2Events = false
     const options = {
       method: 'GET',
@@ -87,8 +87,7 @@ describe('monitoring test', () => {
     }
 
     const response = await server.inject(options)
-    expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe('/event-projection')
+    expect(response.statusCode).toBe(404)
   })
 
   test('GET /monitoring/payments/frn route returns 403 if user not in role', async () => {
