@@ -1,6 +1,6 @@
 const config = require('../config')
 const { schemeAdmin, holdAdmin, dataView } = require('../auth/permissions')
-const { getPaymentsByFrn, getPaymentsByCorrelationId } = require('../payments')
+const { getPaymentsByFrn, getPaymentsByCorrelationId, getPaymentsByBatch } = require('../payments')
 const ViewModel = require('./models/monitoring')
 
 module.exports = [{
@@ -11,7 +11,7 @@ module.exports = [{
   },
   handler: async (request, h) => {
     if (!config.useV2Events) {
-      return h.redirect('/event-projection')
+      return h.view('404').code(404)
     }
     return h.view('monitoring/monitoring', new ViewModel())
   }
@@ -42,5 +42,19 @@ module.exports = [{
     const correlationId = request.query.correlationId
     const events = await getPaymentsByCorrelationId(correlationId)
     return h.view('monitoring/correlation-id', { correlationId, events })
+  }
+}, {
+  method: 'GET',
+  path: '/monitoring/batch/name',
+  options: {
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] }
+  },
+  handler: async (request, h) => {
+    if (!config.useV2Events) {
+      return h.view('404').code(404)
+    }
+    const batch = request.query.batch
+    const payments = await getPaymentsByBatch(batch)
+    return h.view('monitoring/batch', { batch, payments })
   }
 }]
