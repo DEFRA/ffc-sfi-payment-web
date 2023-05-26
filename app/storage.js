@@ -26,45 +26,7 @@ const initialiseContainers = async () => {
   containersInitialised = true
 }
 
-const getBlobList = async (prefix) => {
-  console.log(`Getting blob list for prefix ${prefix}`)
-  !containersInitialised && await initialiseContainers()
-  const eventBlobList = {
-    prefix,
-    blobList: []
-  }
-
-  const blobList = await projectionContainer.listBlobsFlat({ prefix: prefix.toString() })
-
-  for await (const blob of blobList) {
-    const split = blob.name.split('/')
-    const data = {
-      frn: split[0],
-      agreementNumber: split[1],
-      requestNumber: split[2],
-      fileName: split[3],
-      blob: blob.name,
-      updatedDate: parseJsonDate(blob.properties.lastModified, false)
-    }
-
-    eventBlobList.blobList.push(data)
-  }
-
-  return eventBlobList
-}
-
-const getBlob = async (blobPath) => {
-  containersInitialised ?? await initialiseContainers()
-  return projectionContainer.getBlockBlobClient(blobPath)
-}
-
-async function getProjection (blobPath) {
-  const blob = await getBlob(blobPath)
-  const blobBuffer = await blob.downloadToBuffer()
-  return JSON.parse(blobBuffer.toString('utf-8'))
-}
-
-async function getMIReport () {
+const getMIReport = async () => {
   containersInitialised ?? await initialiseContainers()
   const blob = await reportContainer.getBlockBlobClient(config.miReportName)
   return blob.download()
@@ -72,7 +34,5 @@ async function getMIReport () {
 
 module.exports = {
   blobServiceClient,
-  getProjection,
-  getBlobList,
   getMIReport
 }
