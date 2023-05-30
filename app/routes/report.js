@@ -1,6 +1,6 @@
 const { getMIReport } = require('../storage')
 const { getHolds } = require('../holds')
-const { holdAdmin, schemeAdmin } = require('../auth/permissions')
+const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../format-date')
 const convertToCsv = require('../convert-to-csv')
 const storageConfig = require('../config/storage')
@@ -10,7 +10,7 @@ module.exports = [{
   method: 'GET',
   path: '/report/payment-requests',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin] },
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (_request, h) => {
       try {
         const response = await getMIReport()
@@ -31,7 +31,7 @@ module.exports = [{
   method: 'GET',
   path: '/report/holds',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin] },
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (_request, h) => {
       try {
         const paymentHolds = await getHolds()
