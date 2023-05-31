@@ -1,4 +1,5 @@
 module.exports = {
   FRN: 'frn',
-  CORRELATION_ID: 'correlationId'
+  CORRELATION_ID: 'correlationId',
+  SCHEME_ID: 'schemeId'
 }
