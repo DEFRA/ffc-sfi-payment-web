@@ -9,7 +9,6 @@ module.exports = [{
   },
   handler: async (request, h) => {
     const processedPaymentRequests = await getPaymentsBySchemeId()
-    console.log(processedPaymentRequests)
-    return processedPaymentRequests
+    return h.view('monitoring/view-processed-payment-requests', { data: processedPaymentRequests })
   }
 }]
