@@ -14,15 +14,15 @@
     })}}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <span class="govuk-caption-l">{{frn}}</span>
-      <h1 class="govuk-heading-l">Processed Payment Requests</h1>
+      <span class="govuk-caption-l">Processed payment requests</span>
+      <h1 class="govuk-heading-l">Processed payment requests</h1>
 
       {% if data.length %}
         <table class="govuk-table">
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
               <th scope="col" class="govuk-table__header govuk-body-s">Scheme</th>
-              <th scope="col" class="govuk-table__header govuk-body-s">Payments</th>
+              <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-body-s">Payments</th>
               <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-body-s">Value</th>
             </tr>
           </thead>
@@ -30,7 +30,7 @@
             {% for paymentRequests in data %}
               <tr class="govuk-table__row">
                 <td class="govuk-table__cell govuk-body-s">{{ paymentRequests.scheme }}</td>
-                <td class="govuk-table__cell govuk-body-s">{{ paymentRequests.paymentRequests }}</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-body-s">{{ paymentRequests.paymentRequests }}</td>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-body-s">{{ paymentRequests.value }}</td>
               </tr>
             {% endfor %}
