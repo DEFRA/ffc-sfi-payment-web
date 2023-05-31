@@ -1,4 +1,4 @@
-const { holdAdmin, schemeAdmin } = require('./permissions')
+const { holdAdmin, schemeAdmin, dataView } = require('./permissions')
 const { v4: uuidv4 } = require('uuid')
 const devAccount = require('./dev-account')
 
@@ -8,18 +8,18 @@ const getAuthenticationUrl = () => {
 
 const authenticate = async (_redirectCode, cookieAuth) => {
   cookieAuth.set({
-    scope: [holdAdmin, schemeAdmin],
+    scope: [holdAdmin, schemeAdmin, dataView],
     account: devAccount
   })
 }
 
 const refresh = async (_account, cookieAuth, _forceRefresh = true) => {
   cookieAuth.set({
-    scope: [holdAdmin, schemeAdmin],
+    scope: [holdAdmin, schemeAdmin, dataView],
     account: devAccount
   })
 
-  return [holdAdmin, schemeAdmin]
+  return [holdAdmin, schemeAdmin, dataView]
 }
 
 const logout = async (_account) => {

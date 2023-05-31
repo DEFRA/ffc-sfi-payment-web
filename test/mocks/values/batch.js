@@ -1,0 +1,3 @@
+module.exports = {
+  BATCH: 'SITISFI0001_AP_20230526095530'
+}
