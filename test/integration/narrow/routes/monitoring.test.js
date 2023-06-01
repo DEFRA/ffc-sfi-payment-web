@@ -4,7 +4,7 @@ jest.mock('../../../../app/config')
 const config = require('../../../../app/config')
 
 jest.mock('../../../../app/payments')
-const { getPaymentsByFrn: mockGetPaymentsByFrn, getPaymentsByCorrelationId: mockGetPaymentsByCorrelationId, getPaymentsByBatch: mockGetPaymentsByBatch, getPaymentsBySchemeId: mockGetPaymentsBySchemeId } = require('../../../../app/payments')
+const { getPaymentsByFrn: mockGetPaymentsByFrn, getPaymentsByCorrelationId: mockGetPaymentsByCorrelationId, getPaymentsByBatch: mockGetPaymentsByBatch, getPaymentsByScheme: mockGetPaymentsByScheme } = require('../../../../app/payments')
 
 const { DATA } = require('../../../mocks/values/data')
 
@@ -25,7 +25,7 @@ describe('monitoring test', () => {
     mockGetPaymentsByCorrelationId.mockResolvedValue(DATA)
     mockGetPaymentsByFrn.mockResolvedValue(DATA)
     mockGetPaymentsByBatch.mockResolvedValue(DATA)
-    mockGetPaymentsBySchemeId.mockResolvedValue(DATA)
+    mockGetPaymentsByScheme.mockResolvedValue(DATA)
 
     server = await createServer()
     await server.initialize()

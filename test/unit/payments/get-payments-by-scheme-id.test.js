@@ -1,12 +1,12 @@
 jest.mock('../../../app/payments/get-data')
 const { getData: mockGetData } = require('../../../app/payments/get-data')
 
-const { SCHEME_ID: SCHEME_ID_CATEGORY } = require('../../../app/constants/categories')
-const { SCHEME_ID_VALUE } = require('../../../app/constants/scheme-id-value')
-
 const { DATA } = require('../../mocks/values/data')
 
-const { getPaymentsBySchemeId } = require('../../../app/payments')
+const { SCHEME_ID: SCHEME_ID_CATEGORY } = require('../../../app/constants/categories')
+const { SCHEME_VALUE } = require('../../../app/constants/scheme-value')
+
+const { getPaymentsByScheme } = require('../../../app/payments')
 
 describe('get payments by frn', () => {
   beforeEach(() => {
@@ -14,13 +14,13 @@ describe('get payments by frn', () => {
     mockGetData.mockResolvedValue(DATA)
   })
 
-  test('should get data with FRN category and value', async () => {
-    await getPaymentsBySchemeId()
-    expect(mockGetData).toHaveBeenCalledWith(SCHEME_ID_CATEGORY, SCHEME_ID_VALUE)
+  test('should call mockGetData with schemeId category and value', async () => {
+    await getPaymentsByScheme()
+    expect(mockGetData).toHaveBeenCalledWith(SCHEME_ID_CATEGORY, SCHEME_VALUE)
   })
 
-  test('should return data', async () => {
-    const result = await getPaymentsBySchemeId()
+  test('should return DATA when getPaymentsBySchemeId is called', async () => {
+    const result = await getPaymentsByScheme()
     expect(result).toEqual(DATA)
   })
 })
