@@ -11,6 +11,7 @@ const { getPaymentsByScheme } = require('../../../app/payments')
 describe('get payments by frn', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+
     mockGetData.mockResolvedValue(DATA)
   })
 
