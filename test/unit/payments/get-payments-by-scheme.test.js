@@ -15,12 +15,12 @@ describe('get payments by frn', () => {
     mockGetData.mockResolvedValue(DATA)
   })
 
-  test('should call mockGetData with schemeId category and value', async () => {
+  test('should call mockGetData with schemeId category and scheme value', async () => {
     await getPaymentsByScheme()
     expect(mockGetData).toHaveBeenCalledWith(SCHEME_ID_CATEGORY, SCHEME_VALUE)
   })
 
-  test('should return DATA when getPaymentsBySchemeId is called', async () => {
+  test('should return DATA when getPaymentsByScheme is called', async () => {
     const result = await getPaymentsByScheme()
     expect(result).toEqual(DATA)
   })
