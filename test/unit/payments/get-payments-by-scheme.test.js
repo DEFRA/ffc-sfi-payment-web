@@ -20,7 +20,7 @@ describe('get payments by frn', () => {
     expect(mockGetData).toHaveBeenCalledWith(SCHEME_ID_CATEGORY, SCHEME_VALUE)
   })
 
-  test('should return DATA when getPaymentsByScheme is called', async () => {
+  test('should return mock payment events data when getPaymentsByScheme is called', async () => {
     const result = await getPaymentsByScheme()
     expect(result).toEqual(DATA)
   })
