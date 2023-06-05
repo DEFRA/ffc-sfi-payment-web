@@ -4,7 +4,7 @@ jest.mock('../../../../app/config')
 const config = require('../../../../app/config')
 
 jest.mock('../../../../app/payments')
-const { getPaymentsByFrn: mockGetPaymentsByFrn, getPaymentsByCorrelationId: mockGetPaymentsByCorrelationId, getPaymentsByBatch: mockGetPaymentsByBatch } = require('../../../../app/payments')
+const { getPaymentsByFrn: mockGetPaymentsByFrn, getPaymentsByCorrelationId: mockGetPaymentsByCorrelationId, getPaymentsByBatch: mockGetPaymentsByBatch, getPaymentsByScheme: mockGetPaymentsByScheme } = require('../../../../app/payments')
 
 const { DATA } = require('../../../mocks/values/data')
 
@@ -25,6 +25,7 @@ describe('monitoring test', () => {
     mockGetPaymentsByCorrelationId.mockResolvedValue(DATA)
     mockGetPaymentsByFrn.mockResolvedValue(DATA)
     mockGetPaymentsByBatch.mockResolvedValue(DATA)
+    mockGetPaymentsByScheme.mockResolvedValue(DATA)
 
     server = await createServer()
     await server.initialize()
@@ -255,6 +256,63 @@ describe('monitoring test', () => {
     const options = {
       method: 'GET',
       url: '/monitoring/batch/name',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(404)
+  })
+
+  test('GET /monitoring/view-processed-payment-requests route returns 403 if user not in role', async () => {
+    auth.credentials.scope = []
+    const options = {
+      method: 'GET',
+      url: '/monitoring/view-processed-payment-requests',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(403)
+  })
+
+  test('GET /monitoring/view-processed-payment-requests route redirects to login page if not authorised', async () => {
+    const options = {
+      method: 'GET',
+      url: '/monitoring/view-processed-payment-requests'
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toEqual('/login')
+  })
+
+  test('GET /monitoring/view-processed-payment-requests route returns 200 if V2 events enabled', async () => {
+    const options = {
+      method: 'GET',
+      url: '/monitoring/view-processed-payment-requests',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(200)
+  })
+
+  test('GET /monitoring/view-processed-payment-requests route returns view-processed-payment-requests view if V2 events enabled', async () => {
+    const options = {
+      method: 'GET',
+      url: '/monitoring/view-processed-payment-requests',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.payload).toContain('processed payment requests')
+  })
+
+  test('GET /monitoring/view-processed-payment-requests route returns 404 if V2 events disabled', async () => {
+    config.useV2Events = false
+    const options = {
+      method: 'GET',
+      url: '/monitoring/view-processed-payment-requests',
       auth
     }
 
