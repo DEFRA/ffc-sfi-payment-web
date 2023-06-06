@@ -8,7 +8,7 @@ const schema = Joi.object({
   reportContainer: Joi.string().default('reports'),
   useConnectionStr: Joi.boolean().default(false),
   createContainers: Joi.boolean().default(true),
-  miReportName: Joi.boolean().default('ffc-pay-mi-report.csv')
+  miReportName: Joi.boolean().default('ffc-pay-mi-report-v2.csv')
 })
 
 // Build config
