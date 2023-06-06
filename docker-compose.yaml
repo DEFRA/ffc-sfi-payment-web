@@ -3,7 +3,7 @@ version: '3.8'
 services:
   ffc-pay-web:
     depends_on: 
-      - ffc-pay-web-azurite
+      - ffc-pay-event-store-azurite
     build:
       context: .
       target: production
@@ -27,6 +27,6 @@ services:
       DATA_TOPIC_ADDRESS: ${DATA_TOPIC_ADDRESS:-ffc-pay-data-request}${MESSAGE_QUEUE_SUFFIX}
       DATARESPONSE_QUEUE_ADDRESS: ${DATARESPONSE_QUEUE_ADDRESS:-ffc-pay-data-request-response}${MESSAGE_QUEUE_SUFFIX}
 
-  ffc-pay-web-azurite:
+  ffc-pay-event-store-azurite:
     image: mcr.microsoft.com/azure-storage/azurite:3.23.0
     command: "azurite --blobHost 0.0.0.0 --tableHost 0.0.0.0 --loose"
