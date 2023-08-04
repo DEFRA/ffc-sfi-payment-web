@@ -37,7 +37,7 @@
     "@hapi/wreck": "17.1.0",
     "applicationinsights": "2.5.1",
     "ffc-messaging": "2.6.5",
-    "govuk-frontend": "4.4.0",
+    "govuk-frontend": "4.7.0",
     "hapi-pino": "10.1.0",
     "joi": "17.4.0",
     "log-timestamp": "0.3.0",
