@@ -31,7 +31,14 @@ const getMIReport = async () => {
   return blob.download()
 }
 
+const getSuppressedReport = async () => {
+  containersInitialised ?? await initialiseContainers()
+  const blob = await reportContainer.getBlockBlobClient(config.suppressedReportName)
+  return blob.download()
+}
+
 module.exports = {
   blobServiceClient,
-  getMIReport
+  getMIReport,
+  getSuppressedReport
 }

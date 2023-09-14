@@ -1,4 +1,4 @@
-const { getMIReport } = require('../storage')
+const { getMIReport, getSuppressedReport } = require('../storage')
 const { getHolds } = require('../holds')
 const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../format-date')
@@ -20,6 +20,27 @@ module.exports = [{
             .header('Connection', 'keep-alive')
             .header('Cache-Control', 'no-cache')
             .header('Content-Disposition', `attachment;filename=${storageConfig.miReportName}`)
+        }
+      } catch {
+        return h.view('payment-report-unavailable')
+      }
+    }
+  }
+},
+{
+  method: 'GET',
+  path: '/report/suppressed-payments',
+  options: {
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
+    handler: async (_request, h) => {
+      try {
+        const response = await getSuppressedReport()
+        if (response) {
+          return h.response(response.readableStreamBody)
+            .type('text/csv')
+            .header('Connection', 'keep-alive')
+            .header('Cache-Control', 'no-cache')
+            .header('Content-Disposition', `attachment;filename=${storageConfig.suppressedReportName}`)
         }
       } catch {
         return h.view('payment-report-unavailable')
