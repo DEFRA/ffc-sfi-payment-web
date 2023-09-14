@@ -56,6 +56,18 @@ describe('Report test', () => {
     expect(response.payload).toBe('Hello')
   })
 
+  test('GET /report/suppressed-payments route returns stream if report available', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report/suppressed-payments',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(200)
+    expect(response.payload).toBe('Hello')
+  })
+
   test('GET /report/holds route returns stream if report available', async () => {
     getHolds.mockReturnValue([{
       holdId: 1,
@@ -81,6 +93,18 @@ describe('Report test', () => {
     const options = {
       method: 'GET',
       url: '/report/payment-requests',
+      auth
+    }
+
+    const response = await server.inject(options)
+    expect(response.payload).toContain('Payment report unavailable')
+  })
+
+  test('GET /report/suppressed-payments route returns unavailable page if report not available', async () => {
+    mockDownload = jest.fn().mockReturnValue(undefined)
+    const options = {
+      method: 'GET',
+      url: '/report/suppressed-payments',
       auth
     }
 
