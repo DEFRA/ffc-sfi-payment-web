@@ -41,7 +41,7 @@ describe('Report test', () => {
 
   afterEach(async () => {
     await server.stop()
-    jest.restoreAllMocks()
+    jest.clearAllMocks()
   })
 
   test('GET /report/payment-requests route returns stream if report available', async () => {
