@@ -41,7 +41,7 @@ describe('Report test', () => {
 
   afterEach(async () => {
     await server.stop()
-    jest.resetAllMocks()
+    jest.restoreAllMocks()
   })
 
   test('GET /report/payment-requests route returns stream if report available', async () => {
@@ -89,7 +89,7 @@ describe('Report test', () => {
   })
 
   test('GET /report/payment-requests route returns unavailable page if report not available', async () => {
-    mockDownload = jest.fn().mockReturnValue(undefined)
+    mockDownload = undefined
     const options = {
       method: 'GET',
       url: '/report/payment-requests',
@@ -101,7 +101,7 @@ describe('Report test', () => {
   })
 
   test('GET /report/suppressed-payments route returns unavailable page if report not available', async () => {
-    mockDownload = jest.fn().mockReturnValue(undefined)
+    mockDownload = undefined
     const options = {
       method: 'GET',
       url: '/report/suppressed-payments',
@@ -113,7 +113,6 @@ describe('Report test', () => {
   })
 
   test('GET /report/holds route returns unavailable page if report not available', async () => {
-    mockDownload = jest.fn().mockReturnValue(undefined)
     getHolds.mockReturnValue(undefined)
     const options = {
       method: 'GET',
