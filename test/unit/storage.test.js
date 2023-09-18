@@ -26,4 +26,9 @@ describe('storage', () => {
     const result = await storage.getMIReport('filepath')
     expect(result).toStrictEqual(mockBlobContent)
   })
+
+  test('getSuppressedReport returns report data', async () => {
+    const result = await storage.getSuppressedReport('filepath')
+    expect(result).toStrictEqual(mockBlobContent)
+  })
 })
