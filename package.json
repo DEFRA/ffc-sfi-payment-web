@@ -43,7 +43,7 @@
     "log-timestamp": "0.3.0",
     "moment": "2.29.4",
     "nunjucks": "3.2.4",
-    "simple-update-notifier": "^2.0.0",
+    "simple-update-notifier": "2.0.0",
     "uuid": "8.3.2"
   },
   "devDependencies": {
