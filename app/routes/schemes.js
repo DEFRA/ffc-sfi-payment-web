@@ -12,7 +12,9 @@ module.exports = [{
       const schemes = await get('/payment-schemes')
       const schemesPayload = schemes.payload.paymentSchemes
       for (let i = 0; i < schemesPayload.length; i++) {
-        if (schemesPayload[i].name === 'SFI') schemesPayload[i].name = 'SFI22'
+        if (schemesPayload[i].name === 'SFI') {
+          schemesPayload[i].name = 'SFI22'
+        }
       }
       return h.view('payment-schemes', { schemes: schemesPayload })
     }

@@ -5,7 +5,9 @@ const getHolds = async () => {
   const { payload } = await get('/payment-holds')
   return payload.paymentHolds?.filter(x => x.dateTimeClosed == null).map(x => {
     x.dateTimeAdded = moment(x.dateTimeAdded).format('DD/MM/YYYY HH:mm')
-    if (x.holdCategorySchemeName === 'SFI') x.holdCategorySchemeName = 'SFI22'
+    if (x.holdCategorySchemeName === 'SFI') {
+      x.holdCategorySchemeName = 'SFI22'
+    }
     return x
   })
 }
