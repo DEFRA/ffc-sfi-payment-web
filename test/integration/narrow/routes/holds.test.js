@@ -28,7 +28,7 @@ describe('Payment holds', () => {
       frn: '1234567890',
       holdCategoryName: 'Outstanding debt',
       holdCategorySchemeId: 1,
-      holdCategorySchemeName: 'SFI',
+      holdCategorySchemeName: 'SFI23',
       dateTimeAdded: '2021-08-26T13:29:28.949Z',
       dateTimeClosed: null
     },
@@ -37,7 +37,7 @@ describe('Payment holds', () => {
       frn: '1111111111',
       holdCategoryName: 'Outstanding debt',
       holdCategorySchemeId: 1,
-      holdCategorySchemeName: 'SFI',
+      holdCategorySchemeName: 'SFI23',
       dateTimeAdded: '2021-09-14T22:35:28.885Z',
       dateTimeClosed: '2021-09-14T22:41:44.659Z'
     }
@@ -94,6 +94,25 @@ describe('Payment holds', () => {
       expect(holdCells.eq(1).text()).toEqual(mockPaymentHolds[i].holdCategoryName)
       expect(holdCells.eq(2).text()).toEqual(mockPaymentHolds[i].holdCategorySchemeName)
       expect(holdCells.eq(3).text()).toEqual(mockPaymentHolds[i].dateTimeAdded)
+    })
+  })
+
+  test('returns 200 and correctly lists scheme name as SFI22 if passed in name is SFI', async () => {
+    mockPaymentHolds[0].holdCategorySchemeName = 'SFI'
+    mockPaymentHolds[1].holdCategorySchemeName = 'SFI'
+    mockGetPaymentHold(mockPaymentHolds)
+
+    const res = await server.inject({ method, url, auth })
+
+    expectRequestForPaymentHold()
+    expect(res.statusCode).toBe(200)
+    const $ = cheerio.load(res.payload)
+    expect($('h1').text()).toEqual(pageH1)
+    const holds = $('.govuk-table__body tr')
+    expect(holds.length).toEqual(1)
+    holds.each((i, hold) => {
+      const holdCells = $('td', hold)
+      expect(holdCells.eq(2).text()).toEqual('SFI22')
     })
   })
 
