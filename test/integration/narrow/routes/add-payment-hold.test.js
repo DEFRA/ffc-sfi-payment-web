@@ -97,7 +97,7 @@ describe('Payment holds', () => {
       })
 
       expect(post).toHaveBeenCalledTimes(1)
-      expect(post).toHaveBeenCalledWith('/add-payment-hold', { frn: validFrn, holdCategoryId: holdCategoryId }, null)
+      expect(post).toHaveBeenCalledWith('/add-payment-hold', { frn: validFrn, holdCategoryId }, null)
       expect(res.statusCode).toBe(302)
       expect(res.headers.location).toEqual('/payment-holds')
     })

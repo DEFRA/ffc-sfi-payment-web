@@ -12,6 +12,13 @@ const getData = async (category, value) => {
   const response = await receiveMessage(messageId, config.messageConfig.dataQueue)
   if (response) {
     console.info('Data response received:', util.inspect(response, false, null, true))
+    if (Array.isArray(response.data)) {
+      for (let i = 0; i < response.data.length; i++) {
+        if (response.data[i].scheme === 'SFI') {
+          response.data[i].scheme = 'SFI22'
+        }
+      }
+    }
     return response.data
   }
 }

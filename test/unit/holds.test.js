@@ -22,11 +22,11 @@ describe('Get holds categories', () => {
     expect(result.schemes[0]).toBe('Annual Health and Welfare Review')
   })
 
-  test('Should return a schemeName of "SFI" when schemeName is "SFI"', async () => {
+  test('Should return a schemeName of "SFI22" when schemeName is "SFI"', async () => {
     mockPaymentHoldCategories[0].schemeName = 'SFI'
     mockGetPaymentHoldCategories(mockPaymentHoldCategories)
     const result = await getHoldCategories(mockGetPaymentHoldCategories)
-    expect(result.schemes[0]).toBe('SFI')
+    expect(result.schemes[0]).toBe('SFI22')
   })
 
   test('Should return a schemeName of "SFI Pilot" when schemeName is "SFI Pilot"', async () => {

@@ -10,7 +10,13 @@ module.exports = [{
     auth: { scope: [schemeAdmin] },
     handler: async (_request, h) => {
       const schemes = await get('/payment-schemes')
-      return h.view('payment-schemes', { schemes: schemes.payload.paymentSchemes })
+      const schemesPayload = schemes.payload.paymentSchemes
+      for (let i = 0; i < schemesPayload.length; i++) {
+        if (schemesPayload[i].name === 'SFI') {
+          schemesPayload[i].name = 'SFI22'
+        }
+      }
+      return h.view('payment-schemes', { schemes: schemesPayload })
     }
   }
 },
