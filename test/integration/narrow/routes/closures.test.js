@@ -36,9 +36,9 @@ describe('Closures', () => {
     await server.stop()
   })
 
-  describe('GET closure page', () => {
+  describe('GET closure/add page', () => {
     const method = 'GET'
-    const url = '/closure'
+    const url = '/closure/add'
     const pageH1 = 'Agreement closure'
 
     test('returns 200 when load successful', async () => {
@@ -64,7 +64,7 @@ describe('Closures', () => {
 
   describe('GET bulk closure page', () => {
     const method = 'GET'
-    const url = '/bulk-closure'
+    const url = '/closure/bulk'
     const pageH1 = 'Bulk agreement closure'
 
     test('returns 200 when load successful', async () => {
@@ -88,11 +88,11 @@ describe('Closures', () => {
     })
   })
 
-  describe('POST /closure', () => {
+  describe('POST /closure/add', () => {
     const method = 'POST'
-    const url = '/closure'
+    const url = '/closure/add'
     const pageH1 = 'Agreement closure'
-    test('redirects successful request to \'/\' and correctly POSTs hold details', async () => {
+    test('redirects successful request to \'/\'closure and correctly POSTs hold details', async () => {
       const mockForCrumbs = () => mockGetClosures()
       const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
       const res = await server.inject({
@@ -104,9 +104,9 @@ describe('Closures', () => {
       })
 
       expect(post).toHaveBeenCalledTimes(1)
-      expect(post).toHaveBeenCalledWith('/closure', { frn: FRN, agreement: AGREEMENT_NUMBER, date: '2023-08-12T00:00:00' }, null)
+      expect(post).toHaveBeenCalledWith('/closure/add', { frn: FRN, agreement: AGREEMENT_NUMBER, date: '2023-08-12T00:00:00' }, null)
       expect(res.statusCode).toBe(302)
-      expect(res.headers.location).toEqual('/')
+      expect(res.headers.location).toEqual('/closure')
     })
 
     test.each([

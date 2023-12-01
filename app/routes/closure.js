@@ -33,7 +33,7 @@ module.exports = [{
     validate: {
       payload: schema,
       failAction: async (request, h, error) => {
-        return h.view('closure', { errors: error, frn: request.payload.frn, agreement: request.payload.agreement, day: request.payload.day, month: request.payload.month, year: request.payload.year }).code(400).takeover()
+        return h.view('closure/add', { errors: error, frn: request.payload.frn, agreement: request.payload.agreement, day: request.payload.day, month: request.payload.month, year: request.payload.year }).code(400).takeover()
       }
     },
     handler: async (request, h) => {
