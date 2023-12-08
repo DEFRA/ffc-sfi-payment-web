@@ -5,7 +5,7 @@ module.exports = Joi.object({
     errors.forEach(err => { err.message = 'Enter a 10-digit FRN' })
     return errors
   }),
-  agreement: Joi.string().required().error(errors => {
+  agreement: Joi.string().required().max(50).error(errors => {
     errors.forEach(err => { err.message = 'Enter a valid agreement number' })
     return errors
   }),

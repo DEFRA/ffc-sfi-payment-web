@@ -76,7 +76,7 @@ module.exports = [{
     },
     payload: {
       output: 'file',
-      maxBytes: 209715200,
+      maxBytes: 1048576,
       multipart: true
     }
   }

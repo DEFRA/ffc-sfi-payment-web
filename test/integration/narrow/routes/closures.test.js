@@ -115,6 +115,7 @@ describe('Closures', () => {
       { frn: 'not-a-number', agreement: AGREEMENT_NUMBER, day: 12, month: 8, year: 2023, expectedErrorMessage: 'Enter a 10-digit FRN' },
       { frn: undefined, agreement: AGREEMENT_NUMBER, day: 12, month: 8, year: 2023, expectedErrorMessage: 'Enter a 10-digit FRN' },
       { frn: 1000000000, agreement: undefined, day: 12, month: 8, year: 2023, expectedErrorMessage: 'Enter a valid agreement number' },
+      { frn: 1000000000, agreement: 'thisstringisreallyreallylongsolonginfactthatitsmorethan50characters', day: 12, month: 8, year: 2023, expectedErrorMessage: 'Enter a valid agreement number' },
       { frn: 1000000000, agreement: AGREEMENT_NUMBER, day: 35, month: 8, year: 2023, expectedErrorMessage: 'Enter a valid day' },
       { frn: 1000000000, agreement: AGREEMENT_NUMBER, day: -4, month: 8, year: 2023, expectedErrorMessage: 'Enter a valid day' },
       { frn: 1000000000, agreement: AGREEMENT_NUMBER, day: 3.5, month: 8, year: 2023, expectedErrorMessage: 'Enter a valid day' },
