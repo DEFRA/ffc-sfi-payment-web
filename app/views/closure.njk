@@ -1,0 +1,68 @@
+{% extends '_layout.njk' %}
+
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block content %}
+  {{ govukBreadcrumbs({
+    items: [{
+      text: "Home",
+      href: "/"
+    }]
+  })}}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l">Agreement closures</h1>
+
+      <p class="govuk-body">
+        Any agreements listed here are considered closed. Following the closure date listed, no accounts repayable will be processed.
+      </p>
+
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Create new closure",
+          href: "/closure/add"
+        }) }}
+
+        {{ govukButton({
+          text: "Create bulk closure",
+          href: "/closure/bulk",
+          classes: "govuk-button--secondary"
+        }) }}
+      </div>
+
+      {% if closures.length %}
+        <table aria-label="Table of agreement closures" class="govuk-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header">FRN</th>
+              <th scope="col" class="govuk-table__header">Agreement Number</th>
+              <th scope="col" class="govuk-table__header">Scheme</th>
+              <th scope="col" class="govuk-table__header">Closure Date</th>
+              <th scope="col" class="govuk-table__header"></th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            {% for closure in closures %}
+              <tr class="govuk-table__row">
+                <td class="govuk-table__cell">{{ closure.frn }}</td>
+                <td class="govuk-table__cell">{{ closure.agreementNumber }}</td>
+                <td class="govuk-table__cell">{{ closure.schemeName }}</td>
+                <td class="govuk-table__cell">{{ closure.closureDate }}</td>
+                <td class="govuk-table__cell">
+                  <form method="POST" action="/closure/remove">
+                    <input type="hidden" name="crumb" value="{{crumb}}"/>
+                    <input type="hidden" id="closedId" name="closedId" value="{{ closure.closedId }}">
+                    <button class="govuk-button-link">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p id="no-closure-text" class="govuk-body">There are no agreement closures.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

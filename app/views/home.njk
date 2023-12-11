@@ -74,7 +74,31 @@
               </li>
             </ul>
           </div>
-      {% endif %}
+        {% endif %}
+      </div>
+      <div class="govuk-cards govuk-cards--2">
+        {% if auth.isClosureAdminUser %}
+          <div class="govuk-cards--2__item govuk-card--dashboard">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Agreement closures</h2>
+            <p class="govuk-heading-l govuk-!-margin-bottom-5">
+              {{ totalClosures }}
+            </p>
+            <p class="govuk-body govuk-!-margin-bottom-8">
+              Add details of an agreement number closure
+            </p>
+            <ul class="govuk-list">
+              <li>
+                <a href="/closure" class="govuk-link">Manage closures</a>
+              </li>
+              <li>
+                <a href="/closure/add" class="govuk-link">Add closure</a>
+              </li>
+              <li>
+                <a href="/closure/bulk" class="govuk-link">Add bulk closures</a>
+              </li>
+            </ul>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
