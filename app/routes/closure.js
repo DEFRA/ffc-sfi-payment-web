@@ -1,7 +1,7 @@
 const fs = require('fs')
 const { closureAdmin } = require('../auth/permissions')
 const schema = require('./schemas/closure')
-const bulkSchema = require('./schemas/bulk-closure')
+const bulkSchema = require('./schemas/bulk')
 const { post } = require('../api')
 const { processClosureData } = require('../closure')
 
