@@ -1,11 +1,10 @@
-const fs = require('fs')
 const schema = require('./schemas/hold')
 const bulkAddSchema = require('./schemas/bulk-add-hold')
 const bulkRemoveSchema = require('./schemas/bulk')
 const { post } = require('../api')
 const { holdAdmin } = require('../auth/permissions')
 const { getHolds, getHoldCategories } = require('../holds')
-const { processHoldData } = require('../hold/process-hold-data')
+const { processHoldData, readFileContent } = require('../hold')
 
 module.exports = [{
   method: 'GET',
@@ -82,7 +81,7 @@ module.exports = [{
   method: 'POST',
   path: '/payment-holds/bulk/add',
   handler: async (request, h) => {
-    const data = fs.readFileSync(request.payload.file.path, 'utf8')
+    const data = readFileContent(request.payload.file.path)
     if (!data) {
       const { schemes, paymentHoldCategories } = await getHoldCategories()
       return h.view('payment-holds/bulk/add', { schemes, paymentHoldCategories, errors: { details: [{ message: 'An error occurred whilst reading the file' }] } }).code(400).takeover()
@@ -115,7 +114,7 @@ module.exports = [{
   method: 'POST',
   path: '/payment-holds/bulk/remove',
   handler: async (request, h) => {
-    const data = fs.readFileSync(request.payload.file.path, 'utf8')
+    const data = readFileContent(request.payload.file.path)
     if (!data) {
       return h.view('payment-holds/bulk/remove', { errors: { details: [{ message: 'An error occurred whilst reading the file' }] } }).code(400).takeover()
     }

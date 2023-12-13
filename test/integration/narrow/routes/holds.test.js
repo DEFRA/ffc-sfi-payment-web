@@ -1,6 +1,8 @@
 jest.mock('../../../../app/api')
-const { get } = require('../../../../app/api')
+const { get, post } = require('../../../../app/api')
 jest.mock('../../../../app/auth')
+jest.mock('../../../../app/hold/read-file-content.js')
+const { readFileContent } = require('../../../../app/hold/read-file-content')
 const cheerio = require('cheerio')
 const { holdAdmin } = require('../../../../app/auth/permissions')
 const createServer = require('../../../../app/server')
@@ -185,6 +187,253 @@ describe('Payment holds', () => {
     })
   })
 
+  describe('POST payment-holds/bulk/add page', () => {
+    const method = 'POST'
+    const url = '/payment-holds/bulk/add'
+    const mockGetPaymentHoldCategories = (paymentHoldCategories) => {
+      get.mockResolvedValue({ payload: { paymentHoldCategories } })
+    }
+    const holdCategoryId = 1
+    const validFile = {
+      filename: 'name-of-file.csv',
+      path: 'path/to/file',
+      headers: {
+        'content-disposition': 'astring',
+        'content-type': 'text/csv'
+      },
+      bytes: 15
+    }
+    const validContents = '1234567890,1987654320'
+    test('returns 403 if no permission', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      auth.credentials.scope = []
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+      expect(res.statusCode).toBe(403)
+    })
+
+    test('returns 302 no auth', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      const res = await server.inject({
+        method,
+        url,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+      expect(res.statusCode).toBe(302)
+      expect(res.headers.location).toEqual('/login')
+    })
+
+    test('should error appropriately if no data is found', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { throw new Error() })
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+      console.log(auth)
+      console.log(viewCrumb)
+      console.log(cookieCrumb)
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: An error occurred whilst reading the file')
+    })
+
+    test.each([
+      { holdCategoryId: 'not-a-number' },
+      { holdCategoryId: undefined }
+    ])('should error appropriately if invalid holdcategoryid', async (holdCategoryId) => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Category is required')
+    })
+
+    test('should error appropriately if no filename', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile.filename
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Provide a CSV file')
+    })
+
+    test('should error appropriately if no path', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile.path
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Provide a CSV file')
+    })
+
+    test('should error appropriately if no bytes', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile.bytes
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Provide a CSV file')
+    })
+
+    test('should error appropriately if no content-disposition', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile['content-disposition']
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Provide a CSV file')
+    })
+
+    test('should error appropriately if content-type is not CSV', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile['content-type']
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Provide a CSV file')
+    })
+
+    test.each([
+      { contents: 'not-a-number' },
+      { contents: '01' },
+      { contents: '99999999999' },
+      { contents: undefined }
+    ])('should error appropriately if a provided FRN is not valid', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile['content-type']
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: A provided FRN is not in the required format')
+    })
+
+    test('should call post and redirect to payment-holds if successful', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile, holdCategoryId },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(post).toHaveBeenCalledTimes(1)
+      expect(post).toHaveBeenCalledWith('/holds/bulk/add', { data: [1234567890, 1987654320], holdCategoryId }, null)
+      expect(res.statusCode).toBe(302)
+      expect(res.headers.location).toEqual('/payment-holds')
+    })
+  })
+
   describe('GET payment-holds/bulk/remove page', () => {
     const method = 'GET'
     const url = '/payment-holds/bulk/remove'
@@ -208,6 +457,225 @@ describe('Payment holds', () => {
       const res = await server.inject({ method, url })
       expect(res.statusCode).toBe(302)
       expect(res.headers.location).toEqual('/login')
+    })
+  })
+
+  describe('POST payment-holds/bulk/remove page', () => {
+    const method = 'POST'
+    const url = '/payment-holds/bulk/remove'
+    const mockGetPaymentHoldCategories = (paymentHoldCategories) => {
+      get.mockResolvedValue({ payload: { paymentHoldCategories } })
+    }
+    const validFile = {
+      filename: 'name-of-file.csv',
+      path: 'path/to/file',
+      headers: {
+        'content-disposition': 'astring',
+        'content-type': 'text/csv'
+      },
+      bytes: 15
+    }
+    const validContents = '1234567890,1987654320'
+    test('returns 403 if no permission', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      auth.credentials.scope = []
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+      expect(res.statusCode).toBe(403)
+    })
+
+    test('returns 302 no auth', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      const res = await server.inject({
+        method,
+        url,
+        payload: { crumb: viewCrumb, file: validFile },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+      expect(res.statusCode).toBe(302)
+      expect(res.headers.location).toEqual('/login')
+    })
+
+    test('should error appropriately if no data is found', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { throw new Error() })
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: An error occurred whilst reading the file')
+    })
+
+    test('should error appropriately if no filename', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile.filename
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Provide a CSV file')
+    })
+
+    test('should error appropriately if no path', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile.path
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Provide a CSV file')
+    })
+
+    test('should error appropriately if no bytes', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile.bytes
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Provide a CSV file')
+    })
+
+    test('should error appropriately if no content-disposition', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile['content-disposition']
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Provide a CSV file')
+    })
+
+    test('should error appropriately if content-type is not CSV', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile['content-type']
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: Provide a CSV file')
+    })
+
+    test.each([
+      { contents: 'not-a-number' },
+      { contents: '01' },
+      { contents: '99999999999' },
+      { contents: undefined }
+    ])('should error appropriately if a provided FRN is not valid', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      delete validFile['content-type']
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(400)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      expect($('.govuk-error-summary__title').text()).toMatch('There is a problem')
+      const errorMessage = $('.govuk-error-message')
+      expect(errorMessage.length).toEqual(1)
+      expect(errorMessage.text()).toMatch('Error: A provided FRN is not in the required format')
+    })
+
+    test('should call post and redirect to payment-holds if successful', async () => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories([])
+      const { cookieCrumb, viewCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      readFileContent.mockImplementation(() => { return validContents })
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: { crumb: viewCrumb, file: validFile },
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(post).toHaveBeenCalledTimes(1)
+      expect(post).toHaveBeenCalledWith('/holds/bulk/remove', { data: [1234567890, 1987654320] }, null)
+      expect(res.statusCode).toBe(302)
+      expect(res.headers.location).toEqual('/payment-holds')
     })
   })
 })
