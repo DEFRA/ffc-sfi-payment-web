@@ -17,6 +17,7 @@ const processClosureData = async (data) => {
         agreementNumber: clData[1],
         closureDate: clData[2]
       }
+      console.log(parsedData.closureDate)
       const result = parsedSchema.validate(parsedData, {
         abortEarly: false
       })
