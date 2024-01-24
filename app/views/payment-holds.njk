@@ -23,15 +23,11 @@
           href: "/add-payment-hold"
         }) }}
         {{ govukButton({
-          text: "Add bulk holds",
-          href: "/payment-holds/bulk/add",
+          text: "Add or remove holds in bulk",
+          href: "/payment-holds/bulk",
           classes: "govuk-button--secondary"
         }) }}
-        {{ govukButton({
-          text: "Remove bulk holds",
-          href: "/payment-holds/bulk/remove",
-          classes: "govuk-button--secondary"
-        }) }}
+
       </div>
       {% if paymentHolds.length %}
         <table class="govuk-table">

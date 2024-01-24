@@ -1,6 +1,6 @@
-const bulkSchema = require('../../../../../app/routes/schemas/bulk-add-hold')
+const bulkSchema = require('../../../../../app/routes/schemas/bulk-closure')
 
-describe('Bulk Hold Validator', () => {
+describe('Bulk Closure Validator', () => {
   test('Valid File Object', () => {
     const validFile = {
       filename: 'example.csv',
@@ -11,22 +11,7 @@ describe('Bulk Hold Validator', () => {
       },
       bytes: 1024
     }
-    expect(() => bulkSchema.validate({ holdCategoryId: 1, file: validFile })).not.toThrow()
-  })
-
-  test('Invalid - missing holdcategoryid', () => {
-    const invalidFile = {
-      filename: 'example.csv',
-      path: '/path/to/file',
-      headers: {
-        'content-disposition': 'attachment; filename="example.csv"',
-        'content-type': 'text/csv'
-      },
-      bytes: 1024
-    }
-    const validationResult = bulkSchema.validate({ file: invalidFile })
-    expect(validationResult.error).toBeDefined()
-    expect(validationResult.error.message).toMatch(/Category is required/)
+    expect(() => bulkSchema.validate({ file: validFile })).not.toThrow()
   })
 
   test('Invalid File Object - Missing filename', () => {
@@ -38,7 +23,7 @@ describe('Bulk Hold Validator', () => {
       },
       bytes: 1024
     }
-    const validationResult = bulkSchema.validate({ holdCategoryId: 1, file: invalidFile })
+    const validationResult = bulkSchema.validate({ file: invalidFile })
     expect(validationResult.error).toBeDefined()
     expect(validationResult.error.message).toMatch(/Provide a CSV file/)
   })
@@ -52,7 +37,7 @@ describe('Bulk Hold Validator', () => {
       },
       bytes: 1024
     }
-    const validationResult = bulkSchema.validate({ holdCategoryId: 1, file: invalidFile })
+    const validationResult = bulkSchema.validate({ file: invalidFile })
     expect(validationResult.error).toBeDefined()
     expect(validationResult.error.message).toMatch(/Provide a CSV file/)
   })
@@ -63,7 +48,7 @@ describe('Bulk Hold Validator', () => {
       path: '/path/to/file',
       bytes: 1024
     }
-    const validationResult = bulkSchema.validate({ holdCategoryId: 1, file: invalidFile })
+    const validationResult = bulkSchema.validate({ file: invalidFile })
     expect(validationResult.error).toBeDefined()
     expect(validationResult.error.message).toMatch(/Provide a CSV file/)
   })
@@ -77,7 +62,7 @@ describe('Bulk Hold Validator', () => {
       },
       bytes: 1024
     }
-    const validationResult = bulkSchema.validate({ holdCategoryId: 1, file: invalidFile })
+    const validationResult = bulkSchema.validate({ file: invalidFile })
     expect(validationResult.error).toBeDefined()
     expect(validationResult.error.message).toMatch(/Provide a CSV file/)
   })
@@ -92,7 +77,7 @@ describe('Bulk Hold Validator', () => {
       },
       bytes: 1024
     }
-    const validationResult = bulkSchema.validate({ holdCategoryId: 1, file: invalidFile })
+    const validationResult = bulkSchema.validate({ file: invalidFile })
     expect(validationResult.error).toBeDefined()
     expect(validationResult.error.message).toMatch(/Provide a CSV file/)
   })
@@ -106,7 +91,7 @@ describe('Bulk Hold Validator', () => {
       },
       bytes: 1024
     }
-    const validationResult = bulkSchema.validate({ holdCategoryId: 1, file: invalidFile })
+    const validationResult = bulkSchema.validate({ file: invalidFile })
     expect(validationResult.error).toBeDefined()
     expect(validationResult.error.message).toMatch(/Provide a CSV file/)
   })
@@ -120,7 +105,7 @@ describe('Bulk Hold Validator', () => {
         'content-type': 'text/csv'
       }
     }
-    const validationResult = bulkSchema.validate({ holdCategoryId: 1, file: invalidFile })
+    const validationResult = bulkSchema.validate({ file: invalidFile })
     expect(validationResult.error).toBeDefined()
     expect(validationResult.error.message).toMatch(/Provide a CSV file/)
   })

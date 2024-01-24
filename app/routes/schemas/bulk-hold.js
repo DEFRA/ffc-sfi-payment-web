@@ -1,6 +1,14 @@
 const Joi = require('joi')
 
 module.exports = Joi.object({
+  remove: Joi.boolean().required().error(errors => {
+    errors.forEach(err => { err.message = 'Select add to add holds in bulk' })
+    return errors
+  }),
+  holdCategoryId: Joi.number().integer().required().error(errors => {
+    errors.forEach(err => { err.message = 'Category is required' })
+    return errors
+  }),
   file: Joi.object().keys({
     filename: Joi.string().required(),
     path: Joi.string().required(),

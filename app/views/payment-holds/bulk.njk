@@ -15,11 +15,11 @@
   })}}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <form method="POST" action="/payment-holds/bulk/add" autocomplete="off" novalidate enctype="multipart/form-data">
+      <form method="POST" action="/payment-holds/bulk" autocomplete="off" novalidate enctype="multipart/form-data">
         <input type="hidden" name="crumb" value="{{crumb}}"/>
-        <h1 class="govuk-heading-l">Bulk add payment holds</h1>
+        <h1 class="govuk-heading-l">Bulk payment holds</h1>
         <p class="govuk-body">
-          Any FRNs provided here will have holds applied.
+          Any FRNs provided here will have holds applied or removed depending on your input.
         </p>
         {% if errors %}
           <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
@@ -35,6 +35,16 @@
             </div>
           </div>
         {% endif %}
+
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="remove">
+            Do you want to add or remove holds?
+          </label>
+          <select class="govuk-select" id="remove" name="remove" value={{ remove }}>
+            <option value="false" selected>Add</option>
+            <option value="true">Remove</option>
+          </select>
+        </div>
 
         <div class="govuk-form-group">
           <label class="govuk-label govuk-label--s" for="file">

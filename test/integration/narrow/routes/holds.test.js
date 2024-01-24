@@ -133,10 +133,10 @@ describe('Payment holds', () => {
     })
   })
 
-  describe('GET payment-holds/bulk/add page', () => {
+  describe('GET payment-holds/bulk page', () => {
     const method = 'GET'
-    const url = '/payment-holds/bulk/add'
-    const pageH1 = 'Bulk add payment holds'
+    const url = '/payment-holds/bulk'
+    const pageH1 = 'Bulk payment holds'
 
     const mockPaymentHoldCategories = [{
       holdCategoryId: 123,
@@ -186,29 +186,62 @@ describe('Payment holds', () => {
     })
   })
 
-  describe('GET payment-holds/bulk/remove page', () => {
-    const method = 'GET'
-    const url = '/payment-holds/bulk/remove'
-    const pageH1 = 'Bulk remove payment holds'
+  describe('POST payment-holds/bulk', () => {
+    const method = 'POST'
+    const url = '/payment-holds/bulk'
+    const mockPaymentHoldCategories = [{
+      holdCategoryId: 123,
+      name: 'my hold category',
+      schemeName: 'schemeName'
+    }]
 
-    test('returns 200 when load successful', async () => {
-      const res = await server.inject({ method, url, auth })
+    const mockGetPaymentHoldCategories = (paymentHoldCategories) => {
+      get.mockResolvedValue({ payload: { paymentHoldCategories } })
+    }
+    const validForm = {
+      remove: true,
+      holdCategoryId: 123,
+      file: {
+        filename: 'bulkHolds.csv',
+        path: '/tmp/1706098344068-88-f392ed7e665a8ec8',
+        headers: {
+          'content-disposition': 'form-data; name="file"; filename="bulkHolds.csv"',
+          'content-type': 'text/csv'
+        },
+        bytes: 266
+      }
+    }
 
-      expect(res.statusCode).toBe(200)
-      const $ = cheerio.load(res.payload)
-      expect($('h1').text()).toEqual(pageH1)
-    })
+    test.each([
+      { viewCrumb: 'incorrect' },
+      { viewCrumb: undefined }
+    ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
+      const mockForCrumbs = () => mockGetPaymentHoldCategories(mockPaymentHoldCategories)
+      const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      validForm.crumb = viewCrumb
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: validForm,
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
 
-    test('returns 403 if no permission', async () => {
-      auth.credentials.scope = []
-      const res = await server.inject({ method, url, auth })
       expect(res.statusCode).toBe(403)
     })
 
     test('returns 302 no auth', async () => {
-      const res = await server.inject({ method, url })
+      const mockForCrumbs = () => mockGetPaymentHoldCategories(mockPaymentHoldCategories)
+      const { viewCrumb, cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      validForm.crumb = viewCrumb
+      const res = await server.inject({
+        method,
+        url,
+        payload: validForm,
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
       expect(res.statusCode).toBe(302)
-      expect(res.headers.location).toEqual('/login')
     })
   })
 })
