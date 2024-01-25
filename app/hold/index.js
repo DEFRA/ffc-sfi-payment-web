@@ -1,7 +1,5 @@
-const { processHoldData } = require('./process-hold-data')
-const { readFileContent } = require('./read-file-content')
+const { handleBulkPost } = require('./handle-bulk-post')
 
 module.exports = {
-  processHoldData,
-  readFileContent
+  handleBulkPost
 }

@@ -3,7 +3,7 @@ const bulkSchema = require('./schemas/bulk-hold')
 const { post } = require('../api')
 const { holdAdmin } = require('../auth/permissions')
 const { getHolds, getHoldCategories } = require('../holds')
-const { processHoldData, readFileContent } = require('../hold')
+const { handleBulkPost } = require('../hold')
 
 module.exports = [{
   method: 'GET',
@@ -69,24 +69,7 @@ module.exports = [{
 {
   method: 'POST',
   path: '/payment-holds/bulk',
-  handler: async (request, h) => {
-    const data = readFileContent(request.payload.file.path)
-    if (!data) {
-      const { schemes, paymentHoldCategories } = await getHoldCategories()
-      return h.view('payment-holds/bulk', { schemes, paymentHoldCategories, errors: { details: [{ message: 'An error occurred whilst reading the file' }] } }).code(400).takeover()
-    }
-    const { uploadData, errors } = await processHoldData(data)
-    if (errors) {
-      const { schemes, paymentHoldCategories } = await getHoldCategories()
-      return h.view('payment-holds/bulk', { schemes, paymentHoldCategories, errors }).code(400).takeover()
-    }
-    if (request.payload.remove) {
-      await post('/payment-holds/bulk/remove', { data: uploadData, holdCategoryId: request.payload.holdCategoryId }, null)
-    } else {
-      await post('/payment-holds/bulk/add', { data: uploadData, holdCategoryId: request.payload.holdCategoryId }, null)
-    }
-    return h.redirect('/payment-holds')
-  },
+  handler: handleBulkPost,
   options: {
     auth: { scope: [holdAdmin] },
     validate: {
