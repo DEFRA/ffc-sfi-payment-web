@@ -3,8 +3,8 @@ const parsedSchema = require('../routes/schemas/parsed-hold')
 const processHoldData = async (data) => {
   const uploadData = []
   const splitData = data.split(',')
-  for (let i = 0; i < splitData.length; i++) {
-    const result = parsedSchema.validate({ frn: splitData[i] }, {
+  for (const data of splitData) {
+    const result = parsedSchema.validate({ frn: data }, {
       abortEarly: false
     })
     if (result.error) {
@@ -12,7 +12,7 @@ const processHoldData = async (data) => {
         errors: result.error
       }
     } else {
-      uploadData.push(splitData[i])
+      uploadData.push(data)
     }
   }
   return {
