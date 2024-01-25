@@ -10,5 +10,8 @@ module.exports = Joi.object({
     errors.forEach(err => { err.message = 'Category is required' })
     return errors
   }),
-  file: fileSchema
+  file: fileSchema.error(errors => {
+    errors[0].message = 'Provide a CSV file'
+    return errors[0]
+  })
 })
