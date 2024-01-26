@@ -17,13 +17,18 @@
       <p class="govuk-body">
         Payment holds will pause all payment requests for a customer and scheme.
       </p>
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Create new hold",
+          href: "/add-payment-hold"
+        }) }}
+        {{ govukButton({
+          text: "Add or remove holds in bulk",
+          href: "/payment-holds/bulk",
+          classes: "govuk-button--secondary"
+        }) }}
 
-      {{ govukButton({
-        text: "Create new hold",
-        href: "/add-payment-hold",
-        isStartButton: true
-      }) }}
-
+      </div>
       {% if paymentHolds.length %}
         <table class="govuk-table">
           <thead class="govuk-table__head">
