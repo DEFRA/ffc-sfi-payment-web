@@ -1,5 +1,4 @@
 const Joi = require('joi')
-const fileSchema = require('./file-schema')
 
 module.exports = Joi.object({
   remove: Joi.boolean().required().error(errors => {
@@ -10,7 +9,15 @@ module.exports = Joi.object({
     errors.forEach(err => { err.message = 'Category is required' })
     return errors
   }),
-  file: fileSchema.error(errors => {
+  file: Joi.object().keys({
+    filename: Joi.string().required(),
+    path: Joi.string().required(),
+    headers: Joi.object().keys({
+      'content-disposition': Joi.string().required(),
+      'content-type': Joi.string().valid('text/csv').required()
+    }).required(),
+    bytes: Joi.number().required()
+  }).error(errors => {
     errors[0].message = 'Provide a CSV file'
     return errors[0]
   })
