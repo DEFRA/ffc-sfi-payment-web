@@ -31,4 +31,9 @@ describe('storage', () => {
     const result = await storage.getSuppressedReport('filepath')
     expect(result).toStrictEqual(mockBlobContent)
   })
+
+  test('getCPATSummary returns report data', async () => {
+    const result = await storage.getCPATSummary('filepath')
+    expect(result).toStrictEqual(mockBlobContent)
+  })
 })
