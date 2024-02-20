@@ -9,7 +9,8 @@ const schema = Joi.object({
   useConnectionStr: Joi.boolean().default(false),
   createContainers: Joi.boolean().default(true),
   miReportName: Joi.string().default('ffc-pay-mi-report-v2.csv'),
-  suppressedReportName: Joi.string().default('ffc-pay-suppressed-report.csv')
+  suppressedReportName: Joi.string().default('ffc-pay-suppressed-report.csv'),
+  summaryReportName: Joi.string().default('ffc-pay-combined-transaction-report.csv')
 })
 
 // Build config
@@ -21,7 +22,8 @@ const config = {
   useConnectionStr: process.env.AZURE_STORAGE_USE_CONNECTION_STRING,
   createContainers: process.env.AZURE_STORAGE_CREATE_CONTAINERS,
   miReportName: process.env.MI_REPORT_NAME,
-  suppressedReportName: process.env.SUPPRESSED_REPORT_NAME
+  suppressedReportName: process.env.SUPPRESSED_REPORT_NAME,
+  summaryReportName: process.env.SUMMARY_REPORT_NAME
 }
 
 // Validate config
