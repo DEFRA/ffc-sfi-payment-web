@@ -32,8 +32,8 @@ describe('storage', () => {
     expect(result).toStrictEqual(mockBlobContent)
   })
 
-  test('getCPATSummary returns report data', async () => {
-    const result = await storage.getCPATSummary('filepath')
+  test('getTransactionSummary returns report data', async () => {
+    const result = await storage.getTransactionSummary('filepath')
     expect(result).toStrictEqual(mockBlobContent)
   })
 })

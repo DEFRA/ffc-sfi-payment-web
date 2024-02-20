@@ -56,10 +56,10 @@ describe('Report test', () => {
     expect(response.payload).toBe('Hello')
   })
 
-  test('GET /report/cpat-summary route returns stream if report available', async () => {
+  test('GET /report/transaction-summary route returns stream if report available', async () => {
     const options = {
       method: 'GET',
-      url: '/report/cpat-summary',
+      url: '/report/transaction-summary',
       auth
     }
 
@@ -112,11 +112,11 @@ describe('Report test', () => {
     expect(response.payload).toContain('Payment report unavailable')
   })
 
-  test('GET /report/cpat-summary route returns unavailable page if report not available', async () => {
+  test('GET /report/transaction-summary route returns unavailable page if report not available', async () => {
     mockDownload = undefined
     const options = {
       method: 'GET',
-      url: '/report/cpat-summary',
+      url: '/report/transaction-summary',
       auth
     }
 

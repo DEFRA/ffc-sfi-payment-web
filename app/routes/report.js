@@ -1,4 +1,4 @@
-const { getMIReport, getSuppressedReport, getCPATSummary } = require('../storage')
+const { getMIReport, getSuppressedReport, getTransactionSummary } = require('../storage')
 const { getHolds } = require('../holds')
 const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../format-date')
@@ -28,12 +28,12 @@ module.exports = [{
   }
 }, {
   method: 'GET',
-  path: '/report/cpat-summary',
+  path: '/report/transaction-summary',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (_request, h) => {
       try {
-        const response = await getCPATSummary()
+        const response = await getTransactionSummary()
         if (response) {
           return h.response(response.readableStreamBody)
             .type('text/csv')

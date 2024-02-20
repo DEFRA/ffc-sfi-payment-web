@@ -37,7 +37,7 @@ const getSuppressedReport = async () => {
   return blob.download()
 }
 
-const getCPATSummary = async () => {
+const getTransactionSummary = async () => {
   containersInitialised ?? await initialiseContainers()
   const blob = await reportContainer.getBlockBlobClient(config.summaryReportName)
   return blob.download()
@@ -47,5 +47,5 @@ module.exports = {
   blobServiceClient,
   getMIReport,
   getSuppressedReport,
-  getCPATSummary
+  getTransactionSummary
 }
