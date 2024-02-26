@@ -36,4 +36,9 @@ describe('storage', () => {
     const result = await storage.getTransactionSummary('filepath')
     expect(result).toStrictEqual(mockBlobContent)
   })
+
+  test('getAPListingReport returns report data', async () => {
+    const result = await storage.getAPListingReport('filepath')
+    expect(result).toStrictEqual(mockBlobContent)
+  })
 })
