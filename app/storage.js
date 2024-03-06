@@ -43,9 +43,23 @@ const getTransactionSummary = async () => {
   return blob.download()
 }
 
+const getAPListingReport = async () => {
+  containersInitialised ?? await initialiseContainers()
+  const blob = await reportContainer.getBlockBlobClient(config.apListingReportName)
+  return blob.download()
+}
+
+const getARListingReport = async () => {
+  containersInitialised ?? await initialiseContainers()
+  const blob = await reportContainer.getBlockBlobClient(config.arListingReportName)
+  return blob.download()
+}
+
 module.exports = {
   blobServiceClient,
   getMIReport,
   getSuppressedReport,
-  getTransactionSummary
+  getTransactionSummary,
+  getAPListingReport,
+  getARListingReport
 }
