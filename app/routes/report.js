@@ -81,7 +81,7 @@ module.exports = [{
             return {
               frn: hold.frn,
               scheme: hold.holdCategorySchemeName,
-              marketingYear: hold.marketingYear,
+              marketingYear: hold.marketingYear ?? 'All',
               holdCategory: hold.holdCategoryName,
               dateAdded: formatDate(hold.dateTimeAdded)
             }
