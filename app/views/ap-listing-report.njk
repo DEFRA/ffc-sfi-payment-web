@@ -1,0 +1,77 @@
+{% extends '_layout.njk' %}
+{% block content %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+  {{ govukBreadcrumbs({
+    items: [{
+      text: "Home",
+      href: "/"
+    },{
+      text: "AP Listing Report",
+      href: "/report-list/ap-listing"
+    }]
+  })}}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l">AP Listing Report</h1>
+      <form method="post" action="/report-list/ap-listing">
+      <form method="get" action="/report-list/ap-listing">
+        <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset" role="group" aria-describedby="start-date-hint">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+              <h1 class="govuk-fieldset__heading">
+                Start Date
+              </h1>
+            </legend>
+            <div id="start-date-hint" class="govuk-hint">
+              For example, 27 3 2007
+            </div>
+            <div class="govuk-date-input" id="start-date">
+              <div class="govuk-date-input__item">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-day" name="start-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+              </div>
+              <div class="govuk-date-input__item">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-month" name="start-date-month" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+              </div>
+              <div class="govuk-date-input__item">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="start-date-year" name="start-date-year" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset" role="group" aria-describedby="end-date-hint">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+              <h1 class="govuk-fieldset__heading">
+                End Date
+              </h1>
+            </legend>
+            <div id="end-date-hint" class="govuk-hint">
+              For example, 27 3 2007
+            </div>
+            <div class="govuk-date-input" id="end-date">
+              <div class="govuk-date-input__item">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="end-date-day" name="end-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+              </div>
+              <div class="govuk-date-input__item">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="end-date-month" name="end-date-month" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+              </div>
+              <div class="govuk-date-input__item">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="end-date-year" name="end-date-year" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        {% if errorMessage %}
+          <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+              {{ errorMessage }}
+            </h2>
+          </div>
+        {% endif %}
+        <button class="govuk-button" data-module="govuk-button">
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

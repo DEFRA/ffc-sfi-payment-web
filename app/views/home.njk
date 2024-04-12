@@ -19,28 +19,14 @@
               </li>
             </ul>
           </div>
-        {% endif %}
         {% if auth.isHoldAdminUser or auth.isSchemeAdminUser or auth.isDataViewUser %}
-          <div class="govuk-cards--2__item govuk-card--dashboard">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Reports</h2>
-            <p class="govuk-body govuk-!-margin-bottom-8">
-              Download reports
-            </p>
-            <ul class="govuk-list">
-              <li>
-                <a href="/report/payment-requests" class="govuk-link">Payment request statuses</a>
-              </li>
-              <li>
-                <a href="/report/transaction-summary" class="govuk-link">Combined transaction report</a>
-              </li>
-              <li>
-                <a href="/report/suppressed-payments" class="govuk-link">Suppressed payment requests</a>
-              </li>
-              {% if totalHolds > 0 %}
-                <li>
-                  <a href="/report/holds" class="govuk-link">Holds</a>
-                </li>
-              {% endif %}
+  <div class="govuk-cards--2__item govuk-card--dashboard">
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Reports</h2>
+    <p class="govuk-body govuk-!-margin-bottom-8">
+      <a href="/report-list" class="govuk-link">Report List</a>
+    </p>
+  </div>
+{% endif %}
             </ul>
           </div>
         {% endif %}
