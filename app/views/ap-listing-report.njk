@@ -13,18 +13,17 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-l">AP Listing Report</h1>
-      <form method="post" action="/report-list/ap-listing">
-      <form method="get" action="/report-list/ap-listing">
+      <form id="reportForm" method="get" action="/report-list/ap-listing/download">
         <div class="govuk-form-group">
-          <fieldset class="govuk-fieldset" role="group" aria-describedby="start-date-hint">
+          <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
               <h1 class="govuk-fieldset__heading">
-                Start Date
+                Start date
               </h1>
             </legend>
-            <div id="start-date-hint" class="govuk-hint">
-              For example, 27 3 2007
-            </div>
+            <span id="start-date-hint" class="govuk-hint">
+              For example, 12 11 2020
+            </span>
             <div class="govuk-date-input" id="start-date">
               <div class="govuk-date-input__item">
                 <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-day" name="start-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
@@ -39,15 +38,15 @@
           </fieldset>
         </div>
         <div class="govuk-form-group">
-          <fieldset class="govuk-fieldset" role="group" aria-describedby="end-date-hint">
+          <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
               <h1 class="govuk-fieldset__heading">
-                End Date
+                End date
               </h1>
             </legend>
-            <div id="end-date-hint" class="govuk-hint">
-              For example, 27 3 2007
-            </div>
+            <span id="end-date-hint" class="govuk-hint">
+              For example, 12 11 2020
+            </span>
             <div class="govuk-date-input" id="end-date">
               <div class="govuk-date-input__item">
                 <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="end-date-day" name="end-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
@@ -61,17 +60,65 @@
             </div>
           </fieldset>
         </div>
+        <button class="govuk-button" data-module="govuk-button">
+          Submit
+        </button>
         {% if errorMessage %}
-          <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+          <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary" id="server-error-message">
             <h2 class="govuk-error-summary__title" id="error-summary-title">
               {{ errorMessage }}
             </h2>
           </div>
         {% endif %}
-        <button class="govuk-button" data-module="govuk-button">
-          Submit
-        </button>
       </form>
     </div>
   </div>
+
+  <script>
+  document.getElementById('reportForm').addEventListener('submit', function(event) {
+    var startDateDay = document.getElementById('start-date-day');
+    var startDateMonth = document.getElementById('start-date-month');
+    var startDateYear = document.getElementById('start-date-year');
+    var endDateDay = document.getElementById('end-date-day');
+    var endDateMonth = document.getElementById('end-date-month');
+    var endDateYear = document.getElementById('end-date-year');
+    var startDateFields = [startDateDay.value, startDateMonth.value, startDateYear.value];
+    var endDateFields = [endDateDay.value, endDateMonth.value, endDateYear.value];
+    var existingErrorSummary = document.querySelector('.js-error-summary');
+    var serverErrorMessage = document.getElementById('server-error-message');
+    if (!allOrNone(startDateFields) || !allOrNone(endDateFields)) {
+      event.preventDefault();
+      var errorMessage = 'Please provide all values for day, month, and year for each date';
+      if (existingErrorSummary) {
+        existingErrorSummary.remove();
+      }
+      var errorSummary = document.createElement('div');
+      errorSummary.className = 'govuk-error-summary js-error-summary';
+      errorSummary.setAttribute('aria-labelledby', 'error-summary-title');
+      errorSummary.setAttribute('role', 'alert');
+      errorSummary.setAttribute('tabindex', '-1');
+      errorSummary.setAttribute('data-module', 'govuk-error-summary');
+      var errorTitle = document.createElement('h2');
+      errorTitle.className = 'govuk-error-summary__title';
+      errorTitle.id = 'error-summary-title';
+      errorTitle.textContent = errorMessage;
+      errorSummary.appendChild(errorTitle);
+      document.getElementById('reportForm').insertBefore(errorSummary, document.getElementById('reportForm').lastChild);
+    } else {
+      if (existingErrorSummary) {
+        existingErrorSummary.remove();
+      }
+      if (serverErrorMessage) {
+        serverErrorMessage.remove();
+      }
+      // Clear the form
+      event.target.reset();
+    }
+
+    function allOrNone(fields) {
+      var numEmpty = fields.filter(function(field) { return field === ''; }).length;
+      return numEmpty === 0 || numEmpty === fields.length;
+    }
+  });
+</script>
 {% endblock %}

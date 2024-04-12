@@ -15,12 +15,22 @@ module.exports = [
     }
   },
   {
-    method: 'POST',
-    path: '/report-list/ap-listing',
+    method: 'GET',
+    path: '/report-list/ap-listing/download',
     options: {
       auth: { scope: [holdAdmin, schemeAdmin, dataView] },
+      validate: {
+      query: apListingSchema,
+      failAction: async (request, h, err) => {
+        request.log(['error', 'validation'], err)
+        const data = {
+          errorMessage: err.details[0].message
+        }
+        return h.view('ap-listing-report', data).takeover()
+      }
+    },
       handler: async (request, h) => {
-        const { 'start-date-day': startDay, 'start-date-month': startMonth, 'start-date-year': startYear, 'end-date-day': endDay, 'end-date-month': endMonth, 'end-date-year': endYear } = request.payload
+        const { 'start-date-day': startDay, 'start-date-month': startMonth, 'start-date-year': startYear, 'end-date-day': endDay, 'end-date-month': endMonth, 'end-date-year': endYear } = request.query
 
         let url = '/ap-report-data'
         let startDate, endDate
@@ -59,15 +69,6 @@ module.exports = [
         } catch (error) {
           console.error('Failed to fetch tracking data:', error)
           return h.view('ap-listing-report', { errorMessage: 'Failed to fetch tracking data' })
-        }
-      },
-      validate: {
-        payload: apListingSchema,
-        failAction: async (request, h, err) => {
-          if (err) {
-            return h.view('ap-listing-report', { errorMessage: err.details[0].message }).takeover()
-          }
-          return h.continue
         }
       }
     }

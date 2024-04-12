@@ -36,6 +36,5 @@ module.exports = Joi.object({
     'number.integer': 'Year must be an integer',
     'number.min': 'Year cannot be less than 2015',
     'number.max': 'Year cannot be in the future',
-  }),
-  'generate': Joi.string().valid('true').optional()
+  })
 })
