@@ -1,5 +1,16 @@
 {% extends '_layout.njk' %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% block content %}
+  {{ govukBreadcrumbs({
+    items: [{
+      text: "Home",
+      href: "/"
+    },
+    {
+      text: "Report List",
+      href: "/report-list"
+    }]
+  })}}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-l">Report List</h1>

@@ -21,13 +21,17 @@ module.exports = [
       auth: { scope: [holdAdmin, schemeAdmin, dataView] },
       validate: {
       query: apListingSchema,
-      failAction: async (request, h, err) => {
-        request.log(['error', 'validation'], err)
-        const data = {
-          errorMessage: err.details[0].message
+        failAction: async (request, h, err) => {
+          request.log(['error', 'validation'], err)
+          const errors = err.details ? err.details.map(detail => {
+            return {
+              text: detail.message,
+              href: '#' + detail.path[0]
+            }
+          }) : []
+          const data = { errors }
+          return h.view('ap-listing-report', data).code(400).takeover()
         }
-        return h.view('ap-listing-report', data).takeover()
-      }
     },
       handler: async (request, h) => {
         const { 'start-date-day': startDay, 'start-date-month': startMonth, 'start-date-year': startYear, 'end-date-day': endDay, 'end-date-month': endMonth, 'end-date-year': endYear } = request.query
@@ -54,9 +58,24 @@ module.exports = [
           const response = await api.getTrackingData(url)
           const trackingData = response.payload
 
-          const dataWithoutReportDataId = trackingData.apReportData.map(({ reportDataId, ...rest }) => rest)
+          const selectedData = trackingData.apReportData.map(data => {
+            return {
+              Filename: data.batch,
+              'Date Time': data.lastUpdated,
+              Event: data.status,
+              FRN: data.frn,
+              'Invoice Number': data.originalInvoiceNumber,
+              'Invoice Value': data.value,
+              'Invoice Number': data.invoiceNumber,
+              'Invoice Value': data.deltaAmount,
+              'D365 Invoice Imported': data.routedToRequestEditor,
+              'D365 Invoice Payment': data.settledValue,
+              'PH Error Status': data.phError,
+              'D365 Error Status': data.daxError
+            }
+          })
 
-          const csv = convertToCSV(dataWithoutReportDataId)
+          const csv = convertToCSV(selectedData)
 
           const filename = `APListingReportData-from-${startDate || 'beginning'}-to-${endDate || 'now'}.csv`
           const headers = {

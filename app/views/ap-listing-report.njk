@@ -1,10 +1,15 @@
 {% extends '_layout.njk' %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% block content %}
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
   {{ govukBreadcrumbs({
     items: [{
       text: "Home",
       href: "/"
+    },
+    {
+      text: "Report List",
+      href: "/report-list"
     },{
       text: "AP Listing Report",
       href: "/report-list/ap-listing"
@@ -13,49 +18,68 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-l">AP Listing Report</h1>
+      {% if errors %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: errors
+    }) 
+  }}
+  {% endif %}
       <form id="reportForm" method="get" action="/report-list/ap-listing/download">
-        <div class="govuk-form-group">
-          <fieldset class="govuk-fieldset">
+        <!-- Start date fields -->
+        <div class="govuk-form-group {% if errors['start-date-day'] or errors['start-date-month'] or errors['start-date-year'] %}govuk-form-group--error{% endif %}">
+          <fieldset class="govuk-fieldset" role="group" aria-describedby="start-date-hint start-date-error">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
               <h1 class="govuk-fieldset__heading">
                 Start date
               </h1>
             </legend>
+            {% if errors['start-date-day'] or errors['start-date-month'] or errors['start-date-year'] %}
+              <p id="start-date-error" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span> Start date is not valid
+              </p>
+            {% endif %}
             <span id="start-date-hint" class="govuk-hint">
               For example, 12 11 2020
             </span>
             <div class="govuk-date-input" id="start-date">
               <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-day" name="start-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['start-date-day'] %}govuk-input--error{% endif %}" id="start-date-day" name="start-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
               </div>
               <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-month" name="start-date-month" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['start-date-month'] %}govuk-input--error{% endif %}" id="start-date-month" name="start-date-month" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
               </div>
               <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="start-date-year" name="start-date-year" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4 {% if errors['start-date-year'] %}govuk-input--error{% endif %}" id="start-date-year" name="start-date-year" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
               </div>
             </div>
           </fieldset>
         </div>
-        <div class="govuk-form-group">
-          <fieldset class="govuk-fieldset">
+        <!-- End date fields -->
+        <div class="govuk-form-group {% if errors['end-date-day'] or errors['end-date-month'] or errors['end-date-year'] %}govuk-form-group--error{% endif %}">
+          <fieldset class="govuk-fieldset" role="group" aria-describedby="end-date-hint end-date-error">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
               <h1 class="govuk-fieldset__heading">
                 End date
               </h1>
             </legend>
+            {% if errors['end-date-day'] or errors['end-date-month'] or errors['end-date-year'] %}
+              <p id="end-date-error" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span> End date is not valid
+              </p>
+            {% endif %}
             <span id="end-date-hint" class="govuk-hint">
               For example, 12 11 2020
             </span>
             <div class="govuk-date-input" id="end-date">
               <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="end-date-day" name="end-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['end-date-day'] %}govuk-input--error{% endif %}" id="end-date-day" name="end-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
               </div>
               <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="end-date-month" name="end-date-month" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['end-date-month'] %}govuk-input--error{% endif %}" id="end-date-month" name="end-date-month" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
               </div>
               <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="end-date-year" name="end-date-year" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4 {% if errors['end-date-year'] %}govuk-input--error{% endif %}" id="end-date-year" name="end-date-year" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
               </div>
             </div>
           </fieldset>
@@ -63,62 +87,7 @@
         <button class="govuk-button" data-module="govuk-button">
           Submit
         </button>
-        {% if errorMessage %}
-          <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary" id="server-error-message">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-              {{ errorMessage }}
-            </h2>
-          </div>
-        {% endif %}
       </form>
     </div>
   </div>
-
-  <script>
-  document.getElementById('reportForm').addEventListener('submit', function(event) {
-    var startDateDay = document.getElementById('start-date-day');
-    var startDateMonth = document.getElementById('start-date-month');
-    var startDateYear = document.getElementById('start-date-year');
-    var endDateDay = document.getElementById('end-date-day');
-    var endDateMonth = document.getElementById('end-date-month');
-    var endDateYear = document.getElementById('end-date-year');
-    var startDateFields = [startDateDay.value, startDateMonth.value, startDateYear.value];
-    var endDateFields = [endDateDay.value, endDateMonth.value, endDateYear.value];
-    var existingErrorSummary = document.querySelector('.js-error-summary');
-    var serverErrorMessage = document.getElementById('server-error-message');
-    if (!allOrNone(startDateFields) || !allOrNone(endDateFields)) {
-      event.preventDefault();
-      var errorMessage = 'Please provide all values for day, month, and year for each date';
-      if (existingErrorSummary) {
-        existingErrorSummary.remove();
-      }
-      var errorSummary = document.createElement('div');
-      errorSummary.className = 'govuk-error-summary js-error-summary';
-      errorSummary.setAttribute('aria-labelledby', 'error-summary-title');
-      errorSummary.setAttribute('role', 'alert');
-      errorSummary.setAttribute('tabindex', '-1');
-      errorSummary.setAttribute('data-module', 'govuk-error-summary');
-      var errorTitle = document.createElement('h2');
-      errorTitle.className = 'govuk-error-summary__title';
-      errorTitle.id = 'error-summary-title';
-      errorTitle.textContent = errorMessage;
-      errorSummary.appendChild(errorTitle);
-      document.getElementById('reportForm').insertBefore(errorSummary, document.getElementById('reportForm').lastChild);
-    } else {
-      if (existingErrorSummary) {
-        existingErrorSummary.remove();
-      }
-      if (serverErrorMessage) {
-        serverErrorMessage.remove();
-      }
-      // Clear the form
-      event.target.reset();
-    }
-
-    function allOrNone(fields) {
-      var numEmpty = fields.filter(function(field) { return field === ''; }).length;
-      return numEmpty === 0 || numEmpty === fields.length;
-    }
-  });
-</script>
 {% endblock %}
