@@ -2,6 +2,7 @@ const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const api = require('../api')
 const convertToCSV = require('../convert-to-csv')
 const apListingSchema = require('../routes/schemas/ap-listing-schema')
+const config = require('../config/storage')
 
 module.exports = [
   {
@@ -10,7 +11,7 @@ module.exports = [
     options: {
       auth: { scope: [holdAdmin, schemeAdmin, dataView] },
       handler: async (request, h) => {
-        return h.view('ap-listing-report')
+        return h.view('reports-list/ap-listing')
       }
     }
   },
@@ -30,7 +31,7 @@ module.exports = [
             }
           }) : []
           const data = { errors }
-          return h.view('ap-listing-report', data).code(400).takeover()
+          return h.view('reports-list/ap-listing', data).code(400).takeover()
         }
     },
       handler: async (request, h) => {
@@ -41,6 +42,8 @@ module.exports = [
 
         if (startDay && startMonth && startYear) {
           startDate = `${startYear}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`
+        } else {
+          startDate = '2015-01-01'
         }
 
         if (endDay && endMonth && endYear) {
@@ -74,20 +77,24 @@ module.exports = [
               'D365 Error Status': data.daxError
             }
           })
+          if (selectedData.length === 0) {
+            return h.view('reports-list/ap-listing', {
+              errors: [{
+                text: 'No data available for the selected date range'
+              }]
+            })
+          }
 
           const csv = convertToCSV(selectedData)
 
-          const filename = `APListingReportData-from-${startDate || 'beginning'}-to-${endDate || 'now'}.csv`
-          const headers = {
-            'Content-Type': 'text/csv',
-            'Content-Disposition': `attachment; filename=${filename}`
-          }
+          const baseFilename = config.apListingReportName.slice(0, -4)
+          const filename = `${baseFilename}-from-${startDate}-to-${endDate}.csv`
           return h.response(csv)
             .header('Content-Type', 'text/csv')
             .header('Content-Disposition', `attachment; filename=${filename}`)
         } catch (error) {
           console.error('Failed to fetch tracking data:', error)
-          return h.view('ap-listing-report', { errorMessage: 'Failed to fetch tracking data' })
+          return h.view('reports-list/ap-listing', { errorMessage: 'Failed to fetch tracking data' })
         }
       }
     }

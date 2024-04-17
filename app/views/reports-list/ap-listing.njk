@@ -26,7 +26,6 @@
   }}
   {% endif %}
       <form id="reportForm" method="get" action="/report-list/ap-listing/download">
-        <!-- Start date fields -->
         <div class="govuk-form-group {% if errors['start-date-day'] or errors['start-date-month'] or errors['start-date-year'] %}govuk-form-group--error{% endif %}">
           <fieldset class="govuk-fieldset" role="group" aria-describedby="start-date-hint start-date-error">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
@@ -55,7 +54,6 @@
             </div>
           </fieldset>
         </div>
-        <!-- End date fields -->
         <div class="govuk-form-group {% if errors['end-date-day'] or errors['end-date-month'] or errors['end-date-year'] %}govuk-form-group--error{% endif %}">
           <fieldset class="govuk-fieldset" role="group" aria-describedby="end-date-hint end-date-error">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">

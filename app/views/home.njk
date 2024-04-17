@@ -1,11 +1,9 @@
 {% extends '_layout.njk' %}
 {% from "./macros/logout.njk" import logout %}
-
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-l">{{ serviceName }}</h1>
-
         <div class="govuk-cards govuk-cards--2">
         {% if auth.isHoldAdminUser %}
           <div class="govuk-cards--2__item govuk-card--dashboard">
@@ -19,15 +17,16 @@
               </li>
             </ul>
           </div>
+        {% endif %}
         {% if auth.isHoldAdminUser or auth.isSchemeAdminUser or auth.isDataViewUser %}
-  <div class="govuk-cards--2__item govuk-card--dashboard">
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Reports</h2>
-    <p class="govuk-body govuk-!-margin-bottom-8">
-      <a href="/report-list" class="govuk-link">Report List</a>
-    </p>
-  </div>
-{% endif %}
-            </ul>
+          <div class="govuk-cards--2__item govuk-card--dashboard">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Reports</h2>
+            <p class="govuk-heading-l govuk-!-margin-bottom-5">
+              {{ totalReportTypes }}
+            </p>
+            <p class="govuk-body govuk-!-margin-bottom-8">
+              <a href="/report-list" class="govuk-link">Report List</a>
+            </p>
           </div>
         {% endif %}
         </div>
@@ -91,5 +90,4 @@
       </div>
     </div>
   </div>
-</div>
 {% endblock %}

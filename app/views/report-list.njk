@@ -17,27 +17,14 @@
       <div class="govuk-cards--2__item govuk-card--dashboard">
         <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Reports</h2>
         <p class="govuk-body govuk-!-margin-bottom-8">
-          Download reports
+          Available reports
         </p>
         <ul class="govuk-list">
-          <li>
-            <a href="/report/payment-requests" class="govuk-link">Payment request statuses</a>
-          </li>
-          <li>
-            <a href="/report/transaction-summary" class="govuk-link">Combined transaction report</a>
-          </li>
-          <li>
-            <a href="/report/suppressed-payments" class="govuk-link">Suppressed payment requests</a>
-          </li>
-          {% if totalHolds > 0 %}
-            <li>
-              <a href="/report/holds" class="govuk-link">Holds</a>
-            </li>
-          {% endif %}
-          <!-- Add the new hyperlink here -->
-          <li>
-            <a href="/report-list/ap-listing" class="govuk-link">AP Listing Report</a>
-          </li>
+          {% for reportType in reportTypes %}
+  <li>
+    <a href="/report-list/{{ reportTypesRoutes[reportType] | lower }}" class="govuk-link">{{ reportType }}</a>
+  </li>
+{% endfor %}
         </ul>
       </div>
     </div>
