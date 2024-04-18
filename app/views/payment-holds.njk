@@ -47,10 +47,10 @@
                 <td class="govuk-table__cell">{{ paymentHold.frn }}</td>
                 <td class="govuk-table__cell">{{ paymentHold.holdCategoryName }}</td>
                 <td class="govuk-table__cell">{{ paymentHold.holdCategorySchemeName }}</td>
-                <td class="govuk-table__cell">{{ paymentHold.marketingYear ?? 'All' }}</td>
+                <td class="govuk-table__cell">{{ paymentHold.marketingYear }}</td>
                 <td class="govuk-table__cell">{{ paymentHold.dateTimeAdded }}</td>
                 <td class="govuk-table__cell">
-                  {% if !paymentHold.marketingYear %}
+                  {% if paymentHold.canBeRemoved %}
                     <form method="POST" action="/remove-payment-hold">
                       <input type="hidden" name="crumb" value="{{crumb}}"/>
                       <input type="hidden" id="holdId" name="holdId" value="{{ paymentHold.holdId }}">
