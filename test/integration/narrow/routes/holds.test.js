@@ -31,7 +31,6 @@ describe('Payment holds', () => {
         holdCategoryName: 'Outstanding debt',
         holdCategorySchemeId: 1,
         holdCategorySchemeName: 'SFI23',
-        marketingYear: '2017',
         dateTimeAdded: '2021-08-26T13:29:28.949Z',
         dateTimeClosed: null
       },
