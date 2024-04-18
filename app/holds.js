@@ -8,6 +8,10 @@ const getHolds = async () => {
     if (x.holdCategorySchemeName === 'SFI') {
       x.holdCategorySchemeName = 'SFI22'
     }
+    if (!x.marketingYear) {
+      x.marketingYear = 'All'
+      x.canBeRemoved = true
+    }
     return x
   })
 }
