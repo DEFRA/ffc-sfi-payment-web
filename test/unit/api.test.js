@@ -1,4 +1,5 @@
 const { paymentsEndpoint } = require('../../app/config')
+const { trackingEndpoint } = require('../../app/config')
 
 describe('API', () => {
   const api = require('../../app/api')
@@ -44,5 +45,17 @@ describe('API', () => {
       payload: data
     })
     expect(response).toEqual(responseMock.payload)
+  })
+  test('getTrackingData makes request for JSON with auth header and returns response', async () => {
+    const token = 'token'
+    const url = 'tracking-url'
+    const responseMock = { payload: 'tracking data' }
+    wreck.get.mockResolvedValueOnce(responseMock)
+
+    const response = await api.getTrackingData(url, token)
+
+    expect(wreck.get).toHaveBeenCalledTimes(1)
+    expect(wreck.get).toHaveBeenCalledWith(`${trackingEndpoint}${url}`, { headers: { Authorization: token }, json: true })
+    expect(response).toEqual(responseMock)
   })
 })

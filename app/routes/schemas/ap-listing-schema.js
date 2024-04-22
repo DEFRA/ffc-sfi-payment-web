@@ -11,37 +11,37 @@ module.exports = Joi.object({
     'number.base': 'Start date day must be a number',
     'number.integer': 'Start date day must be an integer',
     'number.min': 'Start date day cannot be less than 1',
-    'number.max': 'Start date day cannot be more than 31',
+    'number.max': 'Start date day cannot be more than 31'
   }),
   'start-date-month': datePartMonthSchema.messages({
     'number.base': 'Start date month must be a number',
     'number.integer': 'Start date month must be an integer',
     'number.min': 'Start date month cannot be less than 1',
-    'number.max': 'Start date month cannot be more than 12',
+    'number.max': 'Start date month cannot be more than 12'
   }),
   'start-date-year': datePartYearSchema.messages({
     'number.base': 'Start date year must be a number',
     'number.integer': 'Start date year must be an integer',
     'number.min': 'Start date year cannot be less than 2015',
-    'number.max': 'Start date year cannot be more than current year',
+    'number.max': 'Start date year cannot be more than current year'
   }),
   'end-date-day': datePartDaySchema.messages({
     'number.base': 'End date day must be a number',
     'number.integer': 'End date day must be an integer',
     'number.min': 'End date day cannot be less than 1',
-    'number.max': 'End date day cannot be more than 31',
+    'number.max': 'End date day cannot be more than 31'
   }),
   'end-date-month': datePartMonthSchema.messages({
     'number.base': 'End date month must be a number',
     'number.integer': 'End date month must be an integer',
     'number.min': 'End date month cannot be less than 1',
-    'number.max': 'End date month cannot be more than 12',
+    'number.max': 'End date month cannot be more than 12'
   }),
   'end-date-year': datePartYearSchema.messages({
     'number.base': 'End date year must be a number',
     'number.integer': 'End date year must be an integer',
     'number.min': 'End date year cannot be less than current year',
-    'number.max': 'End date year cannot be more than current year',
+    'number.max': 'End date year cannot be more than current year'
   })
 }).options({ abortEarly: false })
   .custom((value, helpers) => {

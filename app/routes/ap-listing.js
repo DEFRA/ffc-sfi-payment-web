@@ -21,19 +21,21 @@ module.exports = [
     options: {
       auth: { scope: [holdAdmin, schemeAdmin, dataView] },
       validate: {
-      query: apListingSchema,
+        query: apListingSchema,
         failAction: async (request, h, err) => {
           request.log(['error', 'validation'], err)
-          const errors = err.details ? err.details.map(detail => {
-            return {
-              text: detail.message,
-              href: '#' + detail.path[0]
-            }
-          }) : []
+          const errors = err.details
+            ? err.details.map(detail => {
+                return {
+                  text: detail.message,
+                  href: '#' + detail.path[0]
+                }
+              })
+            : []
           const data = { errors }
           return h.view('reports-list/ap-listing', data).code(400).takeover()
         }
-    },
+      },
       handler: async (request, h) => {
         const { 'start-date-day': startDay, 'start-date-month': startMonth, 'start-date-year': startYear, 'end-date-day': endDay, 'end-date-month': endMonth, 'end-date-year': endYear } = request.query
 
@@ -67,10 +69,10 @@ module.exports = [
               'Date Time': data.lastUpdated,
               Event: data.status,
               FRN: data.frn,
-              'Invoice Number': data.originalInvoiceNumber,
-              'Invoice Value': data.value,
+              'Original Invoice Number': data.originalInvoiceNumber,
+              'Original Invoice Value': data.value,
               'Invoice Number': data.invoiceNumber,
-              'Invoice Value': data.deltaAmount,
+              'Invoice Delta Amount': data.deltaAmount,
               'D365 Invoice Imported': data.routedToRequestEditor,
               'D365 Invoice Payment': data.settledValue,
               'PH Error Status': data.phError,

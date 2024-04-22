@@ -47,7 +47,7 @@ describe('Report test', () => {
   test('GET /report/payment-requests route returns stream if report available', async () => {
     const options = {
       method: 'GET',
-      url: '/report/payment-requests',
+      url: '/report-list/payment-requests',
       auth
     }
 
@@ -59,7 +59,7 @@ describe('Report test', () => {
   test('GET /report/transaction-summary route returns stream if report available', async () => {
     const options = {
       method: 'GET',
-      url: '/report/transaction-summary',
+      url: '/report-list/transaction-summary',
       auth
     }
 
@@ -71,7 +71,7 @@ describe('Report test', () => {
   test('GET /report/suppressed-payments route returns stream if report available', async () => {
     const options = {
       method: 'GET',
-      url: '/report/suppressed-payments',
+      url: '/report-list/suppressed-payments',
       auth
     }
 
@@ -104,7 +104,7 @@ describe('Report test', () => {
     mockDownload = undefined
     const options = {
       method: 'GET',
-      url: '/report/payment-requests',
+      url: '/report-list/payment-requests',
       auth
     }
 
@@ -116,7 +116,7 @@ describe('Report test', () => {
     mockDownload = undefined
     const options = {
       method: 'GET',
-      url: '/report/transaction-summary',
+      url: '/report-list/transaction-summary',
       auth
     }
 
@@ -128,7 +128,7 @@ describe('Report test', () => {
     mockDownload = undefined
     const options = {
       method: 'GET',
-      url: '/report/suppressed-payments',
+      url: '/report-list/suppressed-payments',
       auth
     }
 
