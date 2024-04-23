@@ -70,7 +70,7 @@ module.exports = [{
 },
 {
   method: 'GET',
-  path: '/report/holds',
+  path: '/report-list/holds',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (_request, h) => {

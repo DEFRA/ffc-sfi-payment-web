@@ -25,6 +25,11 @@
     <a href="/report-list/{{ reportTypesRoutes[reportType] | lower }}" class="govuk-link">{{ reportType }}</a>
   </li>
 {% endfor %}
+{% if totalHolds > 0 %}
+  <li>
+    <a href="/report-list/holds" class="govuk-link">Holds</a>
+  </li>
+{% endif %}
         </ul>
       </div>
     </div>
