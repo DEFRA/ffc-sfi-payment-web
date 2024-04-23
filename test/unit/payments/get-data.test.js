@@ -51,4 +51,23 @@ describe('get data', () => {
     const result = await getData(CATEGORY, VALUE)
     expect(result).toBe(undefined)
   })
+
+  test('should change scheme from SFI to SFI22 in response data', async () => {
+    const responseMock = {
+      data: [
+        { scheme: 'SFI' },
+        { scheme: 'OTHER' },
+        { scheme: 'SFI' }
+      ]
+    }
+    mockReceiveMessage.mockResolvedValue(responseMock)
+
+    const result = await getData(CATEGORY, VALUE)
+
+    expect(result).toEqual([
+      { scheme: 'SFI22' },
+      { scheme: 'OTHER' },
+      { scheme: 'SFI22' }
+    ])
+  })
 })

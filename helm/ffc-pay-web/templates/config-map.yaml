@@ -7,11 +7,14 @@ data:
   {{- if and (.Values.environmentCode) (not .Values.pr) }}
     {{- if ne .Values.environmentCode "snd" }}
   PAYMENTS_SERVICE_ENDPOINT: {{ .Values.container.paymentsEndpoint }}-{{ .Values.environmentCode }}
+  TRACKING_SERVICE_ENDPOINT: {{ .Values.container.trackingEndpoint }}-{{ .Values.environmentCode }}
     {{ else }}
   PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
+  TRACKING_SERVICE_ENDPOINT: {{ quote .Values.container.trackingEndpoint }}
     {{- end }}
   {{ else }}
   PAYMENTS_SERVICE_ENDPOINT: {{ quote .Values.container.paymentsEndpoint }}
+  TRACKING_SERVICE_ENDPOINT: {{ quote .Values.container.trackingEndpoint }}
   {{- end }}
   {{- if .Values.pr }}
   REDIRECT_URL: https://{{ .Values.ingress.endpoint }}-{{ .Values.pr }}.{{ .Values.ingress.server }}/{{ .Values.azureAppRegistration.redirectUrl }}

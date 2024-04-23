@@ -22,7 +22,12 @@ const getConfiguration = (token) => {
   }
 }
 
+const getTrackingData = async (url, token) => {
+  return wreck.get(`${config.trackingEndpoint}${url}`, getConfiguration(token))
+}
+
 module.exports = {
   get,
-  post
+  post,
+  getTrackingData
 }

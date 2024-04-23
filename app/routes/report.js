@@ -8,7 +8,7 @@ const config = require('../config')
 
 module.exports = [{
   method: 'GET',
-  path: '/report/payment-requests',
+  path: '/report-list/payment-requests',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (_request, h) => {
@@ -28,7 +28,7 @@ module.exports = [{
   }
 }, {
   method: 'GET',
-  path: '/report/transaction-summary',
+  path: '/report-list/transaction-summary',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (_request, h) => {
@@ -49,7 +49,7 @@ module.exports = [{
 },
 {
   method: 'GET',
-  path: '/report/suppressed-payments',
+  path: '/report-list/suppressed-payments',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (_request, h) => {
@@ -70,7 +70,7 @@ module.exports = [{
 },
 {
   method: 'GET',
-  path: '/report/holds',
+  path: '/report-list/holds',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (_request, h) => {

@@ -1,0 +1,37 @@
+{% extends '_layout.njk' %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% block content %}
+  {{ govukBreadcrumbs({
+    items: [{
+      text: "Home",
+      href: "/"
+    },
+    {
+      text: "Report List",
+      href: "/report-list"
+    }]
+  })}}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l">Report List</h1>
+      <div class="govuk-cards--2__item govuk-card--dashboard">
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Reports</h2>
+        <p class="govuk-body govuk-!-margin-bottom-8">
+          Available reports
+        </p>
+        <ul class="govuk-list">
+          {% for reportType in reportTypes %}
+  <li>
+    <a href="/report-list/{{ reportTypesRoutes[reportType] | lower }}" class="govuk-link">{{ reportType }}</a>
+  </li>
+{% endfor %}
+{% if totalHolds > 0 %}
+  <li>
+    <a href="/report-list/holds" class="govuk-link">Holds</a>
+  </li>
+{% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}
