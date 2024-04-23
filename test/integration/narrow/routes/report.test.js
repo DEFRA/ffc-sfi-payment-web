@@ -92,7 +92,7 @@ describe('Report test', () => {
 
     const options = {
       method: 'GET',
-      url: '/report/holds',
+      url: '/report-list/holds',
       auth
     }
 
@@ -140,7 +140,7 @@ describe('Report test', () => {
     getHolds.mockReturnValue(undefined)
     const options = {
       method: 'GET',
-      url: '/report/holds',
+      url: '/report-list/holds',
       auth
     }
 

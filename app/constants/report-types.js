@@ -3,7 +3,7 @@ const getReportTypes = () => ({
   'Combined transaction report': 'transaction-summary',
   'Suppressed payment requests': 'suppressed-payments',
   'AP Listing Report': 'ap-listing',
-  'Holds': 'holds'
+  Holds: 'holds'
 })
 
 module.exports = {
