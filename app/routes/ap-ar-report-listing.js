@@ -65,7 +65,7 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
             const trackingData = response.payload
 
             const selectedData = trackingData[reportDataKey].map(data => {
-              return {
+              const mappedData = {
                 Filename: data.batch,
                 'Date Time': data.lastUpdated,
                 Event: data.status,
@@ -74,11 +74,17 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
                 'Original Invoice Value': data.value,
                 'Invoice Number': data.invoiceNumber,
                 'Invoice Delta Amount': data.deltaAmount,
-                'D365 Invoice Imported': data.routedToRequestEditor,
-                'D365 Invoice Payment': data.settledValue,
-                'PH Error Status': data.phError,
-                'D365 Error Status': data.daxError
+                'D365 Invoice Imported': data.routedToRequestEditor
               }
+            
+              if (reportName !== 'ar-listing') {
+                mappedData['D365 Invoice Payment'] = data.settledValue;
+              }
+            
+              mappedData['PH Error Status'] = data.phError;
+              mappedData['D365 Error Status'] = data.daxError;
+            
+              return mappedData;
             })
 
             if (selectedData.length === 0) {
