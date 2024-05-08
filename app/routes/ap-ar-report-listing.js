@@ -74,17 +74,15 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
                 'Original Invoice Value': data.value,
                 'Invoice Number': data.invoiceNumber,
                 'Invoice Delta Amount': data.deltaAmount,
-                'D365 Invoice Imported': data.routedToRequestEditor
+                'D365 Invoice Imported': data.routedToRequestEditor,
+                'D365 Invoice Payment': data.settledValue,
+                'PH Error Status': data.phError,
+                'D365 Error Status': data.daxError
               }
-            
-              if (reportName !== 'ar-listing') {
-                mappedData['D365 Invoice Payment'] = data.settledValue;
+              if (reportName === 'ar-listing') {
+                delete mappedData['D365 Invoice Payment']
               }
-            
-              mappedData['PH Error Status'] = data.phError;
-              mappedData['D365 Error Status'] = data.daxError;
-            
-              return mappedData;
+              return mappedData
             })
 
             if (selectedData.length === 0) {
