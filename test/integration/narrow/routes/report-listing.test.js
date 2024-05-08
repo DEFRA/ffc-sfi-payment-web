@@ -1,6 +1,7 @@
 const { getTrackingData } = require('../../../../app/api')
 const { schemeAdmin } = require('../../../../app/auth/permissions')
-
+const generateRoutes = require('../../../../app/routes/ap-ar-report-listing')
+const config = require('../../../../app/config/storage')
 jest.mock('../../../../app/api')
 jest.mock('../../../../app/auth')
 
@@ -102,6 +103,7 @@ describe('AP Listing Report tests', () => {
     expect(response.headers['content-type']).toBe('text/csv; charset=utf-8')
     expect(response.headers['content-disposition']).toContain('.csv')
   })
+
   test('GET /report-list/ap-listing/download route sets endDate to current date if only startDate is provided', async () => {
     const now = new Date()
     const expectedEndDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
@@ -142,5 +144,54 @@ describe('AP Listing Report tests', () => {
     const response = await server.inject(options)
     const viewModel = response.request.response.source.context
     expect(viewModel.errorMessage).toBe('Failed to fetch tracking data')
+  })
+  test('startDate defaults to 2015-01-01 if not provided', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/ap-listing/download',
+      auth
+    }
+    getTrackingData.mockImplementation((url) => {
+      expect(url).toContain('startDate=2015-01-01')
+      return Promise.resolve({
+        payload: {
+          apReportData: [mockApReportData]
+        }
+      })
+    })
+    await server.inject(options)
+  })
+  test('returns view with correct reportName when no data is available', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/ap-listing',
+      auth,
+      query: {}
+    }
+    getTrackingData.mockResolvedValueOnce({
+      payload: {
+        apReportData: []
+      }
+    })
+    const h = {
+      view: jest.fn()
+    }
+    const handler = generateRoutes('ap-listing', '/ap-report-data', 'apReportData')[1].options.handler
+    await handler(options, h)
+    expect(h.view).toHaveBeenCalledWith('reports-list/ap-listing', expect.anything())
+  })
+  test('filename starts with correct reportName', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/ap-listing/download?start-date-day=1&start-date-month=1&start-date-year=2022&end-date-day=31&end-date-month=12&end-date-year=2022',
+      auth
+    }
+    getTrackingData.mockResolvedValueOnce({
+      payload: {
+        apReportData: [mockApReportData]
+      }
+    })
+    const response = await server.inject(options)
+    expect(response.headers['content-disposition']).toContain(config.apListingReportName.slice(0, -4))
   })
 })
