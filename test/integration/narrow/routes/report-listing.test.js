@@ -1,6 +1,6 @@
 const { getTrackingData } = require('../../../../app/api')
 const { schemeAdmin } = require('../../../../app/auth/permissions')
-const generateRoutes = require('../../../../app/routes/report-listing')
+const generateRoutes = require('../../../../app/routes/ap-ar-report-listing')
 const config = require('../../../../app/config/storage')
 jest.mock('../../../../app/api')
 jest.mock('../../../../app/auth')
