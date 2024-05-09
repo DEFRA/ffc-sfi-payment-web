@@ -1,5 +1,6 @@
 {% extends '_layout.njk' %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% block content %}
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
   {{ govukBreadcrumbs({
@@ -11,13 +12,13 @@
       text: "Report List",
       href: "/report-list"
     },{
-      text: "AR Listing Report",
-      href: "/report-list/ar-listing"
+      text: "AP/AR Listing Report",
+      href: "/report-list/ap-ar-listing"
     }]
   })}}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <h1 class="govuk-heading-l">AR Listing Report</h1>
+      <h1 class="govuk-heading-l">AP/AR Listing Report</h1>
       {% if errors %}
     {{ govukErrorSummary({
       titleText: "There is a problem",
@@ -25,7 +26,25 @@
     }) 
   }}
   {% endif %}
-      <form id="reportForm" method="get" action="/report-list/ar-listing/download">
+      {% set actionPath = "ap" %}
+      <form id="reportForm" method="get" action="/report-list/{{ actionPath }}-listing/download">
+        {{ govukSelect({
+          id: "report-type",
+          label: {
+            text: "Report Type"
+          },
+          items: [
+            {
+              value: "ap",
+              text: "AP Listing Report",
+              selected: true
+            },
+            {
+              value: "ar",
+              text: "AR Listing Report"
+            }
+          ]
+        }) }}
         <div class="govuk-form-group {% if errors['start-date-day'] or errors['start-date-month'] or errors['start-date-year'] %}govuk-form-group--error{% endif %}">
           <fieldset class="govuk-fieldset" role="group" aria-describedby="start-date-hint start-date-error">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
@@ -88,4 +107,14 @@
       </form>
     </div>
   </div>
+
+  <script>
+  document.getElementById('report-type').addEventListener('change', function() {
+    var actionPath = this.value;
+    var newAction = '/report-list/' + actionPath + '-listing/download';
+    document.getElementById('reportForm').action = newAction;
+  });
+</script>
 {% endblock %}
+
+

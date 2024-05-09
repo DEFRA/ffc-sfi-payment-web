@@ -63,7 +63,6 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
           try {
             const response = await api.getTrackingData(url)
             const trackingData = response.payload
-
             const selectedData = trackingData[reportDataKey].map(data => {
               const mappedData = {
                 Filename: data.batch,
