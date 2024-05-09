@@ -38,7 +38,6 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
           }
         },
         handler: async (request, h) => {
-          console.log('Downloading report:', reportName)
           const { 'start-date-day': startDay, 'start-date-month': startMonth, 'start-date-year': startYear, 'end-date-day': endDay, 'end-date-month': endMonth, 'end-date-year': endYear } = request.query
 
           let url = reportDataUrl
@@ -64,8 +63,6 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
           try {
             const response = await api.getTrackingData(url)
             const trackingData = response.payload
-            console.log(trackingData)
-
             const selectedData = trackingData[reportDataKey].map(data => {
               const mappedData = {
                 Filename: data.batch,
