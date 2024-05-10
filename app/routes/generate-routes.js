@@ -63,27 +63,56 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
           try {
             const response = await api.getTrackingData(url)
             const trackingData = response.payload
+            let selectedData
+            if (['ap-listing', 'ar-listing'].includes(reportName)) {
+              selectedData = trackingData[reportDataKey].map(data => {
+                const mappedData = {
+                  Filename: data.batch,
+                  'Date Time': data.lastUpdated,
+                  Event: data.status,
+                  FRN: data.frn,
+                  'Original Invoice Number': data.originalInvoiceNumber,
+                  'Original Invoice Value': data.value,
+                  'Invoice Number': data.invoiceNumber,
+                  'Invoice Delta Amount': data.deltaAmount,
+                  'D365 Invoice Imported': data.routedToRequestEditor,
+                  'D365 Invoice Payment': data.settledValue,
+                  'PH Error Status': data.phError,
+                  'D365 Error Status': data.daxError
+                }
+                if (reportName === 'ar-listing') {
+                  delete mappedData['D365 Invoice Payment']
+                }
+                return mappedData
+              })
+            }
 
-            const selectedData = trackingData[reportDataKey].map(data => {
-              const mappedData = {
-                Filename: data.batch,
-                'Date Time': data.lastUpdated,
-                Event: data.status,
-                FRN: data.frn,
-                'Original Invoice Number': data.originalInvoiceNumber,
-                'Original Invoice Value': data.value,
-                'Invoice Number': data.invoiceNumber,
-                'Invoice Delta Amount': data.deltaAmount,
-                'D365 Invoice Imported': data.routedToRequestEditor,
-                'D365 Invoice Payment': data.settledValue,
-                'PH Error Status': data.phError,
-                'D365 Error Status': data.daxError
-              }
-              if (reportName === 'ar-listing') {
-                delete mappedData['D365 Invoice Payment']
-              }
-              return mappedData
-            })
+            if (reportName === 'combined-transaction') {
+              selectedData = trackingData[reportDataKey].map(data => {
+                return {
+                  ID: data.correlationId,
+                  FRN: data.frn,
+                  'Claim ID': data.claimNumber,
+                  'Agreement Number': data.agreementNumber,
+                  'Revenue / Capital': data.revenueOrCapital,
+                  Year: data.year,
+                  'Invoice Number': data.invoiceNumber,
+                  'Payment Currency': data.currency,
+                  'Payment Request Number': data.paymentRequestNumber,
+                  'Full Claim Amount': data.value,
+                  'Batch ID': data.batch,
+                  'Batch Creator ID': data.sourceSystem,
+                  'Batch Export Date': data.batchExportDate,
+                  'Routed To Request Editor': data.routedToRequestEditor,
+                  'Delta Amount': data.deltaAmount,
+                  'AP Amount': data.apValue,
+                  'AR Amount': data.arValue,
+                  'Admin Or Irregular': data.debtType,
+                  Status: data.status,
+                  'Last Updated': data.lastUpdated
+                }
+              })
+            }
 
             if (selectedData.length === 0) {
               return h.view(`reports-list/${reportName}`, {
