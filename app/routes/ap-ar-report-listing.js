@@ -74,11 +74,11 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
                   invoiceNumber: data.invoiceNumber,
                   PaymentRequestNumber: data.paymentRequestNumber,
                   year: data.year,
-                  receivedInRE: data.receivedInRE,
+                  receivedInRequestEditor: data.receivedInRequestEditor,
                   enriched: data.enriched,
                   debtType: data.debtType,
                   ledgerSplit: data.ledgerSplit,
-                  releasedFromRE: data.releasedFromRE
+                  releasedFromRequestEditor: data.releasedFromRequestEditor
                 }
               } else {
                 mappedData = {
