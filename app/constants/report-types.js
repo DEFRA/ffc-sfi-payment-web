@@ -4,7 +4,7 @@ const getReportTypes = () => ({
   'Suppressed payment requests': 'suppressed-payments',
   'AP-AR listing report': 'ap-ar-listing',
   Holds: 'holds',
-  'Request Editor report': 'request-editor'
+  'Request Editor report': 'request-editor-report'
 })
 
 module.exports = {

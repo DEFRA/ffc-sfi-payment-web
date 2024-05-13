@@ -12,13 +12,13 @@
       text: "Report List",
       href: "/report-list"
     },{
-      text: "AP/AR Listing Report",
-      href: "/report-list/ap-ar-listing"
+      text: "Request-Editor Report",
+      href: "/report-list/request-editor-report"
     }]
   })}}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <h1 class="govuk-heading-l">AP/AR Listing Report</h1>
+      <h1 class="govuk-heading-l">Request Editor Report</h1>
       {% if errors %}
     {{ govukErrorSummary({
       titleText: "There is a problem",
@@ -26,25 +26,7 @@
     }) 
   }}
   {% endif %}
-      {% set actionPath = "ap-ar" %}
-      <form id="reportForm" method="get" action="/report-list/{{ actionPath }}-listing/download">
-        {{ govukSelect({
-          id: "report-type",
-          label: {
-            text: "Report Type"
-          },
-          items: [
-            {
-              value: "ap-ar",
-              text: "AP Listing Report",
-              selected: true
-            },
-            {
-              value: "ar",
-              text: "AR Listing Report"
-            }
-          ]
-        }) }}
+  <form id="reportForm" method="get" action="/report-list/request-editor-report/download">
         <div class="govuk-form-group {% if errors['start-date-day'] or errors['start-date-month'] or errors['start-date-year'] %}govuk-form-group--error{% endif %}">
           <fieldset class="govuk-fieldset" role="group" aria-describedby="start-date-hint start-date-error">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
@@ -107,14 +89,6 @@
       </form>
     </div>
   </div>
-
-  <script>
-  document.getElementById('report-type').addEventListener('change', function() {
-    var actionPath = this.value;
-    var newAction = '/report-list/' + actionPath + '-listing/download';
-    document.getElementById('reportForm').action = newAction;
-  });
-</script>
 {% endblock %}
 
 

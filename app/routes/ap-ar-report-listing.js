@@ -64,22 +64,40 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
             const response = await api.getTrackingData(url)
             const trackingData = response.payload
             const selectedData = trackingData[reportDataKey].map(data => {
-              const mappedData = {
-                Filename: data.batch,
-                'Date Time': data.lastUpdated,
-                Event: data.status,
-                FRN: data.frn,
-                'Original Invoice Number': data.originalInvoiceNumber,
-                'Original Invoice Value': data.value,
-                'Invoice Number': data.invoiceNumber,
-                'Invoice Delta Amount': data.deltaAmount,
-                'D365 Invoice Imported': data.routedToRequestEditor,
-                'D365 Invoice Payment': data.settledValue,
-                'PH Error Status': data.phError,
-                'D365 Error Status': data.daxError
-              }
-              if (reportName === 'ar-listing') {
-                delete mappedData['D365 Invoice Payment']
+              let mappedData
+              if (reportName === 'request-editor-report') {
+                mappedData = {
+                  FRN: data.frn,
+                  deltaAmount: data.deltaAmount,
+                  SourceSystem: data.sourceSystem,
+                  agreementNumber: data.agreementNumber,
+                  invoiceNumber: data.invoiceNumber,
+                  PaymentRequestNumber: data.paymentRequestNumber,
+                  year: data.year,
+                  receivedInRE: data.receivedInRE,
+                  enriched: data.enriched,
+                  debtType: data.debtType,
+                  ledgerSplit: data.ledgerSplit,
+                  releasedFromRE: data.releasedFromRE
+                }
+              } else {
+                mappedData = {
+                  Filename: data.batch,
+                  'Date Time': data.lastUpdated,
+                  Event: data.status,
+                  FRN: data.frn,
+                  'Original Invoice Number': data.originalInvoiceNumber,
+                  'Original Invoice Value': data.value,
+                  'Invoice Number': data.invoiceNumber,
+                  'Invoice Delta Amount': data.deltaAmount,
+                  'D365 Invoice Imported': data.routedToRequestEditor,
+                  'D365 Invoice Payment': data.settledValue,
+                  'PH Error Status': data.phError,
+                  'D365 Error Status': data.daxError
+                }
+                if (reportName === 'ar-listing') {
+                  delete mappedData['D365 Invoice Payment']
+                }
               }
               return mappedData
             })
@@ -94,7 +112,17 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
 
             const csv = convertToCSV(selectedData)
 
-            const baseFilename = reportName === 'ar-listing' ? config.arListingReportName.slice(0, -4) : config.apListingReportName.slice(0, -4)
+            let baseFilename
+            switch (reportName) {
+              case 'ar-listing':
+                baseFilename = config.arListingReportName.slice(0, -4)
+                break
+              case 'request-editor-report':
+                baseFilename = config.requestEditorReportName.slice(0, -4)
+                break
+              default:
+                baseFilename = config.apListingReportName.slice(0, -4)
+            }
             const filename = `${baseFilename}-from-${startDate}-to-${endDate}.csv`
             return h.response(csv)
               .header('Content-Type', 'text/csv')
