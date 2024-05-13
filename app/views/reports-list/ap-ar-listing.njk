@@ -1,6 +1,7 @@
 {% extends '_layout.njk' %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "reports-list/input-form.njk" import dateInput %}
 {% block content %}
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
   {{ govukBreadcrumbs({
@@ -45,62 +46,8 @@
             }
           ]
         }) }}
-        <div class="govuk-form-group {% if errors['start-date-day'] or errors['start-date-month'] or errors['start-date-year'] %}govuk-form-group--error{% endif %}">
-          <fieldset class="govuk-fieldset" role="group" aria-describedby="start-date-hint start-date-error">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-              <h1 class="govuk-fieldset__heading">
-                Start date
-              </h1>
-            </legend>
-            {% if errors['start-date-day'] or errors['start-date-month'] or errors['start-date-year'] %}
-              <p id="start-date-error" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> Start date is not valid
-              </p>
-            {% endif %}
-            <span id="start-date-hint" class="govuk-hint">
-              For example, 12 11 2020
-            </span>
-            <div class="govuk-date-input" id="start-date">
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['start-date-day'] %}govuk-input--error{% endif %}" id="start-date-day" name="start-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['start-date-month'] %}govuk-input--error{% endif %}" id="start-date-month" name="start-date-month" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-4 {% if errors['start-date-year'] %}govuk-input--error{% endif %}" id="start-date-year" name="start-date-year" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-            </div>
-          </fieldset>
-        </div>
-        <div class="govuk-form-group {% if errors['end-date-day'] or errors['end-date-month'] or errors['end-date-year'] %}govuk-form-group--error{% endif %}">
-          <fieldset class="govuk-fieldset" role="group" aria-describedby="end-date-hint end-date-error">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-              <h1 class="govuk-fieldset__heading">
-                End date
-              </h1>
-            </legend>
-            {% if errors['end-date-day'] or errors['end-date-month'] or errors['end-date-year'] %}
-              <p id="end-date-error" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> End date is not valid
-              </p>
-            {% endif %}
-            <span id="end-date-hint" class="govuk-hint">
-              For example, 12 11 2020
-            </span>
-            <div class="govuk-date-input" id="end-date">
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['end-date-day'] %}govuk-input--error{% endif %}" id="end-date-day" name="end-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['end-date-month'] %}govuk-input--error{% endif %}" id="end-date-month" name="end-date-month" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-4 {% if errors['end-date-year'] %}govuk-input--error{% endif %}" id="end-date-year" name="end-date-year" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-            </div>
-          </fieldset>
-        </div>
+        {{ dateInput('start-date', errors) }}
+        {{ dateInput('end-date', errors) }}
         <button class="govuk-button" data-module="govuk-button">
           Submit
         </button>
@@ -116,5 +63,3 @@
   });
 </script>
 {% endblock %}
-
-
