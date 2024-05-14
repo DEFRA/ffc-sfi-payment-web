@@ -34,7 +34,7 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
                 })
               : []
             const data = { errors }
-            return h.view(`reports-list/${reportName}`, data).code(400).takeover()
+            return h.view('report-list/ap-ar-listing', data).code(400).takeover()
           }
         },
         handler: async (request, h) => {
