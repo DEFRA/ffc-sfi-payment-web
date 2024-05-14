@@ -34,7 +34,15 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
                 })
               : []
             const data = { errors }
-            return h.view('report-list/ap-ar-listing', data).code(400).takeover()
+            if (reportName === 'ar-listing' || reportName === 'ap-ar-listing'){
+              return h.view('report-list/ap-ar-listing', data).code(400).takeover()
+            }
+            if (reportName === 'request-editor-report'){
+              return h.view('report-list/request-editor-report', data).code(400).takeover()
+            }
+            else {
+              return h.view('error-page', data).code(404).takeover()
+            }
           }
         },
         handler: async (request, h) => {
