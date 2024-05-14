@@ -12,6 +12,7 @@ let server
 beforeEach(async () => {
   auth = { strategy: 'session-auth', credentials: { scope: [schemeAdmin] } }
   server = await createServer()
+  console.log(server)
 })
 
 afterEach(async () => {
@@ -250,10 +251,12 @@ describe('AP Listing Report tests', () => {
     const response = await server.inject(options)
     expect(response.statusCode).toBe(400)
   })
-  test('GET /report-list/invalid-report-name returns 404 for non-existent report', async () => {
+  test('GET /report-list/invalid-report-name returns 404 for invalid report name and query parameters', async () => {
+    const routes = generateRoutes('invalid-report-name', '/invalid-report-data', 'invalidReportData')
+    server.route(routes)
     const options = {
       method: 'GET',
-      url: '/report-list/invalid-report-name',
+      url: '/report-list/invalid-report-name/download?start-date-day=32',
       auth
     }
     const response = await server.inject(options)
