@@ -102,17 +102,6 @@ describe('AP Listing Report tests', () => {
     expect(response.statusCode).toBe(200)
   })
 
-  test('GET /report-list/ap-ar-listing/download route returns 500 with invalid query parameters', async () => {
-    const options = {
-      method: 'GET',
-      url: '/report-list/ap-ar-listing/download?start-date-day=32&start-date-month=13&start-date-year=2022&end-date-day=31&end-date-month=12&end-date-year=2022',
-      auth
-    }
-
-    const response = await server.inject(options)
-    expect(response.statusCode).toBe(500)
-  })
-
   test('GET /report-list/ap-ar-listing/download route returns CSV file with valid query parameters', async () => {
     const options = {
       method: 'GET',
@@ -213,7 +202,6 @@ describe('AP Listing Report tests', () => {
       }
     })
     const response = await server.inject(options)
-    console.log(response.headers)
     expect(response.headers['content-disposition']).toContain(config.apListingReportName.slice(0, -4))
   })
   test('CSV content is correct when reportName is ar-listing', async () => {
@@ -243,5 +231,33 @@ describe('AP Listing Report tests', () => {
     })
     const response = await server.inject(options)
     expect(response.headers['content-disposition']).toContain(config.requestEditorReportName.slice(0, -4))
+  })
+  test('GET /report-list/request-editor-report/download returns 400 for invalid request', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/request-editor-report/download?invalid-param=invalid',
+      auth
+    }
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(400)
+  })
+  test('GET /report-list/ap-ar-listing/download returns 400 for invalid request', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/ap-ar-listing/download?invalid-param=invalid',
+      auth
+    }
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(400)
+  })
+  test('GET /report-list/invalid-report-name returns 404 for non-existent report', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/invalid-report-name',
+      auth
+    }
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(404)
+    expect(response.request.response.source.template).toBe('404')
   })
 })
