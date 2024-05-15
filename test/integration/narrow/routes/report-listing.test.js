@@ -12,6 +12,7 @@ let server
 beforeEach(async () => {
   auth = { strategy: 'session-auth', credentials: { scope: [schemeAdmin] } }
   server = await createServer()
+  console.log(server)
 })
 
 afterEach(async () => {
@@ -42,7 +43,7 @@ describe('AP Listing Report tests', () => {
     routedToRequestEditor: null,
     deltaAmount: 50000,
     apValue: 50000,
-    arValue: null,
+    arValue: 500,
     debtType: null,
     daxFileName: null,
     daxImported: null,
@@ -50,7 +51,28 @@ describe('AP Listing Report tests', () => {
     phError: null,
     daxError: null
   }
+  const reMockData = {
+    frn: '1000000002',
+    deltaAmount: 50000,
+    sourceSystem: 'SFI',
+    agreementNumber: '00000002',
+    invoiceNumber: 'S000000800000002V002',
+    paymentRequestNumber: 2,
+    year: 2022,
+    receivedInRequestEditor: null,
+    enriched: null,
+    debtType: null,
+    ledgerSplit: null,
+    releasedFromRequestEditor: null
+  }
 
+  getTrackingData.mockImplementation(() => {
+    return Promise.resolve({
+      payload: {
+        reReportData: [reMockData]
+      }
+    })
+  })
   getTrackingData.mockImplementation(() => {
     return Promise.resolve({
       payload: {
@@ -79,17 +101,6 @@ describe('AP Listing Report tests', () => {
 
     const response = await server.inject(options)
     expect(response.statusCode).toBe(200)
-  })
-
-  test('GET /report-list/ap-ar-listing/download route returns 400 with invalid query parameters', async () => {
-    const options = {
-      method: 'GET',
-      url: '/report-list/ap-ar-listing/download?start-date-day=32&start-date-month=13&start-date-year=2022&end-date-day=31&end-date-month=12&end-date-year=2022',
-      auth
-    }
-
-    const response = await server.inject(options)
-    expect(response.statusCode).toBe(400)
   })
 
   test('GET /report-list/ap-ar-listing/download route returns CSV file with valid query parameters', async () => {
@@ -193,5 +204,63 @@ describe('AP Listing Report tests', () => {
     })
     const response = await server.inject(options)
     expect(response.headers['content-disposition']).toContain(config.apListingReportName.slice(0, -4))
+  })
+  test('CSV content is correct when reportName is ar-listing', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/ar-listing/download?start-date-day=1&start-date-month=1&start-date-year=2022&end-date-day=31&end-date-month=12&end-date-year=2022',
+      auth
+    }
+    getTrackingData.mockResolvedValueOnce({
+      payload: {
+        arReportData: [mockApReportData]
+      }
+    })
+    const response = await server.inject(options)
+    expect(response.headers['content-disposition']).toContain(config.arListingReportName.slice(0, -4))
+  })
+  test('CSV content is correct when reportName is request-editor-report', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/request-editor-report/download?start-date-day=1&start-date-month=1&start-date-year=2022&end-date-day=31&end-date-month=12&end-date-year=2022',
+      auth
+    }
+    getTrackingData.mockResolvedValueOnce({
+      payload: {
+        reReportData: [reMockData]
+      }
+    })
+    const response = await server.inject(options)
+    expect(response.headers['content-disposition']).toContain(config.requestEditorReportName.slice(0, -4))
+  })
+  test('GET /report-list/request-editor-report/download returns 400 for invalid request', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/request-editor-report/download?invalid-param=invalid',
+      auth
+    }
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(400)
+  })
+  test('GET /report-list/ap-ar-listing/download returns 400 for invalid request', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/ap-ar-listing/download?invalid-param=invalid',
+      auth
+    }
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(400)
+  })
+  test('GET /report-list/invalid-report-name returns 404 for invalid report name and query parameters', async () => {
+    const routes = generateRoutes('invalid-report-name', '/invalid-report-data', 'invalidReportData')
+    server.route(routes)
+    const options = {
+      method: 'GET',
+      url: '/report-list/invalid-report-name/download?start-date-day=32',
+      auth
+    }
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(404)
+    expect(response.request.response.source.template).toBe('404')
   })
 })

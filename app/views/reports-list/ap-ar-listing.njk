@@ -1,113 +1,35 @@
-{% extends '_layout.njk' %}
+{% extends 'reports-list/base-report.njk' %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
-{% block content %}
-{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
-  {{ govukBreadcrumbs({
-    items: [{
-      text: "Home",
-      href: "/"
-    },
-    {
-      text: "Report List",
-      href: "/report-list"
-    },{
-      text: "AP/AR Listing Report",
-      href: "/report-list/ap-ar-listing"
-    }]
-  })}}
+{% from "reports-list/input-form.njk" import dateInput %}
+{% set reportTitle = 'AP/AR Listing Report' %}
+{% set reportUrl = '/report-list/ap-ar-listing' %}
+{% set formAction = '/report-list/ap-ar-listing/download' %}
+{% block reportContent %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-l">AP/AR Listing Report</h1>
-      {% if errors %}
-    {{ govukErrorSummary({
-      titleText: "There is a problem",
-      errorList: errors
-    }) 
-  }}
-  {% endif %}
-      {% set actionPath = "ap" %}
-      <form id="reportForm" method="get" action="/report-list/{{ actionPath }}-listing/download">
-        {{ govukSelect({
-          id: "report-type",
-          label: {
-            text: "Report Type"
+      {{ govukSelect({
+        id: "report-type",
+        label: {
+          text: "Report Type"
+        },
+        items: [
+          {
+            value: "ap-ar",
+            text: "AP Listing Report",
+            selected: true
           },
-          items: [
-            {
-              value: "ap",
-              text: "AP Listing Report",
-              selected: true
-            },
-            {
-              value: "ar",
-              text: "AR Listing Report"
-            }
-          ]
-        }) }}
-        <div class="govuk-form-group {% if errors['start-date-day'] or errors['start-date-month'] or errors['start-date-year'] %}govuk-form-group--error{% endif %}">
-          <fieldset class="govuk-fieldset" role="group" aria-describedby="start-date-hint start-date-error">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-              <h1 class="govuk-fieldset__heading">
-                Start date
-              </h1>
-            </legend>
-            {% if errors['start-date-day'] or errors['start-date-month'] or errors['start-date-year'] %}
-              <p id="start-date-error" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> Start date is not valid
-              </p>
-            {% endif %}
-            <span id="start-date-hint" class="govuk-hint">
-              For example, 12 11 2020
-            </span>
-            <div class="govuk-date-input" id="start-date">
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['start-date-day'] %}govuk-input--error{% endif %}" id="start-date-day" name="start-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['start-date-month'] %}govuk-input--error{% endif %}" id="start-date-month" name="start-date-month" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-4 {% if errors['start-date-year'] %}govuk-input--error{% endif %}" id="start-date-year" name="start-date-year" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-            </div>
-          </fieldset>
-        </div>
-        <div class="govuk-form-group {% if errors['end-date-day'] or errors['end-date-month'] or errors['end-date-year'] %}govuk-form-group--error{% endif %}">
-          <fieldset class="govuk-fieldset" role="group" aria-describedby="end-date-hint end-date-error">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-              <h1 class="govuk-fieldset__heading">
-                End date
-              </h1>
-            </legend>
-            {% if errors['end-date-day'] or errors['end-date-month'] or errors['end-date-year'] %}
-              <p id="end-date-error" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> End date is not valid
-              </p>
-            {% endif %}
-            <span id="end-date-hint" class="govuk-hint">
-              For example, 12 11 2020
-            </span>
-            <div class="govuk-date-input" id="end-date">
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['end-date-day'] %}govuk-input--error{% endif %}" id="end-date-day" name="end-date-day" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if errors['end-date-month'] %}govuk-input--error{% endif %}" id="end-date-month" name="end-date-month" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-              <div class="govuk-date-input__item">
-                <input class="govuk-input govuk-date-input__input govuk-input--width-4 {% if errors['end-date-year'] %}govuk-input--error{% endif %}" id="end-date-year" name="end-date-year" type="text" pattern="[0-9]*" inputmode="numeric" spellcheck="false">
-              </div>
-            </div>
-          </fieldset>
-        </div>
-        <button class="govuk-button" data-module="govuk-button">
-          Submit
-        </button>
-      </form>
+          {
+            value: "ar",
+            text: "AR Listing Report"
+          }
+        ]
+      }) }}
+      {{ dateInput('start-date', errors) }}
+      {{ dateInput('end-date', errors) }}
     </div>
   </div>
-
   <script>
   document.getElementById('report-type').addEventListener('change', function() {
     var actionPath = this.value;
@@ -116,5 +38,3 @@
   });
 </script>
 {% endblock %}
-
-

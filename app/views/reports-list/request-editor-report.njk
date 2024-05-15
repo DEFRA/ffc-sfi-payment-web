@@ -1,0 +1,16 @@
+{% extends 'reports-list/base-report.njk' %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "reports-list/input-form.njk" import dateInput %}
+{% set reportTitle = 'Request-Editor Report' %}
+{% set reportUrl = '/report-list/request-editor-report' %}
+{% set formAction = '/report-list/request-editor-report/download' %}
+{% block reportContent %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l">Request Editor Report</h1>
+        {{ dateInput('start-date', errors) }}
+        {{ dateInput('end-date', errors) }}
+    </div>
+  </div>
+{% endblock %}
