@@ -13,7 +13,8 @@ const schema = Joi.object({
   summaryReportName: Joi.string().default('ffc-pay-combined-transaction-report.csv'),
   apListingReportName: Joi.string().default('ffc-pay-ap-listing-report.csv'),
   arListingReportName: Joi.string().default('ffc-pay-ar-listing-report.csv'),
-  requestEditorReportName: Joi.string().default('ffc-pay-request-editor-report.csv')
+  requestEditorReportName: Joi.string().default('ffc-pay-request-editor-report.csv'),
+  claimLevelReportName: Joi.string().default('ffc-pay-claim-level-report.csv')
 })
 
 // Build config
