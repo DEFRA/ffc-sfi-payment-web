@@ -39,6 +39,9 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
             }
             if (reportName === 'request-editor-report') {
               return h.view('reports-list/request-editor-report', data).code(400).takeover()
+            }
+            if (reportName === 'claim-level-report') {
+              return h.view('reports-list/claim-level-report', data).code(400).takeover()
             } else {
               return h.view('404', data).code(404).takeover()
             }
@@ -87,6 +90,24 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
                   ledgerSplit: data.ledgerSplit,
                   releasedFromRequestEditor: data.releasedFromRequestEditor
                 }
+              } else if (reportName === 'claim-level-report') {
+                mappedData = {
+                  FRN: data.frn,
+                  claimID: data.claimNumber,
+                  revenueOrCapital: data.revenueOrCapital,
+                  agreementNumber: data.agreementNumber,
+                  year: data.year,
+                  paymentCurrency: data.currency,
+                  latestFullClaimAmount: data.value,
+                  latestSitiPR: data.paymentRequestNumber,
+                  latestInDAXAmount: data.daxValue,
+                  latestInDAXPR: data.daxPaymentRequestNumber,
+                  overallStatus: data.overallStatus,
+                  crossBorderFlag: data.crossBorderFlag,
+                  latestTransactionStatus: data.status,
+                  valueStillToProcess: data.valueStillToProcess,
+                  PRsStillToProcess: data.prStillToProcess
+                }
               } else {
                 mappedData = {
                   Filename: data.batch,
@@ -126,6 +147,9 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
                 break
               case 'request-editor-report':
                 baseFilename = config.requestEditorReportName.slice(0, -4)
+                break
+              case 'claim-level-report':
+                baseFilename = config.claimLevelReportName.slice(0, -4)
                 break
               default:
                 baseFilename = config.apListingReportName.slice(0, -4)

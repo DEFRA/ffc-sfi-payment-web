@@ -65,6 +65,23 @@ describe('AP Listing Report tests', () => {
     ledgerSplit: null,
     releasedFromRequestEditor: null
   }
+  const claimLevelMockData = {
+    frn: '1000000002',
+    claimNumber: '00000002',
+    revenueOrCapital: null,
+    agreementNumber: '00000002',
+    year: 2022,
+    currency: 'GBP',
+    value: 150000,
+    paymentRequestNumber: 2,
+    daxValue: 50000,
+    daxPaymentRequestNumber: 2,
+    overallStatus: 'Calculation of final state completed',
+    crossBorderFlag: null,
+    status: 'Calculation of final state completed',
+    valueStillToProcess: 50000,
+    prStillToProcess: 1
+  }
 
   getTrackingData.mockImplementation(() => {
     return Promise.resolve({
@@ -241,6 +258,29 @@ describe('AP Listing Report tests', () => {
     }
     const response = await server.inject(options)
     expect(response.statusCode).toBe(400)
+  })
+  test('GET /report-list/claim-level-report/download returns 400 for invalid request', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/claim-level-report/download?invalid-param=invalid',
+      auth
+    }
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(400)
+  })
+  test('CSV content is correct when reportName is claim-level-report', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/claim-level-report/download?start-date-day=1&start-date-month=1&start-date-year=2022&end-date-day=31&end-date-month=12&end-date-year=2022',
+      auth
+    }
+    getTrackingData.mockResolvedValueOnce({
+      payload: {
+        claimLevelReportData: [claimLevelMockData]
+      }
+    })
+    const response = await server.inject(options)
+    expect(response.headers['content-disposition']).toContain(config.claimLevelReportName.slice(0, -4))
   })
   test('GET /report-list/ap-ar-listing/download returns 400 for invalid request', async () => {
     const options = {
