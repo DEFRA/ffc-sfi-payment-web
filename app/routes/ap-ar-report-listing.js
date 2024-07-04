@@ -110,7 +110,7 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
                 }
               } else {
                 mappedData = {
-                  Filename: data.batch,
+                  Filename: data.daxFileName,
                   'Date Time': data.lastUpdated,
                   Event: data.status,
                   FRN: data.frn,
