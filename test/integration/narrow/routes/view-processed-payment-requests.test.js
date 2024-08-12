@@ -1,9 +1,11 @@
 jest.mock('../../../../app/api')
 jest.mock('../../../../app/auth')
+jest.mock('../../../../app/payments')
 const cheerio = require('cheerio')
 const { schemeAdmin, holdAdmin, dataView } = require('../../../../app/auth/permissions')
 const createServer = require('../../../../app/server')
 const { get } = require('../../../../app/api')
+const { getPaymentsByScheme } = require('../../../../app/payments')
 
 let server
 let auth
@@ -87,7 +89,7 @@ describe('Monitoring Schemes and Processed Payments', () => {
     const pageH1 = 'Processed payment requests'
 
     const mockGetProcessedPayments = () => {
-      get.mockResolvedValue({ payload: mockProcessedPayments })
+      getPaymentsByScheme.mockResolvedValue(mockProcessedPayments)
     }
 
     test('returns 200 when processed payments load successfully', async () => {
@@ -102,7 +104,7 @@ describe('Monitoring Schemes and Processed Payments', () => {
     })
 
     test('returns 200 and shows "No processed payment requests found." if no processed payments', async () => {
-      get.mockResolvedValue({ payload: [] })
+      getPaymentsByScheme.mockResolvedValue([])
 
       const res = await server.inject({ method, url, auth })
 
@@ -124,13 +126,13 @@ describe('Monitoring Schemes and Processed Payments', () => {
     })
 
     test('returns 412 and shows error message if processing fails', async () => {
-      get.mockRejectedValue(new Error('Failed to load processed payments'))
+      getPaymentsByScheme.mockRejectedValue(new Error('Failed to load processed payments'))
 
       const res = await server.inject({ method, url, auth })
 
       expect(res.statusCode).toBe(412)
       const $ = cheerio.load(res.payload)
-      expect($('.govuk-error-summary__title').text()).toEqual('There is a problem')
+      expect($('.govuk-error-summary__title').text().trim()).toEqual('There is a problem')
       expect($('.govuk-error-message').text()).toContain('Error: Failed to load processed payments')
     })
   })
