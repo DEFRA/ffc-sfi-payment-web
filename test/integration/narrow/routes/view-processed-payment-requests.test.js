@@ -16,6 +16,16 @@ const mockSchemes = [{
   name: 'Scheme 2'
 }]
 
+const mockProcessedPayments = [{
+  scheme: 'Scheme 1',
+  paymentRequests: 100,
+  value: '£1,000.00'
+}, {
+  scheme: 'Scheme 2',
+  paymentRequests: 50,
+  value: '£500.00'
+}]
+
 const mockGetSchemes = (schemes) => {
   get.mockResolvedValue({ payload: { paymentSchemes: schemes } })
 }
@@ -68,6 +78,60 @@ describe('Monitoring Schemes and Processed Payments', () => {
       const res = await server.inject({ method, url })
       expect(res.statusCode).toBe(302)
       expect(res.headers.location).toEqual('/login')
+    })
+  })
+
+  describe('GET /monitoring/view-processed-payment-requests', () => {
+    const method = 'GET'
+    const url = '/monitoring/view-processed-payment-requests?schemeId=1'
+    const pageH1 = 'Processed payment requests'
+
+    const mockGetProcessedPayments = () => {
+      get.mockResolvedValue({ payload: mockProcessedPayments })
+    }
+
+    test('returns 200 when processed payments load successfully', async () => {
+      mockGetProcessedPayments()
+
+      const res = await server.inject({ method, url, auth })
+
+      expect(res.statusCode).toBe(200)
+      const $ = cheerio.load(res.payload)
+      expect($('caption').text()).toEqual(pageH1)
+      expect($('tbody').children().length).toBe(mockProcessedPayments.length)
+    })
+
+    test('returns 200 and shows "No processed payment requests found." if no processed payments', async () => {
+      get.mockResolvedValue({ payload: [] })
+
+      const res = await server.inject({ method, url, auth })
+
+      expect(res.statusCode).toBe(200)
+      const $ = cheerio.load(res.payload)
+      expect($('#no-hold-text').text()).toEqual('No processed payment requests found.')
+    })
+
+    test('returns 403 if no permission', async () => {
+      auth.credentials.scope = []
+      const res = await server.inject({ method, url, auth })
+      expect(res.statusCode).toBe(403)
+    })
+
+    test('returns 302 and redirects to login if not authenticated', async () => {
+      const res = await server.inject({ method, url })
+      expect(res.statusCode).toBe(302)
+      expect(res.headers.location).toEqual('/login')
+    })
+
+    test('returns 412 and shows error message if processing fails', async () => {
+      get.mockRejectedValue(new Error('Failed to load processed payments'))
+
+      const res = await server.inject({ method, url, auth })
+
+      expect(res.statusCode).toBe(412)
+      const $ = cheerio.load(res.payload)
+      expect($('.govuk-error-summary__title').text()).toEqual('There is a problem')
+      expect($('.govuk-error-message').text()).toContain('Error: Failed to load processed payments')
     })
   })
 })
