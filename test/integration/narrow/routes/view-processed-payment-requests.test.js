@@ -16,16 +16,6 @@ const mockSchemes = [{
   name: 'Scheme 2'
 }]
 
-const mockProcessedPayments = [{
-  scheme: 'Scheme 1',
-  paymentRequests: 100,
-  value: '£1,000.00'
-}, {
-  scheme: 'Scheme 2',
-  paymentRequests: 50,
-  value: '£500.00'
-}]
-
 const mockGetSchemes = (schemes) => {
   get.mockResolvedValue({ payload: { paymentSchemes: schemes } })
 }
