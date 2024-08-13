@@ -8,7 +8,7 @@ const { SCHEME_VALUE } = require('../../../app/constants/scheme-value')
 
 const { getPaymentsByScheme } = require('../../../app/payments')
 
-describe('get payments by frn', () => {
+describe('get payments by scheme', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
@@ -16,12 +16,12 @@ describe('get payments by frn', () => {
   })
 
   test('should call mockGetData with schemeId category and scheme value', async () => {
-    await getPaymentsByScheme()
+    await getPaymentsByScheme(SCHEME_VALUE)
     expect(mockGetData).toHaveBeenCalledWith(SCHEME_ID_CATEGORY, SCHEME_VALUE)
   })
 
   test('should return mock payment events data when getPaymentsByScheme is called', async () => {
-    const result = await getPaymentsByScheme()
+    const result = await getPaymentsByScheme(SCHEME_VALUE)
     expect(result).toEqual(DATA)
   })
 })
