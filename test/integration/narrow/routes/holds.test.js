@@ -245,4 +245,45 @@ describe('Payment holds', () => {
       expect(res.statusCode).toBe(302)
     })
   })
+
+  describe('GET /payment-holds with pagination', () => {
+    const method = 'GET'
+    const url = '/payment-holds'
+    const mockPaymentHolds = [
+      {
+        holdId: 1
+      }
+    ]
+
+    function mockGetPaymentHolds (paymentHolds, page = 1, perPage = 100) {
+      const paginatedHolds = paymentHolds.slice((page - 1) * perPage, page * perPage)
+      get.mockResolvedValue({ payload: { paymentHolds: paginatedHolds } })
+    }
+
+    test('returns the correct page and perPage of results', async () => {
+      const page = 1
+      const perPage = 1
+      mockGetPaymentHolds(mockPaymentHolds, page, perPage)
+
+      const res = await server.inject({ method, url: `${url}?page=${page}&perPage=${perPage}`, auth })
+
+      expect(get).toHaveBeenCalledWith(`/payment-holds?page=${page}&pageSize=${perPage}`)
+      expect(res.statusCode).toBe(200)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      const holds = $('.govuk-table__body tr')
+      expect(holds.length).toEqual(1)
+    })
+
+    test('defaults to page 1 and perPage 100 if not provided', async () => {
+      mockGetPaymentHolds(mockPaymentHolds)
+
+      const res = await server.inject({ method, url, auth })
+
+      expect(get).toHaveBeenCalledWith('/payment-holds?page=1&pageSize=100')
+      expect(res.statusCode).toBe(200)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+    })
+  })
 })
