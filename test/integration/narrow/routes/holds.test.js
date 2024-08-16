@@ -8,7 +8,7 @@ const createServer = require('../../../../app/server')
 const getCrumbs = require('../../../helpers/get-crumbs')
 
 let server
-const url = '/payment-holds'
+let url
 const pageH1 = 'Payment holds'
 let auth
 
@@ -16,6 +16,7 @@ describe('Payment holds', () => {
   beforeEach(async () => {
     auth = { strategy: 'session-auth', credentials: { scope: [holdAdmin] } }
     jest.clearAllMocks()
+    url = '/payment-holds'
     server = await createServer()
   })
 
@@ -51,13 +52,12 @@ describe('Payment holds', () => {
 
     function expectRequestForPaymentHold (timesCalled = 1) {
       expect(get).toHaveBeenCalledTimes(timesCalled)
-      expect(get).toHaveBeenCalledWith('/payment-holds')
+      expect(get).toHaveBeenCalledWith('/payment-holds?page=1&pageSize=100')
     }
     const method = 'GET'
 
     test('returns 200 and no hold categories when no categories returned in response', async () => {
       mockGetPaymentHold([])
-
       const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentHold()
