@@ -250,6 +250,26 @@ describe('Payment holds', () => {
 
       expect(res.statusCode).toBe(302)
     })
+
+    test('returns 200 and correctly lists payment holds when valid crumb and valid FRN provided', async () => {
+      const mockForCrumbs = () => mockGetPaymentHold(mockPaymentHolds)
+      const { viewCrumb, cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      validForm.crumb = viewCrumb
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: validForm,
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(200)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      const holds = $('.govuk-table__body tr')
+      expect(holds.length).toBe(1)
+      expect(holds.find('td').eq(0).text()).toEqual(validForm.frn.toString())
+    })
   })
 
   describe('POST payment-holds/bulk', () => {
