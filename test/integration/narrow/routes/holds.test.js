@@ -187,6 +187,71 @@ describe('Payment holds', () => {
     })
   })
 
+  describe('POST payment-holds', () => {
+    const method = 'POST'
+    const url = '/payment-holds'
+    const mockPaymentHolds = [
+      {
+        holdId: 1,
+        frn: '1234567890',
+        holdCategoryName: 'Outstanding debt',
+        holdCategorySchemeId: 1,
+        holdCategorySchemeName: 'SFI23',
+        dateTimeAdded: '2021-08-26T13:29:28.949Z',
+        dateTimeClosed: null
+      },
+      {
+        holdId: 4,
+        frn: '1111111111',
+        holdCategoryName: 'Outstanding debt',
+        holdCategorySchemeId: 1,
+        holdCategorySchemeName: 'SFI23',
+        dateTimeAdded: '2021-09-14T22:35:28.885Z',
+        dateTimeClosed: '2021-09-14T22:41:44.659Z'
+      }
+    ]
+
+    function mockGetPaymentHold (paymentHolds) {
+      get.mockResolvedValue({ payload: { paymentHolds } })
+    }
+
+    const validForm = {
+      frn: 1234567890
+    }
+
+    test.each([
+      { viewCrumb: 'incorrect' },
+      { viewCrumb: undefined }
+    ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
+      const mockForCrumbs = () => mockGetPaymentHold(mockPaymentHolds)
+      const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      validForm.crumb = viewCrumb
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: validForm,
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(403)
+    })
+
+    test('returns 302 no auth', async () => {
+      const mockForCrumbs = () => mockGetPaymentHold(mockPaymentHolds)
+      const { viewCrumb, cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      validForm.crumb = viewCrumb
+      const res = await server.inject({
+        method,
+        url,
+        payload: validForm,
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(302)
+    })
+  })
+
   describe('POST payment-holds/bulk', () => {
     const method = 'POST'
     const url = '/payment-holds/bulk'
