@@ -8,7 +8,7 @@ const createServer = require('../../../../app/server')
 const getCrumbs = require('../../../helpers/get-crumbs')
 
 let server
-const url = '/payment-holds'
+let url
 const pageH1 = 'Payment holds'
 let auth
 
@@ -16,6 +16,7 @@ describe('Payment holds', () => {
   beforeEach(async () => {
     auth = { strategy: 'session-auth', credentials: { scope: [holdAdmin] } }
     jest.clearAllMocks()
+    url = '/payment-holds'
     server = await createServer()
   })
 
@@ -51,13 +52,12 @@ describe('Payment holds', () => {
 
     function expectRequestForPaymentHold (timesCalled = 1) {
       expect(get).toHaveBeenCalledTimes(timesCalled)
-      expect(get).toHaveBeenCalledWith('/payment-holds')
+      expect(get).toHaveBeenCalledWith('/payment-holds?page=1&pageSize=100')
     }
     const method = 'GET'
 
     test('returns 200 and no hold categories when no categories returned in response', async () => {
       mockGetPaymentHold([])
-
       const res = await server.inject({ method, url, auth })
 
       expectRequestForPaymentHold()
@@ -187,6 +187,91 @@ describe('Payment holds', () => {
     })
   })
 
+  describe('POST payment-holds', () => {
+    const method = 'POST'
+    const url = '/payment-holds'
+    const mockPaymentHolds = [
+      {
+        holdId: 1,
+        frn: '1234567890',
+        holdCategoryName: 'Outstanding debt',
+        holdCategorySchemeId: 1,
+        holdCategorySchemeName: 'SFI23',
+        dateTimeAdded: '2021-08-26T13:29:28.949Z',
+        dateTimeClosed: null
+      },
+      {
+        holdId: 4,
+        frn: '1111111111',
+        holdCategoryName: 'Outstanding debt',
+        holdCategorySchemeId: 1,
+        holdCategorySchemeName: 'SFI23',
+        dateTimeAdded: '2021-09-14T22:35:28.885Z',
+        dateTimeClosed: '2021-09-14T22:41:44.659Z'
+      }
+    ]
+
+    function mockGetPaymentHold (paymentHolds) {
+      get.mockResolvedValue({ payload: { paymentHolds } })
+    }
+
+    const validForm = {
+      frn: 1234567890
+    }
+
+    test.each([
+      { viewCrumb: 'incorrect' },
+      { viewCrumb: undefined }
+    ])('returns 403 when view crumb is invalid or not included', async ({ viewCrumb }) => {
+      const mockForCrumbs = () => mockGetPaymentHold(mockPaymentHolds)
+      const { cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      validForm.crumb = viewCrumb
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: validForm,
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(403)
+    })
+
+    test('returns 302 no auth', async () => {
+      const mockForCrumbs = () => mockGetPaymentHold(mockPaymentHolds)
+      const { viewCrumb, cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      validForm.crumb = viewCrumb
+      const res = await server.inject({
+        method,
+        url,
+        payload: validForm,
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(302)
+    })
+
+    test('returns 200 and correctly lists payment holds when valid crumb and valid FRN provided', async () => {
+      const mockForCrumbs = () => mockGetPaymentHold(mockPaymentHolds)
+      const { viewCrumb, cookieCrumb } = await getCrumbs(mockForCrumbs, server, url, auth)
+      validForm.crumb = viewCrumb
+      const res = await server.inject({
+        method,
+        url,
+        auth,
+        payload: validForm,
+        headers: { cookie: `crumb=${cookieCrumb}` }
+      })
+
+      expect(res.statusCode).toBe(200)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      const holds = $('.govuk-table__body tr')
+      expect(holds.length).toBe(1)
+      expect(holds.find('td').eq(0).text()).toEqual(validForm.frn.toString())
+    })
+  })
+
   describe('POST payment-holds/bulk', () => {
     const method = 'POST'
     const url = '/payment-holds/bulk'
@@ -243,6 +328,47 @@ describe('Payment holds', () => {
       })
 
       expect(res.statusCode).toBe(302)
+    })
+  })
+
+  describe('GET /payment-holds with pagination', () => {
+    const method = 'GET'
+    const url = '/payment-holds'
+    const mockPaymentHolds = [
+      {
+        holdId: 1
+      }
+    ]
+
+    function mockGetPaymentHolds (paymentHolds, page = 1, perPage = 100) {
+      const paginatedHolds = paymentHolds.slice((page - 1) * perPage, page * perPage)
+      get.mockResolvedValue({ payload: { paymentHolds: paginatedHolds } })
+    }
+
+    test('returns the correct page and perPage of results', async () => {
+      const page = 1
+      const perPage = 1
+      mockGetPaymentHolds(mockPaymentHolds, page, perPage)
+
+      const res = await server.inject({ method, url: `${url}?page=${page}&perPage=${perPage}`, auth })
+
+      expect(get).toHaveBeenCalledWith(`/payment-holds?page=${page}&pageSize=${perPage}`)
+      expect(res.statusCode).toBe(200)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
+      const holds = $('.govuk-table__body tr')
+      expect(holds.length).toEqual(1)
+    })
+
+    test('defaults to page 1 and perPage 100 if not provided', async () => {
+      mockGetPaymentHolds(mockPaymentHolds)
+
+      const res = await server.inject({ method, url, auth })
+
+      expect(get).toHaveBeenCalledWith('/payment-holds?page=1&pageSize=100')
+      expect(res.statusCode).toBe(200)
+      const $ = cheerio.load(res.payload)
+      expect($('h1').text()).toEqual(pageH1)
     })
   })
 })
