@@ -1,10 +1,12 @@
-const { getMIReport, getSuppressedReport, getTransactionSummary } = require('../storage')
+const { getMIReport, getSuppressedReport } = require('../storage')
+const api = require('../api')
 const { getHolds } = require('../holds')
 const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../format-date')
-const convertToCsv = require('../convert-to-csv')
 const storageConfig = require('../config/storage')
 const config = require('../config')
+const convertToCSV = require('../convert-to-csv')
+const schema = require('./schemas/transaction-summary-schema')
 
 module.exports = [{
   method: 'GET',
@@ -30,17 +32,172 @@ module.exports = [{
   method: 'GET',
   path: '/report-list/transaction-summary',
   options: {
+    auth: { scope: [holdAdmin, schemeAdmin, dataView] },
+    handler: async (request, h) => {
+      const schemes = await api.get('/payment-schemes')
+      const schemesPayload = schemes.payload.paymentSchemes
+      for (let i = 0; i < schemesPayload.length; i++) {
+        if (schemesPayload[i].name === 'SFI') {
+          schemesPayload[i].name = 'SFI22'
+        }
+      }
+      return h.view('reports-list/transaction-summary', { schemes: schemesPayload })
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/report-list/transaction-summary/download',
+  options: {
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
+    validate: {
+      query: schema,
+      failAction: async (request, h, err) => {
+        request.log(['error', 'validation'], err)
+        const errors = err.details
+          ? err.details.map(detail => {
+              return {
+                text: detail.message,
+                href: '#' + detail.path[0]
+              }
+            })
+          : []
+        const schemes = await api.get('/payment-schemes')
+        const schemesPayload = schemes.payload.paymentSchemes
+        for (let i = 0; i < schemesPayload.length; i++) {
+          if (schemesPayload[i].name === 'SFI') {
+            schemesPayload[i].name = 'SFI22'
+          }
+        }
+        return h.view('reports-list/transaction-summary', { schemes: schemesPayload, errors }).code(400).takeover()
+      }
+    },
+    handler: async (request, h) => {
+      try {
+        const { schemeId, frn } = request.query
+        let url = `/transaction-summary?schemeId=${schemeId}`
+        if (frn && frn.trim() !== '') {
+          url += `&frn=${request.query.frn}`
+        }
+
+        const response = await api.getTrackingData(url)
+        const trackingData = response.payload
+        const selectedData = trackingData.reportData.map(data => {
+          return {
+            ID: data.correlationId,
+            FRN: data.frn,
+            ClaimID: data.claimNumber,
+            AgreementNumber: data.agreementNumber,
+            RevenueOrCapital: data.revenueOrCapital,
+            Year: data.year,
+            InvoiceNumber: data.invoiceNumber,
+            PaymentCurrency: data.currency,
+            PaymentRequestNumber: data.paymentRequestNumber,
+            FullClaimAmount: data.value,
+            BatchID: data.batch,
+            BatchCreatorID: data.sourceSystem,
+            BatchExportDate: data.batchExportDate,
+            RoutedToRequestEditor: data.routedToRequestEditor,
+            DeltaAmount: data.deltaAmount,
+            APAmount: data.apValue,
+            ARAmount: data.arValue,
+            AdminOrIrregular: data.debtType,
+            Status: data.status,
+            LastUpdated: data.lastUpdated
+          }
+        })
+
+        if (selectedData.length === 0) {
+          return h.view('payment-report-unavailable')
+        }
+
+        const csv = convertToCSV(selectedData)
+
+        return h.response(csv)
+          .header('Content-Type', 'text/csv')
+          .header('Content-Disposition', `attachment; filename=${storageConfig.summaryReportName}`)
+      } catch {
+        return h.view('payment-report-unavailable')
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/report-list/request-editor-report',
+  options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (_request, h) => {
       try {
-        const response = await getTransactionSummary()
-        if (response) {
-          return h.response(response.readableStreamBody)
-            .type('text/csv')
-            .header('Connection', 'keep-alive')
-            .header('Cache-Control', 'no-cache')
-            .header('Content-Disposition', `attachment;filename=${storageConfig.summaryReportName}`)
+        const response = await api.getTrackingData('/request-editor-report')
+        const trackingData = response.payload
+        const selectedData = trackingData.reReportData.map(data => {
+          return {
+            FRN: data.frn,
+            DeltaAmount: data.deltaAmount,
+            SourceSystem: data.sourceSystem,
+            ClaimID: data.claimNumber,
+            InvoiceNumber: data.invoiceNumber,
+            PaymentRequestNumber: data.paymentRequestNumber,
+            Year: data.year,
+            ReceivedInRequestEditor: data.receivedInRequestEditor,
+            Enriched: data.enriched,
+            DebtType: data.debtType,
+            LedgerSplit: data.ledgerSplit,
+            ReleasedFromRequestEditor: data.releasedFromRequestEditor
+          }
+        })
+
+        if (selectedData.length === 0) {
+          return h.view('payment-report-unavailable')
         }
+
+        const csv = convertToCSV(selectedData)
+
+        return h.response(csv)
+          .header('Content-Type', 'text/csv')
+          .header('Content-Disposition', `attachment; filename=${storageConfig.requestEditorReportName}`)
+      } catch {
+        return h.view('payment-report-unavailable')
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/report-list/claim-level-report',
+  options: {
+    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
+    handler: async (_request, h) => {
+      try {
+        const response = await api.getTrackingData('/claim-level-report')
+        const trackingData = response.payload
+        const selectedData = trackingData.claimLevelReportData.map(data => {
+          return {
+            FRN: data.frn,
+            ClaimID: data.claimNumber,
+            RevenueOrCapital: data.revenueOrCapital,
+            AgreementNumber: data.agreementNumber,
+            Year: data.year,
+            PaymentCurrency: data.currency,
+            LatestFullClaimAmount: data.value,
+            LatestSitiPR: data.paymentRequestNumber,
+            LatestInDAXAmount: data.daxValue,
+            LatestInDAXPR: data.daxPaymentRequestNumber,
+            OverallStatus: data.overallStatus,
+            CrossBorderFlag: data.crossBorderFlag,
+            LatestTransactionStatus: data.status,
+            ValueStillToProcess: data.valueStillToProcess,
+            PRsStillToProcess: data.prStillToProcess
+          }
+        })
+
+        if (selectedData.length === 0) {
+          return h.view('payment-report-unavailable')
+        }
+
+        const csv = convertToCSV(selectedData)
+
+        return h.response(csv)
+          .header('Content-Type', 'text/csv')
+          .header('Content-Disposition', `attachment; filename=${storageConfig.claimLevelReportName}`)
       } catch {
         return h.view('payment-report-unavailable')
       }
@@ -86,7 +243,7 @@ module.exports = [{
               dateAdded: formatDate(hold.dateTimeAdded)
             }
           })
-          const response = convertToCsv(paymentHoldsData)
+          const response = convertToCSV(paymentHoldsData)
           if (response) {
             return h.response(response)
               .type('text/csv')
