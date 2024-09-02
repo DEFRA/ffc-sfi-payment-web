@@ -38,7 +38,7 @@
     "@hapi/vision": "6.1.0",
     "@hapi/wreck": "17.1.0",
     "@joi/date": "2.1.0",
-    "applicationinsights": "2.5.1",
+    "applicationinsights": "2.9.5",
     "ffc-messaging": "2.10.0",
     "govuk-frontend": "4.7.0",
     "hapi-pino": "10.1.0",
