@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   ffc-pay-web:
     depends_on: 
