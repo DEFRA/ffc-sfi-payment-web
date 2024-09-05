@@ -73,7 +73,7 @@ through the Docker Compose
 [build](https://docs.docker.com/compose/reference/build/) command:
 
 ```
-docker-compose build
+docker compose build
 ```
 
 ## How to start the service
@@ -87,14 +87,14 @@ The service can be ran using the convenience script:
 Or use Docker Compose to run service locally.
 
 ```
-docker-compose start
+docker compose start
 ```
 
 Additional Docker Compose files are provided for scenarios such as linking to other running services.
 Link to other services:
 
 ```
-docker-compose -f docker-compose.yaml -f docker-compose.link.yaml up
+docker compose -f docker-compose.yaml -f docker-compose.link.yaml up
 ```
 
 > Note: This service depends on the [`ffc-pay-processing`](https://github.com/DEFRA/ffc-pay-processing) service to be able to run correctly.
@@ -178,13 +178,13 @@ The service can be stopped in different ways:
 ### Bring the service down  
 
 ```
-docker-compose down
+docker compose down
 ```
 
 ### Bring the service down and clear its data  
 
 ```
-docker-compose down -v
+docker compose down -v
 ```
 
 ## How to test the service
@@ -197,7 +197,7 @@ The tests have been structured into subfolders of `./test` as per the
 A convenience script is provided to run automated tests in a containerised
 environment. This will rebuild images before running tests via docker-compose,
 using a combination of `docker-compose.yaml` and `docker-compose.test.yaml`.
-The command given to `docker-compose run` may be customised by passing
+The command given to `docker compose run` may be customised by passing
 arguments to the test script.
 
 Tests can be run in several modes
