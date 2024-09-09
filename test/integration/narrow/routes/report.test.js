@@ -44,7 +44,7 @@ describe('Report test', () => {
     jest.clearAllMocks()
   })
 
-  test('GET /report/payment-requests route returns stream if report available', async () => {
+  test('GET /report-list/payment-requests route returns stream if report available', async () => {
     const options = {
       method: 'GET',
       url: '/report-list/payment-requests',
@@ -53,10 +53,11 @@ describe('Report test', () => {
 
     const response = await server.inject(options)
     expect(response.statusCode).toBe(200)
+    expect(response.headers['content-type']).toBe('text/csv; charset=utf-8')
     expect(response.payload).toBe('Hello')
   })
 
-  test('GET /report/suppressed-payments route returns stream if report available', async () => {
+  test('GET /report-list/suppressed-payments route returns stream if report available', async () => {
     const options = {
       method: 'GET',
       url: '/report-list/suppressed-payments',
@@ -65,10 +66,11 @@ describe('Report test', () => {
 
     const response = await server.inject(options)
     expect(response.statusCode).toBe(200)
+    expect(response.headers['content-type']).toBe('text/csv; charset=utf-8')
     expect(response.payload).toBe('Hello')
   })
 
-  test('GET /report/holds route returns stream if report available', async () => {
+  test('GET /report-list/holds route returns stream if report available', async () => {
     getHolds.mockReturnValue([{
       holdId: 1,
       frn: '123',
@@ -86,10 +88,14 @@ describe('Report test', () => {
 
     const response = await server.inject(options)
     expect(response.statusCode).toBe(200)
+    expect(response.headers['content-type']).toBe('text/csv; charset=utf-8')
   })
 
-  test('GET /report/payment-requests route returns unavailable page if report not available', async () => {
-    mockDownload = undefined
+  test('GET /report-list/payment-requests route returns unavailable page if report not available', async () => {
+    mockDownload = jest.fn().mockImplementation(() => {
+      throw new Error('Report not available')
+    })
+
     const options = {
       method: 'GET',
       url: '/report-list/payment-requests',
@@ -97,11 +103,15 @@ describe('Report test', () => {
     }
 
     const response = await server.inject(options)
+    expect(response.statusCode).toBe(200)
     expect(response.payload).toContain('Payment report unavailable')
   })
 
-  test('GET /report/suppressed-payments route returns unavailable page if report not available', async () => {
-    mockDownload = undefined
+  test('GET /report-list/suppressed-payments route returns unavailable page if report not available', async () => {
+    mockDownload = jest.fn().mockImplementation(() => {
+      throw new Error('Report not available')
+    })
+
     const options = {
       method: 'GET',
       url: '/report-list/suppressed-payments',
@@ -109,11 +119,13 @@ describe('Report test', () => {
     }
 
     const response = await server.inject(options)
+    expect(response.statusCode).toBe(200)
     expect(response.payload).toContain('Payment report unavailable')
   })
 
-  test('GET /report/holds route returns unavailable page if report not available', async () => {
+  test('GET /report-list/holds route returns unavailable page if report not available', async () => {
     getHolds.mockReturnValue(undefined)
+
     const options = {
       method: 'GET',
       url: '/report-list/holds',
@@ -121,10 +133,7 @@ describe('Report test', () => {
     }
 
     const response = await server.inject(options)
+    expect(response.statusCode).toBe(200)
     expect(response.payload).toContain('Hold report unavailable')
-  })
-
-  afterEach(async () => {
-    await server.stop()
   })
 })

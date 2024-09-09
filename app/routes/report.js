@@ -2,11 +2,12 @@ const { getMIReport, getSuppressedReport } = require('../storage')
 const api = require('../api')
 const { getHolds } = require('../holds')
 const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
-const formatDate = require('../format-date')
+const formatDate = require('../helpers/format-date')
 const storageConfig = require('../config/storage')
 const config = require('../config')
-const convertToCSV = require('../convert-to-csv')
-const schema = require('./schemas/transaction-summary-schema')
+const convertToCSV = require('../helpers/convert-to-csv')
+const schema = require('./schemas/report-schema')
+const { addDetailsToFilename } = require('../helpers/add-details-to-filename')
 
 module.exports = [{
   method: 'GET',
@@ -73,10 +74,13 @@ module.exports = [{
     },
     handler: async (request, h) => {
       try {
-        const { schemeId, frn } = request.query
-        let url = `/transaction-summary?schemeId=${schemeId}`
+        const { schemeId, year, revenueOrCapital, frn } = request.query
+        let url = `/transaction-summary?schemeId=${schemeId}&year=${year}`
         if (frn && frn.trim() !== '') {
-          url += `&frn=${request.query.frn}`
+          url += `&frn=${frn}`
+        }
+        if (revenueOrCapital && revenueOrCapital.trim() !== '') {
+          url += `&revenueOrCapital=${revenueOrCapital}`
         }
 
         const response = await api.getTrackingData(url)
@@ -107,14 +111,18 @@ module.exports = [{
         })
 
         if (selectedData.length === 0) {
-          return h.view('payment-report-unavailable')
+          return h.view('reports-list/transaction-summary', {
+            errors: [{
+              text: 'No data available for the selected filters'
+            }]
+          })
         }
 
         const csv = convertToCSV(selectedData)
-
+        const filename = addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn)
         return h.response(csv)
           .header('Content-Type', 'text/csv')
-          .header('Content-Disposition', `attachment; filename=${storageConfig.summaryReportName}`)
+          .header('Content-Disposition', `attachment; filename=${filename}`)
       } catch {
         return h.view('payment-report-unavailable')
       }
@@ -164,10 +172,57 @@ module.exports = [{
   method: 'GET',
   path: '/report-list/claim-level-report',
   options: {
+    auth: { scope: [holdAdmin, schemeAdmin, dataView] },
+    handler: async (request, h) => {
+      const schemes = await api.get('/payment-schemes')
+      const schemesPayload = schemes.payload.paymentSchemes
+      for (let i = 0; i < schemesPayload.length; i++) {
+        if (schemesPayload[i].name === 'SFI') {
+          schemesPayload[i].name = 'SFI22'
+        }
+      }
+      return h.view('reports-list/claim-level-report', { schemes: schemesPayload })
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/report-list/claim-level-report/download',
+  options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
-    handler: async (_request, h) => {
+    validate: {
+      query: schema,
+      failAction: async (request, h, err) => {
+        request.log(['error', 'validation'], err)
+        const errors = err.details
+          ? err.details.map(detail => {
+              return {
+                text: detail.message,
+                href: '#' + detail.path[0]
+              }
+            })
+          : []
+        const schemes = await api.get('/payment-schemes')
+        const schemesPayload = schemes.payload.paymentSchemes
+        for (let i = 0; i < schemesPayload.length; i++) {
+          if (schemesPayload[i].name === 'SFI') {
+            schemesPayload[i].name = 'SFI22'
+          }
+        }
+        return h.view('reports-list/claim-level-report', { schemes: schemesPayload, errors }).code(400).takeover()
+      }
+    },
+    handler: async (request, h) => {
       try {
-        const response = await api.getTrackingData('/claim-level-report')
+        const { schemeId, year, revenueOrCapital, frn } = request.query
+        let url = `/claim-level-report?schemeId=${schemeId}&year=${year}`
+        if (frn && frn.trim() !== '') {
+          url += `&frn=${frn}`
+        }
+        if (revenueOrCapital && revenueOrCapital.trim() !== '') {
+          url += `&revenueOrCapital=${revenueOrCapital}`
+        }
+
+        const response = await api.getTrackingData(url)
         const trackingData = response.payload
         const selectedData = trackingData.claimLevelReportData.map(data => {
           return {
@@ -190,14 +245,18 @@ module.exports = [{
         })
 
         if (selectedData.length === 0) {
-          return h.view('payment-report-unavailable')
+          return h.view('reports-list/claim-level-report', {
+            errors: [{
+              text: 'No data available for the selected filters'
+            }]
+          })
         }
 
         const csv = convertToCSV(selectedData)
-
+        const filename = addDetailsToFilename(storageConfig.claimLevelReportName, schemeId, year, revenueOrCapital, frn)
         return h.response(csv)
           .header('Content-Type', 'text/csv')
-          .header('Content-Disposition', `attachment; filename=${storageConfig.claimLevelReportName}`)
+          .header('Content-Disposition', `attachment; filename=${filename}`)
       } catch {
         return h.view('payment-report-unavailable')
       }
