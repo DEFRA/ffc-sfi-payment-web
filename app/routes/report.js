@@ -8,6 +8,7 @@ const config = require('../config')
 const convertToCSV = require('../helpers/convert-to-csv')
 const schema = require('./schemas/report-schema')
 const { addDetailsToFilename } = require('../helpers/add-details-to-filename')
+const { getSchemes } = require('../helpers/get-schemes')
 
 module.exports = [{
   method: 'GET',
@@ -35,14 +36,8 @@ module.exports = [{
   options: {
     auth: { scope: [holdAdmin, schemeAdmin, dataView] },
     handler: async (request, h) => {
-      const schemes = await api.get('/payment-schemes')
-      const schemesPayload = schemes.payload.paymentSchemes
-      for (let i = 0; i < schemesPayload.length; i++) {
-        if (schemesPayload[i].name === 'SFI') {
-          schemesPayload[i].name = 'SFI22'
-        }
-      }
-      return h.view('reports-list/transaction-summary', { schemes: schemesPayload })
+      const schemes = await getSchemes()
+      return h.view('reports-list/transaction-summary', { schemes })
     }
   }
 }, {
@@ -62,14 +57,8 @@ module.exports = [{
               }
             })
           : []
-        const schemes = await api.get('/payment-schemes')
-        const schemesPayload = schemes.payload.paymentSchemes
-        for (let i = 0; i < schemesPayload.length; i++) {
-          if (schemesPayload[i].name === 'SFI') {
-            schemesPayload[i].name = 'SFI22'
-          }
-        }
-        return h.view('reports-list/transaction-summary', { schemes: schemesPayload, errors }).code(400).takeover()
+        const schemes = await getSchemes()
+        return h.view('reports-list/transaction-summary', { schemes, errors }).code(400).takeover()
       }
     },
     handler: async (request, h) => {
@@ -174,14 +163,8 @@ module.exports = [{
   options: {
     auth: { scope: [holdAdmin, schemeAdmin, dataView] },
     handler: async (request, h) => {
-      const schemes = await api.get('/payment-schemes')
-      const schemesPayload = schemes.payload.paymentSchemes
-      for (let i = 0; i < schemesPayload.length; i++) {
-        if (schemesPayload[i].name === 'SFI') {
-          schemesPayload[i].name = 'SFI22'
-        }
-      }
-      return h.view('reports-list/claim-level-report', { schemes: schemesPayload })
+      const schemes = await getSchemes()
+      return h.view('reports-list/claim-level-report', { schemes })
     }
   }
 }, {
@@ -201,14 +184,8 @@ module.exports = [{
               }
             })
           : []
-        const schemes = await api.get('/payment-schemes')
-        const schemesPayload = schemes.payload.paymentSchemes
-        for (let i = 0; i < schemesPayload.length; i++) {
-          if (schemesPayload[i].name === 'SFI') {
-            schemesPayload[i].name = 'SFI22'
-          }
-        }
-        return h.view('reports-list/claim-level-report', { schemes: schemesPayload, errors }).code(400).takeover()
+        const schemes = await getSchemes()
+        return h.view('reports-list/claim-level-report', { schemes, errors }).code(400).takeover()
       }
     },
     handler: async (request, h) => {
