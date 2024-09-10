@@ -1,0 +1,134 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
+{
+	"name": "ffc-pay-web",
+
+	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
+	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
+	"dockerComposeFile": [
+		"../docker-compose.yaml",
+		"docker-compose.yml"
+	],
+
+	// The 'service' property is the name of the service for the container that VS Code should
+	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
+	"service": "ffc-pay-web",
+
+	// The optional 'workspaceFolder' property is the path VS Code should open by default when
+	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker",
+				"orta.vscode-jest",
+				"andys8.jest-snippets",
+				"ms-ossdata.vscode-postgresql",
+				"asyncapi.asyncapi-preview",
+				"oderwat.indent-rainbow",
+				"snyk-security.snyk-vulnerability-scanner",
+				"sonarsource.sonarlint-vscode",
+				"esbenp.prettier-vscode",
+				"alexkrechik.cucumberautocomplete",
+				"JosefBiehler.cypress-fixture-intellisense",
+				"Shelex.vscode-cy-helper",
+				"dbaeumer.vscode-eslint",
+				"siarheikuchuk.gherkin-beautifier-vs-code-plugin",
+				"techer.open-in-browser",
+				"VisualStudioExptTeam.vscodeintellicode"
+			],
+			"settings": {
+				"jest.runMode": "on-demand",
+				"editor.formatOnSave": true,
+				"editor.codeActionsOnSave": {
+					"source.fixAll.eslint": "explicit",
+					"eslint.validate": [
+						"javascript",
+						"javascriptreact",
+						"json",
+						"jsonc",
+						"json5"
+					],
+					"cSpell.words": [],
+					"cSpell.minWordLength": 4,
+					"cSpell.showStatus": true,
+					"cSpell.allowCompoundWords": true,
+					"compile-hero.disable-compile-files-on-did-save-code": true,
+					"breadcrumbs.enabled": false,
+					"editor.cursorBlinking": "blink",
+					"editor.lineDecorationsWidth": "30",
+					"editor.folding": false,
+					"editor.hideCursorInOverviewRuler": true,
+					"editor.occurrencesHighlight": "off",
+					"editor.roundedSelection": false,
+					"editor.selectionHighlight": true,
+					"editor.scrollBeyondLastLine": false,
+					"explorer.openEditors.visible": 1,
+					"window.zoomLevel": 0,
+					"workbench.editor.showIcons": true,
+					"workbench.startupEditor": "none",
+					"workbench.tree.renderIndentGuides": "none",
+					"editor.formatOnPaste": false,
+					"workbench.editor.highlightModifiedTabs": true,
+					"files.trimFinalNewlines": true,
+					"editor.acceptSuggestionOnEnter": "off",
+					"cypressHelper.menuItems.OpenCypress": false,
+					"editor.bracketPairColorization.enabled": true,
+					"editor.guides.bracketPairs": "active",
+					"editor.guides.indentation": false,
+					"cucumberautocomplete.smartSnippets": true,
+					"cucumberautocomplete.steps": "cypress/integration/steps/*.js",
+					"cucumberautocomplete.syncfeatures": "cypress/integration/features/*.feature",
+					"cucumberautocomplete.strictGherkinCompletion": false,
+					"cucumberautocomplete.strictGherkinValidation": false,
+					"cucumberautocomplete.skipDocStringsFormat": false,
+					"cucumberautocomplete.onTypeFormat": true,
+					"editor.quickSuggestions": {
+						"comments": false,
+						"strings": true,
+						"other": true
+					},
+					"conf.view.indentSymbol": "space",
+					"conf.view.identsBefore.Feature": 0,
+					"conf.view.identsBefore.Scenario": 2,
+					"conf.view.identsBefore.Background": 2,
+					"conf.view.identsBefore.ScenarioOutline": 2,
+					"conf.view.identsBefore.Given": 4,
+					"conf.view.identsBefore.When": 4,
+					"conf.view.identsBefore.Then": 4,
+					"conf.view.identsBefore.And": 4,
+					"conf.view.identsBefore.Tag": "relative",
+					"conf.view.identsBefore.Table": 6,
+					"conf.view.identsBefore.Examples": 4,
+					"conf.view.table.autoformat": true,
+					"cSpell.ignoreWords": [],
+					"git.ignoreLimitWarning": true,
+					"[json]": {
+						"editor.formatOnSave": true
+					}
+				}
+			}
+		}
+	}
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Uncomment the next line if you want start specific services in your Docker Compose config.
+	// "runServices": [],
+
+	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
+	// "shutdownAction": "none",
+
+	// Uncomment the next line to run commands after the container is created.
+	// "postCreateCommand": "cat /etc/os-release",
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "devcontainer"
+}
