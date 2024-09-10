@@ -4,11 +4,11 @@ const { getHolds } = require('../holds')
 const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../helpers/format-date')
 const storageConfig = require('../config/storage')
-const config = require('../config')
-const convertToCSV = require('../helpers/convert-to-csv')
 const schema = require('./schemas/report-schema')
 const { addDetailsToFilename } = require('../helpers/add-details-to-filename')
 const { getSchemes } = require('../helpers/get-schemes')
+const { handleCSVResponse } = require('../helpers/handle-csv-response')
+const { buildQueryUrl } = require('../helpers/build-query-url')
 
 module.exports = [{
   method: 'GET',
@@ -64,14 +64,7 @@ module.exports = [{
     handler: async (request, h) => {
       try {
         const { schemeId, year, revenueOrCapital, frn } = request.query
-        let url = `/transaction-summary?schemeId=${schemeId}&year=${year}`
-        if (frn && frn.trim() !== '') {
-          url += `&frn=${frn}`
-        }
-        if (revenueOrCapital && revenueOrCapital.trim() !== '') {
-          url += `&revenueOrCapital=${revenueOrCapital}`
-        }
-
+        const url = buildQueryUrl('/transaction-summary', schemeId, year, frn, revenueOrCapital)
         const response = await api.getTrackingData(url)
         const trackingData = response.payload
         const selectedData = trackingData.reportData.map(data => {
@@ -106,12 +99,8 @@ module.exports = [{
             }]
           })
         }
-
-        const csv = convertToCSV(selectedData)
         const filename = addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn)
-        return h.response(csv)
-          .header('Content-Type', 'text/csv')
-          .header('Content-Disposition', `attachment; filename=${filename}`)
+        return handleCSVResponse(selectedData, filename)(h)
       } catch {
         return h.view('payment-report-unavailable')
       }
@@ -122,7 +111,7 @@ module.exports = [{
   path: '/report-list/request-editor-report',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
-    handler: async (_request, h) => {
+    handler: async (request, h) => {
       try {
         const response = await api.getTrackingData('/request-editor-report')
         const trackingData = response.payload
@@ -147,11 +136,7 @@ module.exports = [{
           return h.view('payment-report-unavailable')
         }
 
-        const csv = convertToCSV(selectedData)
-
-        return h.response(csv)
-          .header('Content-Type', 'text/csv')
-          .header('Content-Disposition', `attachment; filename=${storageConfig.requestEditorReportName}`)
+        return handleCSVResponse(selectedData, storageConfig.requestEditorReportName)(h)
       } catch {
         return h.view('payment-report-unavailable')
       }
@@ -191,14 +176,7 @@ module.exports = [{
     handler: async (request, h) => {
       try {
         const { schemeId, year, revenueOrCapital, frn } = request.query
-        let url = `/claim-level-report?schemeId=${schemeId}&year=${year}`
-        if (frn && frn.trim() !== '') {
-          url += `&frn=${frn}`
-        }
-        if (revenueOrCapital && revenueOrCapital.trim() !== '') {
-          url += `&revenueOrCapital=${revenueOrCapital}`
-        }
-
+        const url = buildQueryUrl('/transaction-summary', schemeId, year, frn, revenueOrCapital)
         const response = await api.getTrackingData(url)
         const trackingData = response.payload
         const selectedData = trackingData.claimLevelReportData.map(data => {
@@ -229,11 +207,8 @@ module.exports = [{
           })
         }
 
-        const csv = convertToCSV(selectedData)
         const filename = addDetailsToFilename(storageConfig.claimLevelReportName, schemeId, year, revenueOrCapital, frn)
-        return h.response(csv)
-          .header('Content-Type', 'text/csv')
-          .header('Content-Disposition', `attachment; filename=${filename}`)
+        return handleCSVResponse(selectedData, filename)(h)
       } catch {
         return h.view('payment-report-unavailable')
       }
@@ -266,7 +241,7 @@ module.exports = [{
   path: '/report-list/holds',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
-    handler: async (_request, h) => {
+    handler: async (request, h) => {
       try {
         const paymentHolds = await getHolds()
         if (paymentHolds) {
@@ -279,16 +254,8 @@ module.exports = [{
               dateAdded: formatDate(hold.dateTimeAdded)
             }
           })
-          const response = convertToCSV(paymentHoldsData)
-          if (response) {
-            return h.response(response)
-              .type('text/csv')
-              .header('Connection', 'keep-alive')
-              .header('Cache-Control', 'no-cache')
-              .header('Content-Disposition', `attachment;filename=${config.holdReportName}`)
-          }
+          return handleCSVResponse(paymentHoldsData, storageConfig.holdReportName)(h)
         }
-
         return h.view('hold-report-unavailable')
       } catch {
         return h.view('hold-report-unavailable')
