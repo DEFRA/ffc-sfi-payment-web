@@ -5,10 +5,7 @@ const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../helpers/format-date')
 const storageConfig = require('../config/storage')
 const schema = require('./schemas/report-schema')
-const { addDetailsToFilename } = require('../helpers/add-details-to-filename')
-const { getSchemes } = require('../helpers/get-schemes')
-const { handleCSVResponse } = require('../helpers/handle-csv-response')
-const { buildQueryUrl } = require('../helpers/build-query-url')
+const { addDetailsToFilename, getSchemes, handleCSVResponse, buildQueryUrl, renderErrorPage } = require('../helpers')
 
 module.exports = [{
   method: 'GET',
@@ -48,17 +45,7 @@ module.exports = [{
     validate: {
       query: schema,
       failAction: async (request, h, err) => {
-        request.log(['error', 'validation'], err)
-        const errors = err.details
-          ? err.details.map(detail => {
-              return {
-                text: detail.message,
-                href: '#' + detail.path[0]
-              }
-            })
-          : []
-        const schemes = await getSchemes()
-        return h.view('reports-list/transaction-summary', { schemes, errors }).code(400).takeover()
+        return renderErrorPage('reports-list/transaction-summary', request, h, err)
       }
     },
     handler: async (request, h) => {
@@ -160,17 +147,7 @@ module.exports = [{
     validate: {
       query: schema,
       failAction: async (request, h, err) => {
-        request.log(['error', 'validation'], err)
-        const errors = err.details
-          ? err.details.map(detail => {
-              return {
-                text: detail.message,
-                href: '#' + detail.path[0]
-              }
-            })
-          : []
-        const schemes = await getSchemes()
-        return h.view('reports-list/claim-level-report', { schemes, errors }).code(400).takeover()
+        return renderErrorPage('reports-list/claim-level-report', request, h, err)
       }
     },
     handler: async (request, h) => {
