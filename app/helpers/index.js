@@ -1,6 +1,7 @@
 const { addDetailsToFilename } = require('./add-details-to-filename')
 const { buildQueryUrl } = require('./build-query-url')
 const convertToCSV = require('./convert-to-csv')
+const { createReportHandler } = require('./create-report-handler')
 const { fetchDataAndRespond } = require('./fetch-data-and-respond')
 const formatDate = require('./format-date')
 const { getSchemes } = require('./get-schemes')
@@ -14,6 +15,7 @@ module.exports = {
   addDetailsToFilename,
   buildQueryUrl,
   convertToCSV,
+  createReportHandler,
   fetchDataAndRespond,
   formatDate,
   getSchemes,

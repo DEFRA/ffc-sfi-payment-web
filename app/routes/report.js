@@ -1,48 +1,34 @@
 const { getMIReport, getSuppressedReport } = require('../storage')
-const api = require('../api')
 const { getHolds } = require('../holds')
 const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../helpers/format-date')
 const storageConfig = require('../config/storage')
 const schema = require('./schemas/report-schema')
-const { addDetailsToFilename, handleCSVResponse, buildQueryUrl, renderErrorPage, fetchDataAndRespond, readableStreamReturn, getView, mapReportData } = require('../helpers')
+const { addDetailsToFilename, createReportHandler, handleCSVResponse, renderErrorPage, readableStreamReturn, getView } = require('../helpers')
 const transactionSummaryFields = require('../constants/transaction-summary-fields')
 const claimLevelReportFields = require('../constants/claim-level-report-fields')
 const requestEditorReportFields = require('../constants/request-editor-report-fields')
 
-const getTransactionSummaryHandler = async (request, h) => {
-  const { schemeId, year, revenueOrCapital, frn } = request.query
-  const url = buildQueryUrl('/transaction-summary', schemeId, year, frn, revenueOrCapital)
-  return fetchDataAndRespond(
-    () => api.getTrackingData(url),
-    (response) => response.payload.reportData.map(data => mapReportData(data, transactionSummaryFields)),
-    addDetailsToFilename(storageConfig.claimLevelReportName, schemeId, year, revenueOrCapital, frn),
-    h,
-    'reports-list/transaction-summary'
-  )
-}
+const getTransactionSummaryHandler = createReportHandler(
+  '/transaction-summary',
+  transactionSummaryFields,
+  (schemeId, year, revenueOrCapital, frn) => addDetailsToFilename(storageConfig.claimLevelReportName, schemeId, year, revenueOrCapital, frn),
+  'reports-list/transaction-summary'
+)
 
-const getClaimLevelReportHandler = async (request, h) => {
-  const { schemeId, year, revenueOrCapital, frn } = request.query
-  const url = buildQueryUrl('/claim-level-report', schemeId, year, frn, revenueOrCapital)
-  return fetchDataAndRespond(
-    () => api.getTrackingData(url),
-    (response) => response.payload.claimLevelReportData.map(data => mapReportData(data, claimLevelReportFields)),
-    addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn),
-    h,
-    'reports-list/claim-level-report'
-  )
-}
+const getClaimLevelReportHandler = createReportHandler(
+  '/claim-level-report',
+  claimLevelReportFields,
+  (schemeId, year, revenueOrCapital, frn) => addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn),
+  'reports-list/claim-level-report'
+)
 
-const getRequestEditorReportHandler = async (request, h) => {
-  return fetchDataAndRespond(
-    () => api.getTrackingData('/request-editor-report'),
-    (response) => response.payload.reReportData.map(data => mapReportData(data, requestEditorReportFields)),
-    storageConfig.requestEditorReportName,
-    h,
-    'payment-report-unavailable'
-  )
-}
+const getRequestEditorReportHandler = createReportHandler(
+  '/request-editor-report',
+  requestEditorReportFields,
+  () => storageConfig.requestEditorReportName,
+  'payment-report-unavailable'
+)
 
 module.exports = [{
   method: 'GET',
@@ -149,7 +135,6 @@ module.exports = [{
           })
           return handleCSVResponse(paymentHoldsData, storageConfig.holdReportName)(h)
         }
-        return h.view('hold-report-unavailable')
       } catch {
         return h.view('hold-report-unavailable')
       }
