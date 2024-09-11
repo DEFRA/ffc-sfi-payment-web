@@ -27,11 +27,11 @@ function generateRoutes (reportName, reportDataUrl, reportDataKey) {
             request.log(['error', 'validation'], err)
             const errors = err.details
               ? err.details.map(detail => {
-                return {
-                  text: detail.message,
-                  href: '#' + detail.path[0]
-                }
-              })
+                  return {
+                    text: detail.message,
+                    href: '#' + detail.path[0]
+                  }
+                })
               : []
             const data = { errors }
             if (reportName === 'ar-listing' || reportName === 'ap-ar-listing') {
