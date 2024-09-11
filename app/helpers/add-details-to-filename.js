@@ -17,7 +17,7 @@ const addDetailsToFilename = (reportName, schemeId, year, revenueOrCapital, frn)
     newReportName += `_frn_${frn}`
   }
 
-  return (newReportName += '.csv')
+  return (newReportName + '.csv')
 }
 
 module.exports = {
