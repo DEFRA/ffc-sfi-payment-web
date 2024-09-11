@@ -1,8 +1,13 @@
 const { handleCSVResponse } = require('../../../app/helpers/handle-csv-response')
 const { fetchDataAndRespond } = require('../../../app/helpers')
+const { getSchemes } = require('../../../app/helpers/get-schemes')
 
 jest.mock('../../../app/helpers/handle-csv-response', () => ({
   handleCSVResponse: jest.fn()
+}))
+
+jest.mock('../../../app/helpers/get-schemes', () => ({
+  getSchemes: jest.fn()
 }))
 
 describe('fetch data and respond', () => {
@@ -39,16 +44,19 @@ describe('fetch data and respond', () => {
     expect(mockHandleCSVResponse).toHaveBeenCalledWith(h)
   })
 
-  test('should render empty view with error message when transformed data is empty', async () => {
+  test('should render empty view with error message and schemes when transformed data is empty', async () => {
     const mockResponse = { payload: [] }
     const transformedData = []
+    const mockSchemes = [{ name: 'Scheme 1' }, { name: 'Scheme 2' }]
 
     fetchFn.mockResolvedValue(mockResponse)
     transformFn.mockReturnValue(transformedData)
+    getSchemes.mockResolvedValue(mockSchemes)
 
     await fetchDataAndRespond(fetchFn, transformFn, filename, h, emptyView)
 
-    expect(h.view).toHaveBeenCalledWith(emptyView, { errors: [{ text: 'No data available for the selected filters' }] })
+    expect(getSchemes).toHaveBeenCalled()
+    expect(h.view).toHaveBeenCalledWith(emptyView, { schemes: mockSchemes, errors: [{ text: 'No data available for the selected filters' }] })
   })
 
   test('should render payment-report-unavailable view when fetchFn throws an error', async () => {
