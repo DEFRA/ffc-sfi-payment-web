@@ -5,7 +5,7 @@ const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../helpers/format-date')
 const storageConfig = require('../config/storage')
 const schema = require('./schemas/report-schema')
-const { addDetailsToFilename, getSchemes, handleCSVResponse, buildQueryUrl, renderErrorPage, fetchDataAndRespond } = require('../helpers')
+const { addDetailsToFilename, handleCSVResponse, buildQueryUrl, renderErrorPage, fetchDataAndRespond, readableStreamReturn, getView } = require('../helpers')
 
 const getTransactionSummaryHandler = async (request, h) => {
   const { schemeId, year, revenueOrCapital, frn } = request.query
@@ -34,9 +34,37 @@ const getTransactionSummaryHandler = async (request, h) => {
       Status: data.status,
       LastUpdated: data.lastUpdated
     })),
-    addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn),
+    addDetailsToFilename(storageConfig.claimLevelReportName, schemeId, year, revenueOrCapital, frn),
     h,
     'reports-list/transaction-summary'
+  )
+}
+
+const getClaimLevelReportHandler = async (request, h) => {
+  const { schemeId, year, revenueOrCapital, frn } = request.query
+  const url = buildQueryUrl('/claim-level-report', schemeId, year, frn, revenueOrCapital)
+  return fetchDataAndRespond(
+    () => api.getTrackingData(url),
+    (response) => response.payload.claimLevelReportData.map(data => ({
+      FRN: data.frn,
+      ClaimID: data.claimNumber,
+      RevenueOrCapital: data.revenueOrCapital,
+      AgreementNumber: data.agreementNumber,
+      Year: data.year,
+      PaymentCurrency: data.currency,
+      LatestFullClaimAmount: data.value,
+      LatestSitiPR: data.paymentRequestNumber,
+      LatestInDAXAmount: data.daxValue,
+      LatestInDAXPR: data.daxPaymentRequestNumber,
+      OverallStatus: data.overallStatus,
+      CrossBorderFlag: data.crossBorderFlag,
+      LatestTransactionStatus: data.status,
+      ValueStillToProcess: data.valueStillToProcess,
+      PRsStillToProcess: data.prStillToProcess
+    })),
+    addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn),
+    h,
+    'reports-list/claim-level-report'
   )
 }
 
@@ -72,11 +100,7 @@ module.exports = [{
       try {
         const response = await getMIReport()
         if (response) {
-          return h.response(response.readableStreamBody)
-            .type('text/csv')
-            .header('Connection', 'keep-alive')
-            .header('Cache-Control', 'no-cache')
-            .header('Content-Disposition', `attachment;filename=${storageConfig.miReportName}`)
+          return readableStreamReturn(response, h, storageConfig.miReportName)
         }
       } catch {
         return h.view('payment-report-unavailable')
@@ -89,8 +113,7 @@ module.exports = [{
   options: {
     auth: { scope: [holdAdmin, schemeAdmin, dataView] },
     handler: async (request, h) => {
-      const schemes = await getSchemes()
-      return h.view('reports-list/transaction-summary', { schemes })
+      return getView('reports-list/transaction-summary', h)
     }
   }
 }, {
@@ -119,8 +142,7 @@ module.exports = [{
   options: {
     auth: { scope: [holdAdmin, schemeAdmin, dataView] },
     handler: async (request, h) => {
-      const schemes = await getSchemes()
-      return h.view('reports-list/claim-level-report', { schemes })
+      return getView('reports-list/claim-level-report', h)
     }
   }
 }, {
@@ -134,46 +156,7 @@ module.exports = [{
         return renderErrorPage('reports-list/claim-level-report', request, h, err)
       }
     },
-    handler: async (request, h) => {
-      try {
-        const { schemeId, year, revenueOrCapital, frn } = request.query
-        const url = buildQueryUrl('/transaction-summary', schemeId, year, frn, revenueOrCapital)
-        const response = await api.getTrackingData(url)
-        const trackingData = response.payload
-        const selectedData = trackingData.claimLevelReportData.map(data => {
-          return {
-            FRN: data.frn,
-            ClaimID: data.claimNumber,
-            RevenueOrCapital: data.revenueOrCapital,
-            AgreementNumber: data.agreementNumber,
-            Year: data.year,
-            PaymentCurrency: data.currency,
-            LatestFullClaimAmount: data.value,
-            LatestSitiPR: data.paymentRequestNumber,
-            LatestInDAXAmount: data.daxValue,
-            LatestInDAXPR: data.daxPaymentRequestNumber,
-            OverallStatus: data.overallStatus,
-            CrossBorderFlag: data.crossBorderFlag,
-            LatestTransactionStatus: data.status,
-            ValueStillToProcess: data.valueStillToProcess,
-            PRsStillToProcess: data.prStillToProcess
-          }
-        })
-
-        if (selectedData.length === 0) {
-          return h.view('reports-list/claim-level-report', {
-            errors: [{
-              text: 'No data available for the selected filters'
-            }]
-          })
-        }
-
-        const filename = addDetailsToFilename(storageConfig.claimLevelReportName, schemeId, year, revenueOrCapital, frn)
-        return handleCSVResponse(selectedData, filename)(h)
-      } catch {
-        return h.view('payment-report-unavailable')
-      }
-    }
+    handler: getClaimLevelReportHandler
   }
 },
 {
@@ -185,11 +168,7 @@ module.exports = [{
       try {
         const response = await getSuppressedReport()
         if (response) {
-          return h.response(response.readableStreamBody)
-            .type('text/csv')
-            .header('Connection', 'keep-alive')
-            .header('Cache-Control', 'no-cache')
-            .header('Content-Disposition', `attachment;filename=${storageConfig.suppressedReportName}`)
+          return readableStreamReturn(response, h, storageConfig.suppressedReportName)
         }
       } catch {
         return h.view('payment-report-unavailable')
