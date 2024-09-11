@@ -4,7 +4,7 @@ const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../helpers/format-date')
 const storageConfig = require('../config/storage')
 const schema = require('./schemas/report-schema')
-const { addDetailsToFilename, createReportHandler, handleCSVResponse, renderErrorPage, readableStreamReturn, getView } = require('../helpers')
+const { addDetailsToFilename, createReportHandler, handleCSVResponse, renderErrorPage, getView, handleStreamResponse } = require('../helpers')
 const transactionSummaryFields = require('../constants/transaction-summary-fields')
 const claimLevelReportFields = require('../constants/claim-level-report-fields')
 const requestEditorReportFields = require('../constants/request-editor-report-fields')
@@ -35,16 +35,7 @@ module.exports = [{
   path: '/report-list/payment-requests',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
-    handler: async (_request, h) => {
-      try {
-        const response = await getMIReport()
-        if (response) {
-          return readableStreamReturn(response, h, storageConfig.miReportName)
-        }
-      } catch {
-        return h.view('payment-report-unavailable')
-      }
-    }
+    handler: async (_request, h) => handleStreamResponse(getMIReport, storageConfig.miReportName, h)
   }
 }, {
   method: 'GET',
@@ -103,16 +94,7 @@ module.exports = [{
   path: '/report-list/suppressed-payments',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
-    handler: async (_request, h) => {
-      try {
-        const response = await getSuppressedReport()
-        if (response) {
-          return readableStreamReturn(response, h, storageConfig.suppressedReportName)
-        }
-      } catch {
-        return h.view('payment-report-unavailable')
-      }
-    }
+    handler: async (_request, h) => handleStreamResponse(getSuppressedReport, storageConfig.suppressedReportName, h)
   }
 },
 {
