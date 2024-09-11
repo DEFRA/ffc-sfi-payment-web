@@ -5,7 +5,63 @@ const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../helpers/format-date')
 const storageConfig = require('../config/storage')
 const schema = require('./schemas/report-schema')
-const { addDetailsToFilename, getSchemes, handleCSVResponse, buildQueryUrl, renderErrorPage } = require('../helpers')
+const { addDetailsToFilename, getSchemes, handleCSVResponse, buildQueryUrl, renderErrorPage, fetchDataAndRespond } = require('../helpers')
+
+const getTransactionSummaryHandler = async (request, h) => {
+  const { schemeId, year, revenueOrCapital, frn } = request.query
+  const url = buildQueryUrl('/transaction-summary', schemeId, year, frn, revenueOrCapital)
+  return fetchDataAndRespond(
+    () => api.getTrackingData(url),
+    (response) => response.payload.reportData.map(data => ({
+      ID: data.correlationId,
+      FRN: data.frn,
+      ClaimID: data.claimNumber,
+      AgreementNumber: data.agreementNumber,
+      RevenueOrCapital: data.revenueOrCapital,
+      Year: data.year,
+      InvoiceNumber: data.invoiceNumber,
+      PaymentCurrency: data.currency,
+      PaymentRequestNumber: data.paymentRequestNumber,
+      FullClaimAmount: data.value,
+      BatchID: data.batch,
+      BatchCreatorID: data.sourceSystem,
+      BatchExportDate: data.batchExportDate,
+      RoutedToRequestEditor: data.routedToRequestEditor,
+      DeltaAmount: data.deltaAmount,
+      APAmount: data.apValue,
+      ARAmount: data.arValue,
+      AdminOrIrregular: data.debtType,
+      Status: data.status,
+      LastUpdated: data.lastUpdated
+    })),
+    addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn),
+    h,
+    'reports-list/transaction-summary'
+  )
+}
+
+const getRequestEditorReportHandler = async (request, h) => {
+  return fetchDataAndRespond(
+    () => api.getTrackingData('/request-editor-report'),
+    (response) => response.payload.reReportData.map(data => ({
+      FRN: data.frn,
+      DeltaAmount: data.deltaAmount,
+      SourceSystem: data.sourceSystem,
+      ClaimID: data.claimNumber,
+      InvoiceNumber: data.invoiceNumber,
+      PaymentRequestNumber: data.paymentRequestNumber,
+      Year: data.year,
+      ReceivedInRequestEditor: data.receivedInRequestEditor,
+      Enriched: data.enriched,
+      DebtType: data.debtType,
+      LedgerSplit: data.ledgerSplit,
+      ReleasedFromRequestEditor: data.releasedFromRequestEditor
+    })),
+    storageConfig.requestEditorReportName,
+    h,
+    'payment-report-unavailable'
+  )
+}
 
 module.exports = [{
   method: 'GET',
@@ -48,86 +104,14 @@ module.exports = [{
         return renderErrorPage('reports-list/transaction-summary', request, h, err)
       }
     },
-    handler: async (request, h) => {
-      try {
-        const { schemeId, year, revenueOrCapital, frn } = request.query
-        const url = buildQueryUrl('/transaction-summary', schemeId, year, frn, revenueOrCapital)
-        const response = await api.getTrackingData(url)
-        const trackingData = response.payload
-        const selectedData = trackingData.reportData.map(data => {
-          return {
-            ID: data.correlationId,
-            FRN: data.frn,
-            ClaimID: data.claimNumber,
-            AgreementNumber: data.agreementNumber,
-            RevenueOrCapital: data.revenueOrCapital,
-            Year: data.year,
-            InvoiceNumber: data.invoiceNumber,
-            PaymentCurrency: data.currency,
-            PaymentRequestNumber: data.paymentRequestNumber,
-            FullClaimAmount: data.value,
-            BatchID: data.batch,
-            BatchCreatorID: data.sourceSystem,
-            BatchExportDate: data.batchExportDate,
-            RoutedToRequestEditor: data.routedToRequestEditor,
-            DeltaAmount: data.deltaAmount,
-            APAmount: data.apValue,
-            ARAmount: data.arValue,
-            AdminOrIrregular: data.debtType,
-            Status: data.status,
-            LastUpdated: data.lastUpdated
-          }
-        })
-
-        if (selectedData.length === 0) {
-          return h.view('reports-list/transaction-summary', {
-            errors: [{
-              text: 'No data available for the selected filters'
-            }]
-          })
-        }
-        const filename = addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn)
-        return handleCSVResponse(selectedData, filename)(h)
-      } catch {
-        return h.view('payment-report-unavailable')
-      }
-    }
+    handler: getTransactionSummaryHandler
   }
 }, {
   method: 'GET',
   path: '/report-list/request-editor-report',
   options: {
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
-    handler: async (request, h) => {
-      try {
-        const response = await api.getTrackingData('/request-editor-report')
-        const trackingData = response.payload
-        const selectedData = trackingData.reReportData.map(data => {
-          return {
-            FRN: data.frn,
-            DeltaAmount: data.deltaAmount,
-            SourceSystem: data.sourceSystem,
-            ClaimID: data.claimNumber,
-            InvoiceNumber: data.invoiceNumber,
-            PaymentRequestNumber: data.paymentRequestNumber,
-            Year: data.year,
-            ReceivedInRequestEditor: data.receivedInRequestEditor,
-            Enriched: data.enriched,
-            DebtType: data.debtType,
-            LedgerSplit: data.ledgerSplit,
-            ReleasedFromRequestEditor: data.releasedFromRequestEditor
-          }
-        })
-
-        if (selectedData.length === 0) {
-          return h.view('payment-report-unavailable')
-        }
-
-        return handleCSVResponse(selectedData, storageConfig.requestEditorReportName)(h)
-      } catch {
-        return h.view('payment-report-unavailable')
-      }
-    }
+    handler: getRequestEditorReportHandler
   }
 }, {
   method: 'GET',
