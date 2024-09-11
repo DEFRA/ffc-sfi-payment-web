@@ -6,6 +6,7 @@ const formatDate = require('./format-date')
 const { getSchemes } = require('./get-schemes')
 const { getView } = require('./get-view')
 const { handleCSVResponse } = require('./handle-csv-response')
+const { mapReportData } = require('./map-report-data')
 const { readableStreamReturn } = require('./readable-stream-return')
 const { renderErrorPage } = require('./render-error-page')
 
@@ -18,6 +19,7 @@ module.exports = {
   getSchemes,
   getView,
   handleCSVResponse,
+  mapReportData,
   readableStreamReturn,
   renderErrorPage
 }

@@ -5,35 +5,17 @@ const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const formatDate = require('../helpers/format-date')
 const storageConfig = require('../config/storage')
 const schema = require('./schemas/report-schema')
-const { addDetailsToFilename, handleCSVResponse, buildQueryUrl, renderErrorPage, fetchDataAndRespond, readableStreamReturn, getView } = require('../helpers')
+const { addDetailsToFilename, handleCSVResponse, buildQueryUrl, renderErrorPage, fetchDataAndRespond, readableStreamReturn, getView, mapReportData } = require('../helpers')
+const transactionSummaryFields = require('../constants/transaction-summary-fields')
+const claimLevelReportFields = require('../constants/claim-level-report-fields')
+const requestEditorReportFields = require('../constants/request-editor-report-fields')
 
 const getTransactionSummaryHandler = async (request, h) => {
   const { schemeId, year, revenueOrCapital, frn } = request.query
   const url = buildQueryUrl('/transaction-summary', schemeId, year, frn, revenueOrCapital)
   return fetchDataAndRespond(
     () => api.getTrackingData(url),
-    (response) => response.payload.reportData.map(data => ({
-      ID: data.correlationId,
-      FRN: data.frn,
-      ClaimID: data.claimNumber,
-      AgreementNumber: data.agreementNumber,
-      RevenueOrCapital: data.revenueOrCapital,
-      Year: data.year,
-      InvoiceNumber: data.invoiceNumber,
-      PaymentCurrency: data.currency,
-      PaymentRequestNumber: data.paymentRequestNumber,
-      FullClaimAmount: data.value,
-      BatchID: data.batch,
-      BatchCreatorID: data.sourceSystem,
-      BatchExportDate: data.batchExportDate,
-      RoutedToRequestEditor: data.routedToRequestEditor,
-      DeltaAmount: data.deltaAmount,
-      APAmount: data.apValue,
-      ARAmount: data.arValue,
-      AdminOrIrregular: data.debtType,
-      Status: data.status,
-      LastUpdated: data.lastUpdated
-    })),
+    (response) => response.payload.reportData.map(data => mapReportData(data, transactionSummaryFields)),
     addDetailsToFilename(storageConfig.claimLevelReportName, schemeId, year, revenueOrCapital, frn),
     h,
     'reports-list/transaction-summary'
@@ -45,23 +27,7 @@ const getClaimLevelReportHandler = async (request, h) => {
   const url = buildQueryUrl('/claim-level-report', schemeId, year, frn, revenueOrCapital)
   return fetchDataAndRespond(
     () => api.getTrackingData(url),
-    (response) => response.payload.claimLevelReportData.map(data => ({
-      FRN: data.frn,
-      ClaimID: data.claimNumber,
-      RevenueOrCapital: data.revenueOrCapital,
-      AgreementNumber: data.agreementNumber,
-      Year: data.year,
-      PaymentCurrency: data.currency,
-      LatestFullClaimAmount: data.value,
-      LatestSitiPR: data.paymentRequestNumber,
-      LatestInDAXAmount: data.daxValue,
-      LatestInDAXPR: data.daxPaymentRequestNumber,
-      OverallStatus: data.overallStatus,
-      CrossBorderFlag: data.crossBorderFlag,
-      LatestTransactionStatus: data.status,
-      ValueStillToProcess: data.valueStillToProcess,
-      PRsStillToProcess: data.prStillToProcess
-    })),
+    (response) => response.payload.claimLevelReportData.map(data => mapReportData(data, claimLevelReportFields)),
     addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn),
     h,
     'reports-list/claim-level-report'
@@ -71,20 +37,7 @@ const getClaimLevelReportHandler = async (request, h) => {
 const getRequestEditorReportHandler = async (request, h) => {
   return fetchDataAndRespond(
     () => api.getTrackingData('/request-editor-report'),
-    (response) => response.payload.reReportData.map(data => ({
-      FRN: data.frn,
-      DeltaAmount: data.deltaAmount,
-      SourceSystem: data.sourceSystem,
-      ClaimID: data.claimNumber,
-      InvoiceNumber: data.invoiceNumber,
-      PaymentRequestNumber: data.paymentRequestNumber,
-      Year: data.year,
-      ReceivedInRequestEditor: data.receivedInRequestEditor,
-      Enriched: data.enriched,
-      DebtType: data.debtType,
-      LedgerSplit: data.ledgerSplit,
-      ReleasedFromRequestEditor: data.releasedFromRequestEditor
-    })),
+    (response) => response.payload.reReportData.map(data => mapReportData(data, requestEditorReportFields)),
     storageConfig.requestEditorReportName,
     h,
     'payment-report-unavailable'
@@ -183,7 +136,7 @@ module.exports = [{
     auth: { scope: [schemeAdmin, holdAdmin, dataView] },
     handler: async (request, h) => {
       try {
-        const paymentHolds = await getHolds()
+        const paymentHolds = await getHolds(undefined, undefined, false)
         if (paymentHolds) {
           const paymentHoldsData = paymentHolds.map(hold => {
             return {
