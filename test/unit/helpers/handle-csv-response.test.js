@@ -4,7 +4,7 @@ const { handleCSVResponse } = require('../../../app/helpers/handle-csv-response'
 jest.mock('../../../app/helpers/convert-to-csv', () => jest.fn())
 
 describe('handle CSV response', () => {
-  const mockH = {
+  const mockHapi = {
     response: jest.fn().mockReturnThis(),
     header: jest.fn().mockReturnThis()
   }
@@ -20,12 +20,12 @@ describe('handle CSV response', () => {
     convertToCSV.mockReturnValue('id,name\n1,Test')
 
     const handler = handleCSVResponse(data, filename)
-    handler(mockH)
+    handler(mockHapi)
 
     expect(convertToCSV).toHaveBeenCalledWith(data)
-    expect(mockH.response).toHaveBeenCalledWith('id,name\n1,Test')
-    expect(mockH.header).toHaveBeenCalledWith('Content-Type', 'text/csv')
-    expect(mockH.header).toHaveBeenCalledWith('Content-Disposition', `attachment; filename=${filename}`)
+    expect(mockHapi.response).toHaveBeenCalledWith('id,name\n1,Test')
+    expect(mockHapi.header).toHaveBeenCalledWith('Content-Type', 'text/csv')
+    expect(mockHapi.header).toHaveBeenCalledWith('Content-Disposition', `attachment; filename=${filename}`)
   })
 
   test('should handle empty data', () => {
@@ -35,12 +35,12 @@ describe('handle CSV response', () => {
     convertToCSV.mockReturnValue('')
 
     const handler = handleCSVResponse(data, filename)
-    handler(mockH)
+    handler(mockHapi)
 
     expect(convertToCSV).toHaveBeenCalledWith(data)
-    expect(mockH.response).toHaveBeenCalledWith('')
-    expect(mockH.header).toHaveBeenCalledWith('Content-Type', 'text/csv')
-    expect(mockH.header).toHaveBeenCalledWith('Content-Disposition', `attachment; filename=${filename}`)
+    expect(mockHapi.response).toHaveBeenCalledWith('')
+    expect(mockHapi.header).toHaveBeenCalledWith('Content-Type', 'text/csv')
+    expect(mockHapi.header).toHaveBeenCalledWith('Content-Disposition', `attachment; filename=${filename}`)
   })
 
   test('should handle special characters in filename', () => {
@@ -50,11 +50,11 @@ describe('handle CSV response', () => {
     convertToCSV.mockReturnValue('id,name\n2,Special')
 
     const handler = handleCSVResponse(data, filename)
-    handler(mockH)
+    handler(mockHapi)
 
     expect(convertToCSV).toHaveBeenCalledWith(data)
-    expect(mockH.response).toHaveBeenCalledWith('id,name\n2,Special')
-    expect(mockH.header).toHaveBeenCalledWith('Content-Type', 'text/csv')
-    expect(mockH.header).toHaveBeenCalledWith('Content-Disposition', `attachment; filename=${filename}`)
+    expect(mockHapi.response).toHaveBeenCalledWith('id,name\n2,Special')
+    expect(mockHapi.header).toHaveBeenCalledWith('Content-Type', 'text/csv')
+    expect(mockHapi.header).toHaveBeenCalledWith('Content-Disposition', `attachment; filename=${filename}`)
   })
 })

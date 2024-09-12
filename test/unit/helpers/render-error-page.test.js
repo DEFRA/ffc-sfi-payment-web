@@ -4,7 +4,7 @@ const { getSchemes } = require('../../../app/helpers/get-schemes')
 jest.mock('../../../app/helpers/get-schemes')
 
 describe('render error page', () => {
-  let mockRequest, mockH, mockView, mockError, mockResponse
+  let mockRequest, mockHapi, mockView, mockError, mockResponse
 
   beforeEach(() => {
     mockRequest = {
@@ -14,7 +14,7 @@ describe('render error page', () => {
       code: jest.fn().mockReturnThis(),
       takeover: jest.fn().mockReturnThis()
     }
-    mockH = {
+    mockHapi = {
       view: jest.fn().mockReturnValue(mockResponse)
     }
     mockView = 'some-view'
@@ -28,18 +28,18 @@ describe('render error page', () => {
   })
 
   test('logs error details', async () => {
-    await renderErrorPage(mockView, mockRequest, mockH, mockError)
+    await renderErrorPage(mockView, mockRequest, mockHapi, mockError)
     expect(mockRequest.log).toHaveBeenCalledWith(['error', 'validation'], mockError)
   })
 
   test('retrieves schemes', async () => {
-    await renderErrorPage(mockView, mockRequest, mockH, mockError)
+    await renderErrorPage(mockView, mockRequest, mockHapi, mockError)
     expect(getSchemes).toHaveBeenCalled()
   })
 
   test('renders the view with errors and schemes', async () => {
-    await renderErrorPage(mockView, mockRequest, mockH, mockError)
-    expect(mockH.view).toHaveBeenCalledWith(mockView, {
+    await renderErrorPage(mockView, mockRequest, mockHapi, mockError)
+    expect(mockHapi.view).toHaveBeenCalledWith(mockView, {
       schemes: [{ name: 'Scheme 1' }, { name: 'Scheme 2' }],
       errors: [
         { text: 'Error message 1', href: '#field1' },
@@ -49,12 +49,12 @@ describe('render error page', () => {
   })
 
   test('returns a 400 response code', async () => {
-    const response = await renderErrorPage(mockView, mockRequest, mockH, mockError)
+    const response = await renderErrorPage(mockView, mockRequest, mockHapi, mockError)
     expect(response.code).toHaveBeenCalledWith(400)
   })
 
   test('calls takeover on the response', async () => {
-    const response = await renderErrorPage(mockView, mockRequest, mockH, mockError)
+    const response = await renderErrorPage(mockView, mockRequest, mockHapi, mockError)
     expect(response.takeover).toHaveBeenCalled()
   })
 })

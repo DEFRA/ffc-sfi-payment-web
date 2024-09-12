@@ -2,23 +2,23 @@ const { readableStreamReturn } = require('../../../app/helpers')
 
 describe('readable stream return', () => {
   let mockResponse
-  let mockH
+  let mockHapi
 
   beforeEach(() => {
     mockResponse = {
       type: jest.fn().mockReturnThis(),
       header: jest.fn().mockReturnThis()
     }
-    mockH = { response: jest.fn().mockReturnValue(mockResponse) }
+    mockHapi = { response: jest.fn().mockReturnValue(mockResponse) }
   })
 
   test('should correctly set headers and return the response', async () => {
     const response = { readableStreamBody: 'stream content' }
     const reportName = 'report.csv'
 
-    const result = await readableStreamReturn(response, mockH, reportName)
+    const result = await readableStreamReturn(response, mockHapi, reportName)
 
-    expect(mockH.response).toHaveBeenCalledWith(response.readableStreamBody)
+    expect(mockHapi.response).toHaveBeenCalledWith(response.readableStreamBody)
     expect(mockResponse.type).toHaveBeenCalledWith('text/csv')
     expect(mockResponse.header).toHaveBeenCalledWith('Connection', 'keep-alive')
     expect(mockResponse.header).toHaveBeenCalledWith('Cache-Control', 'no-cache')
@@ -33,9 +33,9 @@ describe('readable stream return', () => {
     const response = { readableStreamBody: 'different stream' }
     const reportName = 'another-report.csv'
 
-    const result = await readableStreamReturn(response, mockH, reportName)
+    const result = await readableStreamReturn(response, mockHapi, reportName)
 
-    expect(mockH.response).toHaveBeenCalledWith(response.readableStreamBody)
+    expect(mockHapi.response).toHaveBeenCalledWith(response.readableStreamBody)
     expect(mockResponse.type).toHaveBeenCalledWith('text/csv')
     expect(mockResponse.header).toHaveBeenCalledWith('Connection', 'keep-alive')
     expect(mockResponse.header).toHaveBeenCalledWith('Cache-Control', 'no-cache')
@@ -50,9 +50,9 @@ describe('readable stream return', () => {
     const response = { readableStreamBody: '' }
     const reportName = 'empty-report.csv'
 
-    const result = await readableStreamReturn(response, mockH, reportName)
+    const result = await readableStreamReturn(response, mockHapi, reportName)
 
-    expect(mockH.response).toHaveBeenCalledWith(response.readableStreamBody)
+    expect(mockHapi.response).toHaveBeenCalledWith(response.readableStreamBody)
     expect(mockResponse.type).toHaveBeenCalledWith('text/csv')
     expect(mockResponse.header).toHaveBeenCalledWith('Connection', 'keep-alive')
     expect(mockResponse.header).toHaveBeenCalledWith('Cache-Control', 'no-cache')

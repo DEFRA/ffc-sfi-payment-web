@@ -5,11 +5,11 @@ jest.mock('../../../app/helpers/get-schemes')
 
 describe('get view', () => {
   let mockView
-  let mockH
+  let mockHapi
 
   beforeEach(() => {
     mockView = jest.fn()
-    mockH = { view: mockView }
+    mockHapi = { view: mockView }
   })
 
   test('should call getSchemes and h.view with the correct parameters', async () => {
@@ -17,7 +17,7 @@ describe('get view', () => {
     getSchemes.mockResolvedValue(schemes)
 
     const path = 'some/path'
-    await getView(path, mockH)
+    await getView(path, mockHapi)
 
     expect(getSchemes).toHaveBeenCalledTimes(1)
     expect(mockView).toHaveBeenCalledWith(path, { schemes })
@@ -27,7 +27,7 @@ describe('get view', () => {
     getSchemes.mockResolvedValue([])
 
     const path = 'some/empty/path'
-    await getView(path, mockH)
+    await getView(path, mockHapi)
 
     expect(mockView).toHaveBeenCalledWith(path, { schemes: [] })
   })
@@ -37,7 +37,7 @@ describe('get view', () => {
 
     const path = 'error/path'
 
-    await expect(getView(path, mockH)).rejects.toThrow('Failed to fetch schemes')
+    await expect(getView(path, mockHapi)).rejects.toThrow('Failed to fetch schemes')
     expect(mockView).not.toHaveBeenCalled()
   })
 })

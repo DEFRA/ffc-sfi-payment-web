@@ -13,5 +13,5 @@ module.exports = {
   CrossBorderFlag: 'crossBorderFlag',
   LatestTransactionStatus: 'status',
   ValueStillToProcess: 'valueStillToProcess',
-  PRsStillToProcess: 'prStillToProcess'
+  PRStillToProcess: 'prStillToProcess'
 }
