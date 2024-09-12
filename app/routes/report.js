@@ -9,6 +9,8 @@ const transactionSummaryFields = require('../constants/transaction-summary-field
 const claimLevelReportFields = require('../constants/claim-level-report-fields')
 const requestEditorReportFields = require('../constants/request-editor-report-fields')
 
+const authOptions = { scope: [schemeAdmin, holdAdmin, dataView] }
+
 const getTransactionSummaryHandler = createReportHandler(
   '/transaction-summary',
   transactionSummaryFields,
@@ -34,14 +36,14 @@ module.exports = [{
   method: 'GET',
   path: '/report-list/payment-requests',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
+    auth: authOptions,
     handler: async (_request, h) => handleStreamResponse(getMIReport, storageConfig.miReportName, h)
   }
 }, {
   method: 'GET',
   path: '/report-list/transaction-summary',
   options: {
-    auth: { scope: [holdAdmin, schemeAdmin, dataView] },
+    auth: authOptions,
     handler: async (request, h) => {
       return getView('reports-list/transaction-summary', h)
     }
@@ -50,7 +52,7 @@ module.exports = [{
   method: 'GET',
   path: '/report-list/transaction-summary/download',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
+    auth: authOptions,
     validate: {
       query: schema,
       failAction: async (request, h, err) => {
@@ -63,14 +65,14 @@ module.exports = [{
   method: 'GET',
   path: '/report-list/request-editor-report',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
+    auth: authOptions,
     handler: getRequestEditorReportHandler
   }
 }, {
   method: 'GET',
   path: '/report-list/claim-level-report',
   options: {
-    auth: { scope: [holdAdmin, schemeAdmin, dataView] },
+    auth: authOptions,
     handler: async (request, h) => {
       return getView('reports-list/claim-level-report', h)
     }
@@ -79,7 +81,7 @@ module.exports = [{
   method: 'GET',
   path: '/report-list/claim-level-report/download',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
+    auth: authOptions,
     validate: {
       query: schema,
       failAction: async (request, h, err) => {
@@ -93,7 +95,7 @@ module.exports = [{
   method: 'GET',
   path: '/report-list/suppressed-payments',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
+    auth: authOptions,
     handler: async (_request, h) => handleStreamResponse(getSuppressedReport, storageConfig.suppressedReportName, h)
   }
 },
@@ -101,7 +103,7 @@ module.exports = [{
   method: 'GET',
   path: '/report-list/holds',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
+    auth: authOptions,
     handler: async (request, h) => {
       try {
         const paymentHolds = await getHolds(undefined, undefined, false)
