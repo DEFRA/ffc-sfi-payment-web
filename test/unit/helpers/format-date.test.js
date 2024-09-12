@@ -1,5 +1,5 @@
 describe('Format date', () => {
-  const formatDate = require('../../app/format-date')
+  const formatDate = require('../../../app/helpers/format-date')
 
   test('formats date if date format not supplied', () => {
     const result = formatDate('01/11/2021 23:21')

@@ -31,9 +31,4 @@ describe('storage', () => {
     const result = await storage.getSuppressedReport('filepath')
     expect(result).toStrictEqual(mockBlobContent)
   })
-
-  test('getTransactionSummary returns report data', async () => {
-    const result = await storage.getTransactionSummary('filepath')
-    expect(result).toStrictEqual(mockBlobContent)
-  })
 })

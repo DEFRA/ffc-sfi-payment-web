@@ -1,81 +1,112 @@
-const { getMIReport, getSuppressedReport, getTransactionSummary } = require('../storage')
+const { getMIReport, getSuppressedReport } = require('../storage')
 const { getHolds } = require('../holds')
 const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
-const formatDate = require('../format-date')
-const convertToCsv = require('../convert-to-csv')
+const formatDate = require('../helpers/format-date')
 const storageConfig = require('../config/storage')
-const config = require('../config')
+const schema = require('./schemas/report-schema')
+const { addDetailsToFilename, createReportHandler, handleCSVResponse, renderErrorPage, getView, handleStreamResponse } = require('../helpers')
+const transactionSummaryFields = require('../constants/transaction-summary-fields')
+const claimLevelReportFields = require('../constants/claim-level-report-fields')
+const requestEditorReportFields = require('../constants/request-editor-report-fields')
+
+const authOptions = { scope: [schemeAdmin, holdAdmin, dataView] }
+
+const getTransactionSummaryHandler = createReportHandler(
+  '/transaction-summary',
+  transactionSummaryFields,
+  (schemeId, year, revenueOrCapital, frn) => addDetailsToFilename(storageConfig.claimLevelReportName, schemeId, year, revenueOrCapital, frn),
+  'reports-list/transaction-summary'
+)
+
+const getClaimLevelReportHandler = createReportHandler(
+  '/claim-level-report',
+  claimLevelReportFields,
+  (schemeId, year, revenueOrCapital, frn) => addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn),
+  'reports-list/claim-level-report'
+)
+
+const getRequestEditorReportHandler = createReportHandler(
+  '/request-editor-report',
+  requestEditorReportFields,
+  () => storageConfig.requestEditorReportName,
+  'payment-report-unavailable'
+)
 
 module.exports = [{
   method: 'GET',
   path: '/report-list/payment-requests',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
-    handler: async (_request, h) => {
-      try {
-        const response = await getMIReport()
-        if (response) {
-          return h.response(response.readableStreamBody)
-            .type('text/csv')
-            .header('Connection', 'keep-alive')
-            .header('Cache-Control', 'no-cache')
-            .header('Content-Disposition', `attachment;filename=${storageConfig.miReportName}`)
-        }
-      } catch {
-        return h.view('payment-report-unavailable')
-      }
-    }
+    auth: authOptions,
+    handler: async (_request, h) => handleStreamResponse(getMIReport, storageConfig.miReportName, h)
   }
 }, {
   method: 'GET',
   path: '/report-list/transaction-summary',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
-    handler: async (_request, h) => {
-      try {
-        const response = await getTransactionSummary()
-        if (response) {
-          return h.response(response.readableStreamBody)
-            .type('text/csv')
-            .header('Connection', 'keep-alive')
-            .header('Cache-Control', 'no-cache')
-            .header('Content-Disposition', `attachment;filename=${storageConfig.summaryReportName}`)
-        }
-      } catch {
-        return h.view('payment-report-unavailable')
-      }
+    auth: authOptions,
+    handler: async (request, h) => {
+      return getView('reports-list/transaction-summary', h)
     }
+  }
+}, {
+  method: 'GET',
+  path: '/report-list/transaction-summary/download',
+  options: {
+    auth: authOptions,
+    validate: {
+      query: schema,
+      failAction: async (request, h, err) => {
+        return renderErrorPage('reports-list/transaction-summary', request, h, err)
+      }
+    },
+    handler: getTransactionSummaryHandler
+  }
+}, {
+  method: 'GET',
+  path: '/report-list/request-editor-report',
+  options: {
+    auth: authOptions,
+    handler: getRequestEditorReportHandler
+  }
+}, {
+  method: 'GET',
+  path: '/report-list/claim-level-report',
+  options: {
+    auth: authOptions,
+    handler: async (request, h) => {
+      return getView('reports-list/claim-level-report', h)
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/report-list/claim-level-report/download',
+  options: {
+    auth: authOptions,
+    validate: {
+      query: schema,
+      failAction: async (request, h, err) => {
+        return renderErrorPage('reports-list/claim-level-report', request, h, err)
+      }
+    },
+    handler: getClaimLevelReportHandler
   }
 },
 {
   method: 'GET',
   path: '/report-list/suppressed-payments',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
-    handler: async (_request, h) => {
-      try {
-        const response = await getSuppressedReport()
-        if (response) {
-          return h.response(response.readableStreamBody)
-            .type('text/csv')
-            .header('Connection', 'keep-alive')
-            .header('Cache-Control', 'no-cache')
-            .header('Content-Disposition', `attachment;filename=${storageConfig.suppressedReportName}`)
-        }
-      } catch {
-        return h.view('payment-report-unavailable')
-      }
-    }
+    auth: authOptions,
+    handler: async (_request, h) => handleStreamResponse(getSuppressedReport, storageConfig.suppressedReportName, h)
   }
 },
 {
   method: 'GET',
   path: '/report-list/holds',
   options: {
-    auth: { scope: [schemeAdmin, holdAdmin, dataView] },
-    handler: async (_request, h) => {
+    auth: authOptions,
+    handler: async (request, h) => {
       try {
-        const paymentHolds = await getHolds()
+        const paymentHolds = await getHolds(undefined, undefined, false)
         if (paymentHolds) {
           const paymentHoldsData = paymentHolds.map(hold => {
             return {
@@ -86,17 +117,8 @@ module.exports = [{
               dateAdded: formatDate(hold.dateTimeAdded)
             }
           })
-          const response = convertToCsv(paymentHoldsData)
-          if (response) {
-            return h.response(response)
-              .type('text/csv')
-              .header('Connection', 'keep-alive')
-              .header('Cache-Control', 'no-cache')
-              .header('Content-Disposition', `attachment;filename=${config.holdReportName}`)
-          }
+          return handleCSVResponse(paymentHoldsData, storageConfig.holdReportName)(h)
         }
-
-        return h.view('hold-report-unavailable')
       } catch {
         return h.view('hold-report-unavailable')
       }

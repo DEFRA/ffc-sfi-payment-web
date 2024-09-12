@@ -1,6 +1,6 @@
 const { holdAdmin, schemeAdmin, dataView } = require('../auth/permissions')
 const api = require('../api')
-const convertToCSV = require('../convert-to-csv')
+const convertToCSV = require('../helpers/convert-to-csv')
 const apListingSchema = require('./schemas/ap-listing-schema')
 const config = require('../config/storage')
 
