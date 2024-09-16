@@ -14,14 +14,14 @@ const authOptions = { scope: [schemeAdmin, holdAdmin, dataView] }
 const getTransactionSummaryHandler = createReportHandler(
   '/transaction-summary',
   transactionSummaryFields,
-  (schemeId, year, revenueOrCapital, frn) => addDetailsToFilename(storageConfig.claimLevelReportName, schemeId, year, revenueOrCapital, frn),
+  (schemeId, year, revenueOrCapital, frn) => addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn),
   'reports-list/transaction-summary'
 )
 
 const getClaimLevelReportHandler = createReportHandler(
   '/claim-level-report',
   claimLevelReportFields,
-  (schemeId, year, revenueOrCapital, frn) => addDetailsToFilename(storageConfig.summaryReportName, schemeId, year, revenueOrCapital, frn),
+  (schemeId, year, revenueOrCapital, frn) => addDetailsToFilename(storageConfig.claimLevelReportName, schemeId, year, revenueOrCapital, frn),
   'reports-list/claim-level-report'
 )
 
