@@ -31,6 +31,7 @@ describe('create report handler', () => {
       query: {
         schemeId: '123',
         year: '2024',
+        prn: 1,
         revenueOrCapital: 'revenue',
         frn: '456'
       }
@@ -65,7 +66,7 @@ describe('create report handler', () => {
     const handler = createReportHandler(path, fields, filenameFunc, errorView)
     await handler(request, h)
 
-    expect(buildQueryUrl).toHaveBeenCalledWith(path, '123', '2024', '456', 'revenue')
+    expect(buildQueryUrl).toHaveBeenCalledWith(path, '123', '2024', 1, '456', 'revenue')
   })
 
   test('should call fetchDataAndRespond with correct arguments', async () => {

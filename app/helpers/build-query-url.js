@@ -1,5 +1,8 @@
-const buildQueryUrl = (path, schemeId, year, frn, revenueOrCapital) => {
+const buildQueryUrl = (path, schemeId, year, prn, frn, revenueOrCapital) => {
   let url = `${path}?schemeId=${schemeId}&year=${year}`
+  if (prn) {
+    url += `&prn=${prn}`
+  }
   if (frn && frn.trim() !== '') {
     url += `&frn=${frn}`
   }
