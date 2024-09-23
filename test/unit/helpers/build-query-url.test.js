@@ -14,7 +14,7 @@ describe('build query URL', () => {
     const schemeId = '123'
     const year = '2024'
     const frn = '456789'
-    const result = buildQueryUrl(path, schemeId, year, frn)
+    const result = buildQueryUrl(path, schemeId, year, undefined, frn)
     expect(result).toBe('/endpoint?schemeId=123&year=2024&frn=456789')
   })
 
@@ -23,7 +23,7 @@ describe('build query URL', () => {
     const schemeId = '123'
     const year = '2024'
     const frn = '   ' // Just whitespace
-    const result = buildQueryUrl(path, schemeId, year, frn)
+    const result = buildQueryUrl(path, schemeId, year, undefined, frn)
     expect(result).toBe('/endpoint?schemeId=123&year=2024')
   })
 
@@ -33,7 +33,7 @@ describe('build query URL', () => {
     const year = '2024'
     const frn = '456789'
     const revenueOrCapital = 'Revenue'
-    const result = buildQueryUrl(path, schemeId, year, frn, revenueOrCapital)
+    const result = buildQueryUrl(path, schemeId, year, undefined, frn, revenueOrCapital)
     expect(result).toBe('/endpoint?schemeId=123&year=2024&frn=456789&revenueOrCapital=Revenue')
   })
 
@@ -43,7 +43,7 @@ describe('build query URL', () => {
     const year = '2024'
     const frn = '456789'
     const revenueOrCapital = '   ' // Just whitespace
-    const result = buildQueryUrl(path, schemeId, year, frn, revenueOrCapital)
+    const result = buildQueryUrl(path, schemeId, year, undefined, frn, revenueOrCapital)
     expect(result).toBe('/endpoint?schemeId=123&year=2024&frn=456789')
   })
 
@@ -51,7 +51,7 @@ describe('build query URL', () => {
     const path = '/endpoint'
     const schemeId = '123'
     const year = '2024'
-    const result = buildQueryUrl(path, schemeId, year, undefined, undefined)
+    const result = buildQueryUrl(path, schemeId, year, undefined, undefined, undefined)
     expect(result).toBe('/endpoint?schemeId=123&year=2024')
   })
 
@@ -59,9 +59,10 @@ describe('build query URL', () => {
     const path = '/endpoint'
     const schemeId = '123'
     const year = '2024'
+    const prn = 1
     const frn = '456789'
     const revenueOrCapital = 'Capital'
-    const result = buildQueryUrl(path, schemeId, year, frn, revenueOrCapital)
-    expect(result).toBe('/endpoint?schemeId=123&year=2024&frn=456789&revenueOrCapital=Capital')
+    const result = buildQueryUrl(path, schemeId, year, prn, frn, revenueOrCapital)
+    expect(result).toBe('/endpoint?schemeId=123&year=2024&prn=1&frn=456789&revenueOrCapital=Capital')
   })
 })

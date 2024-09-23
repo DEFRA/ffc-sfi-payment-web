@@ -5,12 +5,12 @@ const { mapReportData } = require('./map-report-data')
 
 const createReportHandler = (path, fields, filenameFunc, errorView) => {
   return async (request, h) => {
-    const { schemeId, year, revenueOrCapital, frn } = request.query
-    const url = buildQueryUrl(path, schemeId, year, frn, revenueOrCapital)
+    const { schemeId, year, prn, revenueOrCapital, frn } = request.query
+    const url = buildQueryUrl(path, schemeId, year, prn, frn, revenueOrCapital)
     return fetchDataAndRespond(
       () => api.getTrackingData(url),
       (response) => response.payload[Object.keys(response.payload)[0]].map(data => mapReportData(data, fields)),
-      filenameFunc(schemeId, year, revenueOrCapital, frn),
+      filenameFunc(schemeId, year, prn, revenueOrCapital, frn),
       h,
       errorView
     )
