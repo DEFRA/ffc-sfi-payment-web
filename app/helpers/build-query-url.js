@@ -3,7 +3,7 @@ const buildQueryUrl = (path, schemeId, year, prn, frn, revenueOrCapital) => {
   if (prn) {
     url += `&prn=${prn}`
   }
-  if (frn && frn.trim() !== '') {
+  if (frn) {
     url += `&frn=${frn}`
   }
   if (revenueOrCapital && revenueOrCapital.trim() !== '') {
