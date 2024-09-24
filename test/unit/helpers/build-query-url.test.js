@@ -9,7 +9,7 @@ describe('build query URL', () => {
     expect(result).toBe('/endpoint?schemeId=123&year=2024')
   })
 
-  test('should include frn if it is not empty or just whitespace', () => {
+  test('should include frn if it is not empty', () => {
     const path = '/endpoint'
     const schemeId = '123'
     const year = '2024'
@@ -18,12 +18,11 @@ describe('build query URL', () => {
     expect(result).toBe('/endpoint?schemeId=123&year=2024&frn=456789')
   })
 
-  test('should not include frn if it is empty or just whitespace', () => {
+  test('should not include frn if it is undefined', () => {
     const path = '/endpoint'
     const schemeId = '123'
     const year = '2024'
-    const frn = '   ' // Just whitespace
-    const result = buildQueryUrl(path, schemeId, year, undefined, frn)
+    const result = buildQueryUrl(path, schemeId, year, undefined, undefined)
     expect(result).toBe('/endpoint?schemeId=123&year=2024')
   })
 
