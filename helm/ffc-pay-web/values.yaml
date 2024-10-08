@@ -5,7 +5,7 @@ namespace: ffc-pay
 workstream: ffc-pay
 image: ffc-pay-web
 
-labels: 
+labels:
   component: web
 
 appInsights:
@@ -36,10 +36,10 @@ service:
 deployment: {}
 
 container:
-  requestMemory: 10Mi
-  requestCpu: 10m
-  limitMemory: 120Mi
-  limitCpu: 120m
+  requestMemory: 100Mi
+  requestCpu: 100m
+  limitMemory: 400Mi
+  limitCpu: 400m
   port: 3007
   paymentsEndpoint: http://ffc-pay-processing.ffc-pay
   trackingEndpoint: http://ffc-pay-tracking.ffc-pay
