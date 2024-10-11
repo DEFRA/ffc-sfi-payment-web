@@ -36,10 +36,8 @@ service:
 deployment: {}
 
 container:
-  requestMemory: 100Mi
-  requestCpu: 100m
-  limitMemory: 400Mi
-  limitCpu: 400m
+  requestMemory: 500Mi
+  requestCpu: 500m
   port: 3007
   paymentsEndpoint: http://ffc-pay-processing.ffc-pay
   trackingEndpoint: http://ffc-pay-tracking.ffc-pay

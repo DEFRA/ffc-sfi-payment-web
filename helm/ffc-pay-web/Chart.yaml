@@ -5,5 +5,5 @@ name: ffc-pay-web
 version: 1.0.0
 dependencies:
 - name: ffc-helm-library
-  version: 3.4.0
+  version: 4.7.2
   repository: https://raw.githubusercontent.com/defra/ffc-helm-repository/master/
