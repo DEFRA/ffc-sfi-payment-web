@@ -61,25 +61,29 @@ const mapBaseAPARData = data => ({
   'Invoice Number': data.invoiceNumber,
   'Invoice Delta Amount': data.deltaAmount,
   'D365 Invoice Imported': data.routedToRequestEditor,
+  'D365 Invoice Payment': data.settledValue,
   'PH Error Status': data.phError,
   'D365 Error Status': data.daxError
 })
 
 const mapAPData = data => ({
-  ...mapBaseAPARData(data),
-  'D365 Invoice Payment': data.settledValue
+  ...mapBaseAPARData(data)
 })
 
-const mapARData = data => mapBaseAPARData(data)
+const mapARData = data => {
+  const mapped = { ...mapBaseAPARData(data) }
+  delete mapped['D365 Invoice Payment']
+  return mapped
+}
 
 const getDataMapper = reportName => {
   switch (reportName) {
+    case REPORT_TYPES.AR_LISTING:
+      return mapARData
     case REPORT_TYPES.REQUEST_EDITOR:
       return mapRequestEditorData
     case REPORT_TYPES.CLAIM_LEVEL:
       return mapClaimLevelData
-    case REPORT_TYPES.AR_LISTING:
-      return mapARData
     default:
       return mapAPData
   }
