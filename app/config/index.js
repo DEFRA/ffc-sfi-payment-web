@@ -3,7 +3,7 @@ const authConfig = require('./auth')
 const storageConfig = require('./storage')
 const messageConfig = require('./message')
 const portNumber = 3007
-const staticCacheTimeout = 7 * 24 * 60 * 60 * 1000
+const staticCacheTimeout = 604800000
 
 // Define config schema
 const schema = joi.object({

@@ -15,6 +15,8 @@ const REPORT_TYPES = {
 const AUTH_SCOPE = { scope: [holdAdmin, schemeAdmin, dataView] }
 const DEFAULT_START_DATE = '2015-01-01'
 const HTTP_STATUS = { BAD_REQUEST: 400, NOT_FOUND: 404 }
+const startsAt = 0
+const removeFromEnd = -4
 
 const mapRequestEditorData = data => ({
   FRN: data.frn,
@@ -84,7 +86,9 @@ const getDataMapper = reportName => {
 }
 
 const formatDate = (day, month, year) => {
-  if (!day || !month || !year) return null
+  if (!day || !month || !year) {
+    return null
+  }
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(
     2,
     '0'
@@ -103,7 +107,10 @@ const getBaseFilename = reportName => {
     [REPORT_TYPES.CLAIM_LEVEL]: config.claimLevelReportName,
     default: config.apListingReportName
   }
-  return (fileNames[reportName] || fileNames.default).slice(0, -4)
+  return (fileNames[reportName] || fileNames.default).slice(
+    startsAt,
+    removeFromEnd
+  )
 }
 
 const handleValidationError = async (request, h, err, reportName) => {
