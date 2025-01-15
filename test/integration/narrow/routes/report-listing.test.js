@@ -241,4 +241,14 @@ describe('AP Listing Report tests', () => {
     const response = await server.inject(options)
     expect(response.statusCode).toBe(400)
   })
+  test('GET /report-list/invalid-report-name returns 404 for invalid report name and query parameters', async () => {
+    const options = {
+      method: 'GET',
+      url: '/report-list/invalid-report-name/download?start-date-day=32',
+      auth
+    }
+    const response = await server.inject(options)
+    expect(response.statusCode).toBe(404)
+    expect(response.request.response.source.template).toBe('404')
+  })
 })
