@@ -1,10 +1,29 @@
 const Joi = require('joi')
+const minDate = 1
+const maxDateDay = 31
+const maxDateMonth = 12
+const minYear = 2015
 
 const getSchema = () => {
   const yearNow = new Date().getFullYear()
-  const datePartDaySchema = Joi.number().integer().min(1).max(31).allow('').optional()
-  const datePartMonthSchema = Joi.number().integer().min(1).max(12).allow('').optional()
-  const datePartYearSchema = Joi.number().integer().min(2015).max(yearNow).allow('').optional()
+  const datePartDaySchema = Joi.number()
+    .integer()
+    .min(minDate)
+    .max(maxDateDay)
+    .allow('')
+    .optional()
+  const datePartMonthSchema = Joi.number()
+    .integer()
+    .min(minDate)
+    .max(maxDateMonth)
+    .allow('')
+    .optional()
+  const datePartYearSchema = Joi.number()
+    .integer()
+    .min(minYear)
+    .max(yearNow)
+    .allow('')
+    .optional()
 
   return Joi.object({
     'start-date-day': datePartDaySchema.messages({
@@ -43,15 +62,23 @@ const getSchema = () => {
       'number.min': 'End date year cannot be less than current year',
       'number.max': 'End date year cannot be more than current year'
     })
-  }).options({ abortEarly: false })
+  })
+    .options({ abortEarly: false })
     .custom((value, helpers) => {
-      const startDateParts = ['start-date-day', 'start-date-month', 'start-date-year']
+      const startDateParts = [
+        'start-date-day',
+        'start-date-month',
+        'start-date-year'
+      ]
       const endDateParts = ['end-date-day', 'end-date-month', 'end-date-year']
 
       const startDateProvided = startDateParts.every(part => value[part] !== '')
       const endDateProvided = endDateParts.every(part => value[part] !== '')
 
-      if (!startDateProvided && startDateParts.some(part => value[part] !== '')) {
+      if (
+        !startDateProvided &&
+        startDateParts.some(part => value[part] !== '')
+      ) {
         return helpers.message('Start date must include day, month, and year')
       }
 
@@ -60,8 +87,16 @@ const getSchema = () => {
       }
 
       if (startDateProvided && endDateProvided) {
-        const startDate = new Date(value['start-date-year'], value['start-date-month'] - 1, value['start-date-day'])
-        const endDate = new Date(value['end-date-year'], value['end-date-month'] - 1, value['end-date-day'])
+        const startDate = new Date(
+          value['start-date-year'],
+          value['start-date-month'] - 1,
+          value['start-date-day']
+        )
+        const endDate = new Date(
+          value['end-date-year'],
+          value['end-date-month'] - 1,
+          value['end-date-day']
+        )
 
         if (endDate < startDate) {
           return helpers.message('End date cannot be less than start date')
