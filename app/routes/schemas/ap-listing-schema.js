@@ -61,12 +61,16 @@ const validateCompleteDate = (value, helpers) => {
     startYear,
     helpers
   )
-  if (startDateError) return startDateError
+  if (startDateError) {
+    return startDateError
+  }
 
   const endDateError = validateEndDate(endDay, endMonth, endYear, helpers)
-  if (endDateError) return endDateError
+  if (endDateError) {
+    return endDateError
+  }
 
-  const dateRangeError = validateDateRange(
+  const rangeError = validateDateRange(
     startDay,
     startMonth,
     startYear,
@@ -75,7 +79,9 @@ const validateCompleteDate = (value, helpers) => {
     endYear,
     helpers
   )
-  if (dateRangeError) return dateRangeError
+  if (rangeError) {
+    return rangeError
+  }
 
   return value
 }
