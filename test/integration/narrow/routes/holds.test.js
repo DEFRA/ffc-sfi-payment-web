@@ -96,7 +96,8 @@ describe('Payment holds', () => {
         expect(holdCells.eq(1).text()).toEqual(mockPaymentHolds[i].holdCategoryName)
         expect(holdCells.eq(2).text()).toEqual(mockPaymentHolds[i].holdCategorySchemeName)
         expect(holdCells.eq(3).text()).toEqual(mockPaymentHolds[i].marketingYear)
-        expect(holdCells.eq(4).text()).toEqual(mockPaymentHolds[i].dateTimeAdded)
+        expect(holdCells.eq(4).text()).toEqual(mockPaymentHolds[i].agreementNumber)
+        expect(holdCells.eq(5).text()).toEqual(mockPaymentHolds[i].dateTimeAdded)
       })
     })
 
