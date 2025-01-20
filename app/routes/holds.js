@@ -152,7 +152,7 @@ module.exports = [
     options: {
       auth: { scope: [holdAdmin] },
       handler: async (request, h) => {
-        await post(VIEWS.REMOVE, { holdId: request.payload.holdId })
+        await post(ROUTES.REMOVE, { holdId: request.payload.holdId })
         return h.redirect('/')
       }
     }
