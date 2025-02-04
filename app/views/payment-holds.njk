@@ -84,6 +84,7 @@
               <th scope="col" class="govuk-table__header">Description</th>
               <th scope="col" class="govuk-table__header">Scheme</th>
               <th scope="col" class="govuk-table__header">Marketing Year</th>
+              <th scope="col" class="govuk-table__header">Agreement Number</th>
               <th scope="col" class="govuk-table__header">Created</th>
               <th scope="col" class="govuk-table__header"></th>
             </tr>
@@ -95,6 +96,7 @@
                 <td class="govuk-table__cell">{{ paymentHold.holdCategoryName }}</td>
                 <td class="govuk-table__cell">{{ paymentHold.holdCategorySchemeName }}</td>
                 <td class="govuk-table__cell">{{ paymentHold.marketingYear }}</td>
+                <td class="govuk-table__cell">{{ paymentHold.agreementNumber }}</td>
                 <td class="govuk-table__cell">{{ paymentHold.dateTimeAdded }}</td>
                 <td class="govuk-table__cell">
                   {% if paymentHold.canBeRemoved %}
